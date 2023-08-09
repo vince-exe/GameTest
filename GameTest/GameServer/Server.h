@@ -1,11 +1,12 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
+#include <unordered_map>
 #include <thread>
 #include <boost/asio.hpp>
 
 #include "network_utilities.h"
+#include "User.h"
 
 using boost::asio::ip::tcp;
 
@@ -17,11 +18,13 @@ public:
 
 private:
 	void handleClient(tcp::socket& socket);
+	
+	bool nicknameAlreadyExist(const std::string& nick);
 
 private:
 	std::shared_ptr<boost::asio::io_service> ioServicePtr;
 	std::shared_ptr<tcp::acceptor> acceptorPtr;
 
 	int maxConnections;
-	std::vector<std::thread> threads;
+	std::unordered_map<std::string, User> usersMap;
 };

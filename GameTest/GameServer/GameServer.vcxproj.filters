@@ -24,12 +24,18 @@
     <ClCompile Include="network_utilities.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="User.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="network_utilities.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>

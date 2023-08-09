@@ -133,10 +133,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="network_utilities.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="network_utilities.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

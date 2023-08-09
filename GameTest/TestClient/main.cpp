@@ -22,10 +22,14 @@ void send(tcp::socket& socket, const std::string& message, const std::string& de
 int main() {
     boost::asio::io_service io_service;
     tcp::socket socket(io_service);
-   
+    
+    std::string nick;
+    std::cout << "\nNickname: ";
+    std::cin >> nick;
+
     socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 8888));
-  
-    std::cout << "\nMessaggio Dal Server: " << read(socket, "\n");
+    
+    send(socket, nick, "\n");
 
     system("pause");
     return 0;
