@@ -21,4 +21,8 @@ namespace NetMessages {
     const std::string CLIENT_ACCEPTED = "[!Client_Accept!]";
 
     const std::string MATCHMAKING_REQUEST = "[!Match_Request!]";
+
+    const std::string WAIT_FOR_MATCH = "[!Wait_Match!]";
+
+    const std::string UNDO_MATCHMAKING = "[!Undo_Match!]";
 }

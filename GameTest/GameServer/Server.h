@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <thread>
 #include <boost/asio.hpp>
+#include <queue>
 
 #include "network_utilities.h"
 #include "User.h"
@@ -26,5 +27,7 @@ private:
 	std::unique_ptr<tcp::acceptor> acceptorPtr;
 
 	int maxConnections;
-	std::unordered_map<std::string, User> usersMap;
+	std::unordered_map<std::string, std::shared_ptr<User>> usersMap;
+
+	std::queue<std::shared_ptr<User>> matchmakingQueue;
 };

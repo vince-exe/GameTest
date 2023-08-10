@@ -30,10 +30,37 @@ int main() {
     std::cin >> nick;
 
     socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 8888));
-    send(socket, nick, "\n");
+    send(socket, nick, NetUtils::MSG_DELIMETER);
 
-    std::cout << "\nMessage Server: " << read(socket, "\n");
+    std::string msgServer = read(socket, NetUtils::MSG_DELIMETER);
+    std::cout << "\nServer: " << msgServer << "\n";
+    if (msgServer == NetMessages::SERVER_FULL) {
+        "\nServer Full !";
+        socket.close();
+        return 0;
+    }
 
+    int option;
+    while (true) {
+        std::cout << "\n1) Matchmaking \
+                    \n2) Private Room \
+                    \n\n-> ";
+        std::cin >> option;
+
+        switch (option) {
+        case 1:
+            send(socket, NetMessages::MATCHMAKING_REQUEST, NetUtils::MSG_DELIMETER);
+
+            std::cout << "\nServer: " << read(socket, NetUtils::MSG_DELIMETER) << "\n";
+            std::cout << "\n5) Exit Matchmaking: ";
+            std::cin >> option;
+
+            if (option == 5) {
+                send(socket, NetMessages::UNDO_MATCHMAKING, NetUtils::MSG_DELIMETER);
+                break;
+            }
+        }
+    }
     system("pause");
     return 0;
 }

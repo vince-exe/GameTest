@@ -38,7 +38,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 		return;
 	}
 	else {
-		this->usersMap.emplace(nick, User(nick, socket));
+		this->usersMap[nick] = std::make_shared<User>(nick, socket);
 		std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << " [ NICK ]: " << nick << " | accepted.";
 	
 		NetUtils::send(*socket, NetMessages::CLIENT_ACCEPTED, NetUtils::MSG_DELIMETER);
@@ -52,6 +52,19 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 			
 			if (msg == NetMessages::MATCHMAKING_REQUEST) {
 				/* match this client with the last client who requested the match */
+				if (this->matchmakingQueue.empty()) {
+					this->matchmakingQueue.push(this->usersMap[nick]);
+					NetUtils::send(*socket, NetMessages::WAIT_FOR_MATCH, NetUtils::MSG_DELIMETER);
+
+					std::cout << "\nClient [nick]: " << nick << " in queue for a match!";
+				}
+				else {
+
+				}
+			}
+			else if (msg == NetMessages::UNDO_MATCHMAKING) {
+				this->matchmakingQueue.pop();
+				std::cout << "\nClient [nick]: " << nick << " undo the matchmaking";
 			}
 		}
 		catch (const boost::system::system_error& ex) {
