@@ -12,3 +12,13 @@ namespace NetUtils {
   
     void send(tcp::socket& socket, const std::string& message, const std::string& delimeter);
 }
+
+namespace NetMessages {
+    const std::string SERVER_FULL = "[!Server_Full!]";
+
+    const std::string NICK_ALREADY_EXIST = "[!Nick_Exist!]";
+
+    const std::string CLIENT_ACCEPTED = "[!Client_Accept!]";
+
+    const std::string MATCHMAKING_REQUEST = "[!Match_Request!]";
+}

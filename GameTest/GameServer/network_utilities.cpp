@@ -4,6 +4,8 @@ std::string NetUtils::read(tcp::socket& socket, const std::string& until) {
     boost::asio::streambuf buf;
     boost::asio::read_until(socket, buf, until);
     std::string data = boost::asio::buffer_cast<const char*>(buf.data());
+    /* remove the 'until' char */
+    data.pop_back();
 
     return data;
 }

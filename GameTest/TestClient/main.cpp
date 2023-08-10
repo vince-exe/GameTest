@@ -11,6 +11,8 @@ std::string read(tcp::socket& socket, const std::string& until) {
     boost::asio::read_until(socket, buf, until);
     std::string data = boost::asio::buffer_cast<const char*>(buf.data());
 
+    data.pop_back();
+
     return data;
 }
 
@@ -28,8 +30,9 @@ int main() {
     std::cin >> nick;
 
     socket.connect(tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 8888));
-    
     send(socket, nick, "\n");
+
+    std::cout << "\nMessage Server: " << read(socket, "\n");
 
     system("pause");
     return 0;

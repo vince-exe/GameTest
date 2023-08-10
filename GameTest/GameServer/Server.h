@@ -17,13 +17,13 @@ public:
 	void accept();
 
 private:
-	void handleClient(tcp::socket& socket);
+	void handleClient(std::shared_ptr<tcp::socket> socket);
 	
 	bool nicknameAlreadyExist(const std::string& nick);
 
 private:
-	std::shared_ptr<boost::asio::io_service> ioServicePtr;
-	std::shared_ptr<tcp::acceptor> acceptorPtr;
+	boost::asio::io_service ioServicePtr;
+	std::unique_ptr<tcp::acceptor> acceptorPtr;
 
 	int maxConnections;
 	std::unordered_map<std::string, User> usersMap;

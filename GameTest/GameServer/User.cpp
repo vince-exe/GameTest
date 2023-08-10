@@ -1,22 +1,19 @@
 #include "User.h"
 
-User::User(const std::string& nick, const std::string& ip) {
+User::User(const std::string& nick, std::shared_ptr<tcp::socket> socketPtr) {
 	this->nick = nick;
-	this->ip = ip;
+	this->ip = socketPtr->remote_endpoint().address().to_string();
+	this->socketPtr = socketPtr;
 }
 
-void User::setNick(std::string& nick) {
-	this->nick = nick;
-}
-
-void User::setIp(std::string& ip) {
-	this->ip = ip;
-}
-
-std::string User::getNick() {
+const std::string User::getNick() {
 	return this->nick;
 }
 
-std::string User::getIp() {
+const std::string User::getIp() {
 	return this->ip;
+}
+
+const std::shared_ptr<tcp::socket> User::getSocket() {
+	return this->socketPtr;
 }
