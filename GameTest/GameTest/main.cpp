@@ -1,7 +1,8 @@
-#include <SFML/Graphics.hpp>
-#include <boost/asio.hpp>
-#include <iostream>
+#include "MainWindow.h"
 
 int main() {
-	;
+    MainWindow mainWindow;
+
+    mainWindow.init();
+    return 0;
 }
