@@ -1,12 +1,18 @@
 #include "MainWindow.h"
 
 MainWindow::MainWindow() {
-    this->windowPtr = std::make_shared<sf::Window>();
+    this->windowPtr = std::make_shared<sf::RenderWindow>();
 
-	this->windowPtr->create(sf::VideoMode(1200, 600), "SkyFall Showdown", sf::Style::Fullscreen | sf::Style::Close);
+	this->windowPtr->create(sf::VideoMode::getDesktopMode(), "SkyFall Showdown", sf::Style::Fullscreen);
+}
+
+bool MainWindow::initTextures() {
+    return backgroundTexture.loadFromFile("assets/Background.png");
 }
 
 void MainWindow::init() {
+    initSprites();
+
     while (windowPtr->isOpen()) {
         sf::Event event;
         while (windowPtr->pollEvent(event)) {
@@ -14,5 +20,15 @@ void MainWindow::init() {
                 windowPtr->close();
             }
         }
+
+        windowPtr->clear();
+
+        windowPtr->draw(backgroundSprite);
+
+        windowPtr->display();
     }
+}
+
+void MainWindow::initSprites() {
+    backgroundSprite.setTexture(backgroundTexture);
 }
