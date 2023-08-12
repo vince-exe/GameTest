@@ -3,9 +3,15 @@
 int main() {
     MainWindow mainWindow;
 
-    if (!mainWindow.initTextures()) {
+    if (!mainWindow.loadTextures()) {
         std::cout << "\n[ Error ]: Failed to load same / all Game's textures";
+        return -1;
     }
+    if (!mainWindow.loadMouse()) {
+        std::cout << "\n[ Error ]: Failed to load the cursor..";
+        return -1;
+    }
+
     mainWindow.init();
     return 0;
 }

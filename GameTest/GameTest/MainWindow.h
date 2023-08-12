@@ -9,7 +9,9 @@ class MainWindow {
 public:
 	MainWindow();
 
-	bool initTextures();
+	bool loadTextures();
+
+	bool loadMouse();
 
 	void init();
 
@@ -22,4 +24,15 @@ private:
 	sf::Texture backgroundTexture;
 	sf::Sprite backgroundSprite;
 	
+	sf::Texture playBtnText;
+	sf::Sprite playBtnSprite;
+
+	sf::Texture settingBtnText;
+	sf::Sprite settingBtnSprite;
+
+	sf::Texture exitBtnText;
+	sf::Sprite exitBtnSprite;
+
+	sf::Texture cursorTextureGrab;
+	sf::Cursor customCursor;
 };
