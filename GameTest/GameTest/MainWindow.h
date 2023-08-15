@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#include "Entity.h"
+
 class MainWindow {
 public:
 	MainWindow();
@@ -21,18 +23,10 @@ private:
 private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;
 
-	sf::Texture backgroundTexture;
-	sf::Sprite backgroundSprite;
-	
-	sf::Texture playBtnText;
-	sf::Sprite playBtnSprite;
-
-	sf::Texture settingBtnText;
-	sf::Sprite settingBtnSprite;
-
-	sf::Texture exitBtnText;
-	sf::Sprite exitBtnSprite;
+	Entity background, playBtn, settingsBtn, exitBtn;
 
 	sf::Texture cursorTextureGrab;
-	sf::Cursor customCursor;
+	sf::Texture cursorTexturePoint;
+
+	sf::Cursor defaultCursor, pointCursor;
 };

@@ -8,18 +8,21 @@ MainWindow::MainWindow() {
 }
 
 bool MainWindow::loadTextures() {
-    return backgroundTexture.loadFromFile("assets/Background.png") && playBtnText.loadFromFile("assets/playBtn.png")
-        && settingBtnText.loadFromFile("assets/settingsBtn.png") && exitBtnText.loadFromFile("assets/exitBtn.png")
-        && cursorTextureGrab.loadFromFile("assets/Cursor_Grab.png");
+    return background.loadTexture("assets/Background.png") && playBtn.loadTexture("assets/playBtn.png")
+        && settingsBtn.loadTexture("assets/settingsBtn.png") && exitBtn.loadTexture("assets/exitBtn.png")
+        && cursorTextureGrab.loadFromFile("assets/Cursor_Grab.png") && cursorTexturePoint.loadFromFile("assets/Cursor_Point.png");
 }
 
 bool MainWindow::loadMouse() {
-    if (customCursor.loadFromPixels(cursorTextureGrab.copyToImage().getPixelsPtr(), cursorTextureGrab.getSize(), { 0, 0 })) {
-        windowPtr->setMouseCursor(customCursor);
-        return true;
+    if (!defaultCursor.loadFromPixels(cursorTextureGrab.copyToImage().getPixelsPtr(), cursorTextureGrab.getSize(), { 0, 0 }) ||
+        !pointCursor.loadFromPixels(cursorTexturePoint.copyToImage().getPixelsPtr(), cursorTexturePoint.getSize(), { 0, 0 })
+       ) {
+        return false;
     }
-
-    return false;
+    
+    windowPtr->setMouseCursor(defaultCursor);
+    
+    return true;
 }
 
 void MainWindow::init() {
@@ -31,28 +34,48 @@ void MainWindow::init() {
             if (event.type == sf::Event::Closed) {
                 windowPtr->close();
             }
+            if (event.type == sf::Event::MouseMoved) {
+                sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
+
+                if (playBtn.isInside(position) || settingsBtn.isInside(position) || exitBtn.isInside(position)) {
+                    windowPtr->setMouseCursor(pointCursor);
+                }
+                else {
+                    windowPtr->setMouseCursor(defaultCursor);
+                }
+            }
+
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
+
+                if (playBtn.isInside(position)) {
+
+                }
+                else if (settingsBtn.isInside(position)) {
+
+                }
+                else if (exitBtn.isInside(position)) {
+                    windowPtr->close();
+                    std::exit(0);
+                }
+            }
         }
 
         windowPtr->clear();
 
-        windowPtr->draw(backgroundSprite);
-        windowPtr->draw(playBtnSprite);
-        windowPtr->draw(settingBtnSprite);
-        windowPtr->draw(exitBtnSprite);
+        windowPtr->draw(background);
+        windowPtr->draw(playBtn);
+        windowPtr->draw(settingsBtn);
+        windowPtr->draw(exitBtn);
 
         windowPtr->display();
     }
 }
 
 void MainWindow::initSprites() {
-    backgroundSprite.setTexture(backgroundTexture);
+    playBtn.getSprite().setPosition(800.f, 345.f);
 
-    playBtnSprite.setTexture(playBtnText);
-    playBtnSprite.setPosition(800.f, 345.f);
+    settingsBtn.getSprite().setPosition(800.f, 465.f);
 
-    settingBtnSprite.setTexture(settingBtnText);
-    settingBtnSprite.setPosition(800.f, 465.f);
-
-    exitBtnSprite.setTexture(exitBtnText);
-    exitBtnSprite.setPosition(800.f, 585);
+    exitBtn.getSprite().setPosition(800.f, 585);
 }
