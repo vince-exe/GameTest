@@ -2,10 +2,11 @@
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-
 #include <iostream>
+#include <thread>
 
 #include "Entity.h"
+#include "PopupExitWindow.h"
 
 class MainWindow {
 public:

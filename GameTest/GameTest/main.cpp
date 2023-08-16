@@ -4,7 +4,7 @@ int main() {
     MainWindow mainWindow;
 
     if (!mainWindow.loadTextures()) {
-        std::cout << "\n[ Error ]: Failed to load same / all Game's textures";
+        std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( MainWindow )";
         return -1;
     }
     if (!mainWindow.loadMouse()) {

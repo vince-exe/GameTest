@@ -3,7 +3,7 @@
 MainWindow::MainWindow() {
     this->windowPtr = std::make_shared<sf::RenderWindow>();
 
-	this->windowPtr->create(sf::VideoMode::getDesktopMode(), "SkyFall Showdown", sf::Style::Fullscreen);
+	this->windowPtr->create(sf::VideoMode::getDesktopMode(), "SkyFall Showdown", sf::Style::None);
     this->windowPtr->setFramerateLimit(60);
 }
 
@@ -27,13 +27,14 @@ bool MainWindow::loadMouse() {
 
 void MainWindow::init() {
     initSprites();
+    sf::Event event;
 
     while (windowPtr->isOpen()) {
-        sf::Event event;
         while (windowPtr->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 windowPtr->close();
             }
+            /* change the mouse cursor from handle to point if it is on a button */
             if (event.type == sf::Event::MouseMoved) {
                 sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
@@ -55,8 +56,20 @@ void MainWindow::init() {
 
                 }
                 else if (exitBtn.isInside(position)) {
-                    windowPtr->close();
-                    std::exit(0);
+                    /* handle a new window */
+                    PopupExitWindow popupExitWindow;
+                    PopupExitWindowValues checker;
+
+                    std::thread thread(&PopupExitWindow::init, &popupExitWindow, std::ref(background), std::ref(checker), std::ref(defaultCursor), std::ref(pointCursor));
+                    thread.join();
+                    
+                    if (checker == PopupExitWindowValues::TEXTURE_FAIL) {
+                        std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( PopupExitWindow )";
+                        windowPtr->close();
+                    }
+                    else if(checker == PopupExitWindowValues::EXIT){
+                        windowPtr->close();
+                    }
                 }
             }
         }
