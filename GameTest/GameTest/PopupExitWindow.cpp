@@ -1,62 +1,59 @@
 #include "PopupExitWindow.h"
 
-void PopupExitWindow::init(Entity& background, PopupExitWindowValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor) {
+void PopupExitWindow::init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupExitWindowValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor) {
 	if (!PopupExitWindow::loadTextures()) {
 		checker = PopupExitWindowValues::TEXTURE_FAIL;
 		return;
 	}
-
-	window.create(sf::VideoMode::getDesktopMode(), "SkyFall Showdown", sf::Style::Fullscreen);
-	window.setFramerateLimit(60);
-	
 	backBtn.getSprite().setPosition(615.f, 550.f);
 	exitBtn.getSprite().setPosition(965.f, 550.f);
 
 	/* center the sprite */
 	sf::Vector2f spriteSize(text.getSprite().getGlobalBounds().width, text.getSprite().getGlobalBounds().height);
-	sf::Vector2f windowSize(window.getSize().x, window.getSize().y);
+	sf::Vector2f windowSize(windowPtr->getSize().x, windowPtr->getSize().y);
 	sf::Vector2f spritePosition((windowSize.x - spriteSize.x) / 2, (windowSize.y - spriteSize.y) / 2);
 	spritePosition.y -= 100.f;
 	text.getSprite().setPosition(spritePosition);
 
 	sf::Event event;
-	while (window.isOpen()) {
-		while (window.pollEvent(event)) {
+	while (windowPtr->isOpen()) {
+		while (windowPtr->pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
-				window.close();
+				windowPtr->close();
 			}
 			/* change the mouse cursor from handle to point if it is on a button */
 			if (event.type == sf::Event::MouseMoved) {
-				sf::Vector2f position = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+				sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
 				if (backBtn.isInside(position) || exitBtn.isInside(position)) {
-					window.setMouseCursor(pointCursor);
+					windowPtr->setMouseCursor(pointCursor);
 				}
 				else {
-					window.setMouseCursor(defCursor);
+					windowPtr->setMouseCursor(defCursor);
 				}
 			}
 			/* check if the user pressed one of the buttons */
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-				sf::Vector2f position = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+				sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
 				if (exitBtn.isInside(position)) {
-					window.close();
+					windowPtr->close();
 					checker = PopupExitWindowValues::EXIT;
 				}
 				else if (backBtn.isInside(position)) {
-					window.close();
+					checker = PopupExitWindowValues::BACK;
+					return;
 				}
 			}
 		}
-		window.clear();
+		windowPtr->clear();
 
-		window.draw(background);
-		window.draw(backBtn);
-		window.draw(exitBtn);
-		window.draw(text);
+		windowPtr->draw(background);
+		windowPtr->draw(backBtn);
+		windowPtr->draw(exitBtn);
+		windowPtr->draw(text);
 
-		window.display();
+		windowPtr->display();
 	}
 }
 

@@ -7,18 +7,17 @@
 
 enum PopupExitWindowValues {
 	TEXTURE_FAIL,
-	EXIT
+	EXIT,
+	BACK
 };
 
 class PopupExitWindow {
 public:
-	void init(Entity& background, PopupExitWindowValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor);
+	void init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupExitWindowValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor);
 
 	bool loadTextures();
 
 private:
-	sf::RenderWindow window;
-
 	Entity backBtn, exitBtn, text;
 };
 

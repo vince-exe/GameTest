@@ -58,11 +58,10 @@ void MainWindow::init() {
                 else if (exitBtn.isInside(position)) {
                     /* handle a new window */
                     PopupExitWindow popupExitWindow;
-                    PopupExitWindowValues checker;
+                    PopupExitWindowValues checker{};
 
-                    std::thread thread(&PopupExitWindow::init, &popupExitWindow, std::ref(background), std::ref(checker), std::ref(defaultCursor), std::ref(pointCursor));
-                    thread.join();
-                    
+                    popupExitWindow.init(windowPtr, background, checker, defaultCursor, pointCursor);
+
                     if (checker == PopupExitWindowValues::TEXTURE_FAIL) {
                         std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( PopupExitWindow )";
                         windowPtr->close();
