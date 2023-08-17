@@ -6,20 +6,26 @@
 #include <thread>
 
 #include "Entity.h"
-#include "PopupExitWindow.h"
+#include "MenuConfirmationExit.h"
 
-class MainWindow {
+class MainMenu {
 public:
-	MainWindow();
+	MainMenu();
 
 	bool loadTextures();
 
 	bool loadMouse();
 
-	void init();
+	bool init();
 
 private:
 	void initSprites();
+
+	void renderWindow();
+
+	void handleMouseCursor(sf::Event& event);
+
+	void handleButtonClicks(sf::Event& event, bool& exitRequested);
 
 private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;
