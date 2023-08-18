@@ -7,6 +7,7 @@
 
 #include "Entity.h"
 #include "MenuConfirmationExit.h"
+#include "OptionsMainMenu.h"
 
 class MainMenu {
 public:

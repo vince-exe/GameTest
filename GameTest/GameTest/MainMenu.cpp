@@ -21,7 +21,7 @@ bool MainMenu::loadMouse() {
     }
     
     windowPtr->setMouseCursor(defaultCursor);
-    
+   
     return true;
 }
 
@@ -97,6 +97,8 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
 
         }
         else if (settingsBtn.isInside(position)) {
+            OptionsMainMenu optionsMainMenu;
+            optionsMainMenu.init(windowPtr, background);
 
         }
         else if (exitBtn.isInside(position)) {

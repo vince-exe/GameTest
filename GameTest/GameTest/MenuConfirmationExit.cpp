@@ -29,6 +29,10 @@ void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Ent
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 				handleButtonClicks(windowPtr, checker, exitRequested);
 			}
+			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+				checker = MenuConfirmationExitValues::BACK;
+				exitRequested = true;
+			}
 		}
 		renderWindow(windowPtr, background);
 	}

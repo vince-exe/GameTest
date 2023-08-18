@@ -39,6 +39,9 @@
     <ClCompile Include="Entity.cpp">
       <Filter>File di origine\Game</Filter>
     </ClCompile>
+    <ClCompile Include="OptionsMainMenu.cpp">
+      <Filter>File di origine\Menu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -49,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsMainMenu.h">
+      <Filter>File di intestazione\Menu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
