@@ -2,6 +2,7 @@
 
 MainMenu::MainMenu() {
     this->windowPtr = std::make_shared<sf::RenderWindow>();
+    this->backgroundMusicPtr = std::make_shared<Music>();
 
 	this->windowPtr->create(sf::VideoMode::getDesktopMode(), "SkyFall Showdown", sf::Style::None);
     this->windowPtr->setFramerateLimit(60);
@@ -25,15 +26,26 @@ bool MainMenu::loadMouse() {
     return true;
 }
 
+bool MainMenu::loadMusic() {
+    return backgroundMusicPtr->getMusic().openFromFile("assets/Background_Menu_Music.mp3");
+}
+
 bool MainMenu::init() {
     if (!loadTextures()) {
         std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( MainMenu )";
         false;
     }
     if (!loadMouse()) {
-        std::cout << "\n[ Error ]: Failed to load the cursor..";
+        std::cout << "\n[ Error ]: Failed to load the cursor ( MainMenu )";
         false;
     }
+    if (!loadMusic()) {
+        std::cout << "\n[ Error ]: Failed to load the music ( MainMenu )";
+        false;
+    }
+    backgroundMusicPtr->setVolume(60.f);
+    backgroundMusicPtr->play();
+    backgroundMusicPtr->loop(true);
 
     initSprites();
     sf::Event event;
@@ -44,11 +56,23 @@ bool MainMenu::init() {
             if (event.type == sf::Event::Closed) {
                 windowPtr->close();
             }
-            handleMouseCursor(event);
+            /* OPEN THE EXIT MENU */
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                MenuConfirmationExit menuConfirmationExit;
+                PopupReturnValues checker{};
 
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                handleButtonClicks(event, exitRequested);
+                menuConfirmationExit.init(windowPtr, background, checker, defaultCursor, pointCursor);
+
+                if (checker == PopupReturnValues::TEXTURE_FAIL) {
+                    std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( MenuConfirmationExit )";
+                    exitRequested = true;
+                }
+                else if (checker == PopupReturnValues::EXIT) {
+                    exitRequested = true;
+                }
             }
+            handleMouseCursor(event);
+            handleButtonClicks(event, exitRequested);
         }
         renderWindow();
     }
@@ -98,21 +122,27 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
         }
         else if (settingsBtn.isInside(position)) {
             OptionsMainMenu optionsMainMenu;
-            optionsMainMenu.init(windowPtr, background);
+            PopupReturnValues checker{};
 
+            optionsMainMenu.init(windowPtr, backgroundMusicPtr, background, checker);
+      
+            if (checker == PopupReturnValues::TEXTURE_FAIL) {
+                std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( OptionsMainMenu )";
+                exitRequested = true;
+            }
         }
         else if (exitBtn.isInside(position)) {
             /* handle a new window */
             MenuConfirmationExit menuConfirmationExit;
-            MenuConfirmationExitValues checker{};
+            PopupReturnValues checker{};
 
             menuConfirmationExit.init(windowPtr, background, checker, defaultCursor, pointCursor);
 
-            if (checker == MenuConfirmationExitValues::TEXTURE_FAIL) {
+            if (checker == PopupReturnValues::TEXTURE_FAIL) {
                 std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( MenuConfirmationExit )";
                 exitRequested = true;
             }
-            else if (checker == MenuConfirmationExitValues::EXIT) {
+            else if (checker == PopupReturnValues::EXIT) {
                 exitRequested = true;
             }
         }

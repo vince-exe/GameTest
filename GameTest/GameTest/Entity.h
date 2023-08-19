@@ -13,6 +13,8 @@ public:
 
 	sf::Sprite& getSprite();
 
+	sf::Texture& getTexture();
+
 	virtual bool loadTexture(const std::string& path);
 
 	virtual bool isInside(const sf::Vector2f& pos);

@@ -3,9 +3,9 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <thread>
 
 #include "Entity.h"
+#include "Music.h"
 #include "MenuConfirmationExit.h"
 #include "OptionsMainMenu.h"
 
@@ -16,6 +16,8 @@ public:
 	bool loadTextures();
 
 	bool loadMouse();
+
+	bool loadMusic();
 
 	bool init();
 
@@ -30,6 +32,7 @@ private:
 
 private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;
+	std::shared_ptr<Music> backgroundMusicPtr;
 
 	Entity background, playBtn, settingsBtn, exitBtn;
 

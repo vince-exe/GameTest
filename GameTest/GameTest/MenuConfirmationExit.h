@@ -4,21 +4,16 @@
 #include <SFML/Graphics.hpp>
 
 #include "Entity.h"
-
-enum MenuConfirmationExitValues {
-	TEXTURE_FAIL,
-	EXIT,
-	BACK
-};
+#include "ui_utils.h"
 
 class MenuConfirmationExit {
 public:
-	void init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, MenuConfirmationExitValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor);
-
+	void init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor);
+	
 private:
 	void handleMouseCursor(std::shared_ptr<sf::RenderWindow> windowPtr, sf::Cursor& pointCursor, sf::Cursor& defCursor);
 
-	void handleButtonClicks(std::shared_ptr<sf::RenderWindow> windowPtr, MenuConfirmationExitValues& checker, bool& exitRequested);
+	void handleButtonClicks(std::shared_ptr<sf::RenderWindow> windowPtr, PopupReturnValues& checker, bool& exitRequested);
 
 	bool loadTextures();
 

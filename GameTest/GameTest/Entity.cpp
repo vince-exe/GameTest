@@ -9,6 +9,10 @@ sf::Sprite& Entity::getSprite() {
 	return this->sprite;
 }
 
+sf::Texture& Entity::getTexture() {
+	return this->texture;
+}
+
 bool Entity::loadTexture(const std::string& path) {
 	if (this->texture.loadFromFile(path)) {
 		this->sprite.setTexture(this->texture);

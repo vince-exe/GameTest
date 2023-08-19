@@ -1,8 +1,8 @@
 #include "MenuConfirmationExit.h"
 
-void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, MenuConfirmationExitValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor) {
+void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor) {
 	if (!MenuConfirmationExit::loadTextures()) {
-		checker = MenuConfirmationExitValues::TEXTURE_FAIL;
+		checker = PopupReturnValues::TEXTURE_FAIL;
 		return;
 	}
 	windowPtr->setMouseCursor(defCursor);
@@ -30,7 +30,7 @@ void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Ent
 				handleButtonClicks(windowPtr, checker, exitRequested);
 			}
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-				checker = MenuConfirmationExitValues::BACK;
+				checker = PopupReturnValues::BACK;
 				exitRequested = true;
 			}
 		}
@@ -54,16 +54,16 @@ void MenuConfirmationExit::handleMouseCursor(std::shared_ptr<sf::RenderWindow> w
 	}
 }
 
-void MenuConfirmationExit::handleButtonClicks(std::shared_ptr<sf::RenderWindow> windowPtr, MenuConfirmationExitValues& checker, bool& exitRequested) {
+void MenuConfirmationExit::handleButtonClicks(std::shared_ptr<sf::RenderWindow> windowPtr, PopupReturnValues& checker, bool& exitRequested) {
 	sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
 	if (exitBtn.isInside(position)) {
 		windowPtr->close();
-		checker = MenuConfirmationExitValues::EXIT;
+		checker = PopupReturnValues::EXIT;
 		exitRequested = true;
 	}
 	else if (backBtn.isInside(position)) {
-		checker = MenuConfirmationExitValues::BACK;
+		checker = PopupReturnValues::BACK;
 		exitRequested = true;
 	}
 }

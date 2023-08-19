@@ -138,13 +138,16 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MenuConfirmationExit.cpp" />
+    <ClCompile Include="Music.cpp" />
     <ClCompile Include="OptionsMainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MenuConfirmationExit.h" />
+    <ClInclude Include="Music.h" />
     <ClInclude Include="OptionsMainMenu.h" />
+    <ClInclude Include="ui_utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
