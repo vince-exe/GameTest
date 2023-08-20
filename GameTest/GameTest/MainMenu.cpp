@@ -27,21 +27,21 @@ bool MainMenu::loadMouse() {
 }
 
 bool MainMenu::loadMusic() {
-    return backgroundMusicPtr->getMusic().openFromFile("assets/Background_Menu_Music.mp3");
+    return backgroundMusicPtr->getMusic().openFromFile("assets/Background_Menu_Music.ogg");
 }
 
 bool MainMenu::init() {
     if (!loadTextures()) {
-        std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( MainMenu )";
-        false;
+        std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( MainMenu )\n";
+        return false;
     }
     if (!loadMouse()) {
-        std::cout << "\n[ Error ]: Failed to load the cursor ( MainMenu )";
-        false;
+        std::cout << "\n[ Error ]: Failed to load the cursor ( MainMenu )\n";
+        return false;
     }
     if (!loadMusic()) {
-        std::cout << "\n[ Error ]: Failed to load the music ( MainMenu )";
-        false;
+        std::cout << "\n[ Error ]: Failed to load the music ( MainMenu )\n";
+        return false;
     }
     backgroundMusicPtr->setVolume(60.f);
     backgroundMusicPtr->play();
@@ -77,6 +77,7 @@ bool MainMenu::init() {
         renderWindow();
     }
 
+    backgroundMusicPtr->getMusic().stop();
     return (exitRequested == false);
 }
 
@@ -120,6 +121,7 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
         if (playBtn.isInside(position)) {
 
         }
+        /* SETTINGS MENU */
         else if (settingsBtn.isInside(position)) {
             OptionsMainMenu optionsMainMenu;
             PopupReturnValues checker{};
@@ -131,8 +133,8 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
                 exitRequested = true;
             }
         }
+        /* EXIT MENU */
         else if (exitBtn.isInside(position)) {
-            /* handle a new window */
             MenuConfirmationExit menuConfirmationExit;
             PopupReturnValues checker{};
 
