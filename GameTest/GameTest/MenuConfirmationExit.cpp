@@ -5,6 +5,8 @@ void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Ent
 		checker = PopupReturnValues::TEXTURE_FAIL;
 		return;
 	}
+	this->windowPtr = windowPtr;
+
 	windowPtr->setMouseCursor(defCursor);
 	backBtn.getSprite().setPosition(615.f, 550.f);
 	exitBtn.getSprite().setPosition(965.f, 550.f);
@@ -24,17 +26,17 @@ void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Ent
 			if (event.type == sf::Event::Closed) {
 				windowPtr->close();
 			}
-			handleMouseCursor(windowPtr, pointCursor, defCursor);
+			handleMouseCursor(pointCursor, defCursor);
 
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-				handleButtonClicks(windowPtr, checker, exitRequested);
+				handleButtonClicks(checker, exitRequested);
 			}
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
 				checker = PopupReturnValues::BACK;
 				exitRequested = true;
 			}
 		}
-		renderWindow(windowPtr, background);
+		renderWindow(background);
 	}
 }
 
@@ -43,7 +45,7 @@ bool MenuConfirmationExit::loadTextures() {
 		   text.loadTexture("assets/img.png");
 }
 
-void MenuConfirmationExit::handleMouseCursor(std::shared_ptr<sf::RenderWindow> windowPtr, sf::Cursor& pointCursor, sf::Cursor& defCursor) {
+void MenuConfirmationExit::handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCursor) {
 	sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
 	if (backBtn.isInside(position) || exitBtn.isInside(position)) {
@@ -54,7 +56,7 @@ void MenuConfirmationExit::handleMouseCursor(std::shared_ptr<sf::RenderWindow> w
 	}
 }
 
-void MenuConfirmationExit::handleButtonClicks(std::shared_ptr<sf::RenderWindow> windowPtr, PopupReturnValues& checker, bool& exitRequested) {
+void MenuConfirmationExit::handleButtonClicks(PopupReturnValues& checker, bool& exitRequested) {
 	sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
 	if (exitBtn.isInside(position)) {
@@ -68,7 +70,7 @@ void MenuConfirmationExit::handleButtonClicks(std::shared_ptr<sf::RenderWindow> 
 	}
 }
 
-void MenuConfirmationExit::renderWindow(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background) {
+void MenuConfirmationExit::renderWindow(Entity& background) {
 	windowPtr->clear();
 	windowPtr->draw(background);
 	windowPtr->draw(backBtn);

@@ -11,15 +11,16 @@ public:
 	void init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor);
 	
 private:
-	void handleMouseCursor(std::shared_ptr<sf::RenderWindow> windowPtr, sf::Cursor& pointCursor, sf::Cursor& defCursor);
+	void handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCursor);
 
-	void handleButtonClicks(std::shared_ptr<sf::RenderWindow> windowPtr, PopupReturnValues& checker, bool& exitRequested);
+	void handleButtonClicks(PopupReturnValues& checker, bool& exitRequested);
 
 	bool loadTextures();
 
-	void renderWindow(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background);
+	void renderWindow(Entity& background);
 
 private:
+	std::shared_ptr<sf::RenderWindow> windowPtr;
 	Entity backBtn, exitBtn, text;
 };
 

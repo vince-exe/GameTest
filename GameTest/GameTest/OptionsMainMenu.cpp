@@ -5,12 +5,13 @@ void OptionsMainMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, std::sha
         checker = PopupReturnValues::TEXTURE_FAIL;
         return;
     }
+    this->windowPtr = windowPtr;
 
     sf::Cursor defaultCursor;
     defaultCursor.loadFromSystem(sf::Cursor::Arrow);
     windowPtr->setMouseCursor(defaultCursor);
     
-    initSprites(windowPtr, backgroundMusicPtr);
+    initSprites(backgroundMusicPtr);
 
     bool requestExit = false;
     sf::Event event;
@@ -23,14 +24,14 @@ void OptionsMainMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, std::sha
                 checker = PopupReturnValues::BACK;
                 return;
             }
-            handleMouseButtons(windowPtr, backgroundMusicPtr, event, requestExit, checker);
+            handleMouseButtons(backgroundMusicPtr, event, requestExit, checker);
         }
 
-        draw(windowPtr, background);
+        draw(background);
     }
 }
 
-void OptionsMainMenu::draw(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background) {
+void OptionsMainMenu::draw(Entity& background) {
     windowPtr->clear();
     windowPtr->draw(background);
     windowPtr->draw(backBtn);
@@ -44,11 +45,11 @@ void OptionsMainMenu::draw(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& 
     windowPtr->display();
 }
 
-void OptionsMainMenu::handleMouseButtons(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, sf::Event& event, bool& requestExit, PopupReturnValues& checker) {
+void OptionsMainMenu::handleMouseButtons(std::shared_ptr<Music> backgroundMusicPtr, sf::Event& event, bool& requestExit, PopupReturnValues& checker) {
     sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-        checkVolumeLevel(windowPtr, backgroundMusicPtr, position);
+        checkVolumeLevel(backgroundMusicPtr, position);
 
         if (backBtn.isInside(position)) {
             requestExit = true;
@@ -58,7 +59,7 @@ void OptionsMainMenu::handleMouseButtons(std::shared_ptr<sf::RenderWindow> windo
     }
 }
 
-void OptionsMainMenu::checkVolumeLevel(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, sf::Vector2f& position) {
+void OptionsMainMenu::checkVolumeLevel(std::shared_ptr<Music> backgroundMusicPtr, sf::Vector2f& position) {
     int volumeLevel = 0;
 
     sf::Vector2i mousePosition = sf::Mouse::getPosition(*windowPtr);
@@ -74,7 +75,7 @@ void OptionsMainMenu::checkVolumeLevel(std::shared_ptr<sf::RenderWindow> windowP
     }
 }
 
-void OptionsMainMenu::initSprites(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr) {
+void OptionsMainMenu::initSprites(std::shared_ptr<Music> backgroundMusicPtr) {
     slider.setSize(sf::Vector2f(500, 10));
     slider.setFillColor(sf::Color(255, 51, 51));
     slider.setPosition((windowPtr->getSize().x - slider.getSize().x) / 2, (windowPtr->getSize().y / 2) - 200);

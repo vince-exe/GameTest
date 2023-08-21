@@ -13,17 +13,19 @@ public:
 	void init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, Entity& background, PopupReturnValues& checker);
 
 private:
-	void draw(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background);
+	void draw(Entity& background);
 
-	void handleMouseButtons(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, sf::Event& event, bool& requestExit, PopupReturnValues& checker);
+	void handleMouseButtons(std::shared_ptr<Music> backgroundMusicPtr, sf::Event& event, bool& requestExit, PopupReturnValues& checker);
 
-	void checkVolumeLevel(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, sf::Vector2f& position);
+	void checkVolumeLevel(std::shared_ptr<Music> backgroundMusicPtr, sf::Vector2f& position);
 
-	void initSprites(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr);
+	void initSprites(std::shared_ptr<Music> backgroundMusicPtr);
 
 	bool loadTextures();
 
 private:
+	std::shared_ptr<sf::RenderWindow> windowPtr;
+
 	const sf::Color defCheckpointColor = sf::Color(255, 51, 51);
 	const sf::Color selectedCheckpointColor = sf::Color(58, 59, 60);
 
