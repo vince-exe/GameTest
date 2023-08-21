@@ -15,9 +15,9 @@ public:
 private:
 	void draw(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background);
 
-	void handleMouseButtons(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, sf::Event& event);
+	void handleMouseButtons(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, sf::Event& event, bool& requestExit, PopupReturnValues& checker);
 
-	void checkVolumeLevel(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr);
+	void checkVolumeLevel(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, sf::Vector2f& position);
 
 	void initSprites(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr);
 
@@ -32,6 +32,7 @@ private:
 
 	Entity volumeText;
 	Entity volumeLevelText[10];
+	Entity backBtn;
 
 	int oldVolumeIndex;
 };
