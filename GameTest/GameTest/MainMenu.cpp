@@ -8,21 +8,20 @@ MainMenu::MainMenu() {
     this->windowPtr->setFramerateLimit(60);
 }
 
-bool MainMenu::loadTextures() {
-    return background.loadTexture("assets/Background.png") && playBtn.loadTexture("assets/playBtn.png")
-        && settingsBtn.loadTexture("assets/settingsBtn.png") && exitBtn.loadTexture("assets/exitBtn.png")
-        && cursorTextureGrab.loadFromFile("assets/Cursor_Grab.png") && cursorTexturePoint.loadFromFile("assets/Cursor_Point.png");
+void MainMenu::setTextures() {
+    background.setTexture(MainMenuTextureManager::background);
+    playBtn.setTexture(MainMenuTextureManager::playBtn);
+    settingsBtn.setTexture(MainMenuTextureManager::settingsBtn);
+    exitBtn.setTexture(MainMenuTextureManager::exitBtn);
 }
 
 bool MainMenu::loadMouse() {
-    if (!defaultCursor.loadFromPixels(cursorTextureGrab.copyToImage().getPixelsPtr(), cursorTextureGrab.getSize(), { 0, 0 }) ||
-        !pointCursor.loadFromPixels(cursorTexturePoint.copyToImage().getPixelsPtr(), cursorTexturePoint.getSize(), { 0, 0 })
-       ) {
+    if (!defaultCursor.loadFromPixels(MainMenuTextureManager::cursorTextureGrab.copyToImage().getPixelsPtr(), MainMenuTextureManager::cursorTextureGrab.getSize(), { 0, 0 }) ||
+        !pointCursor.loadFromPixels(MainMenuTextureManager::cursorTexturePoint.copyToImage().getPixelsPtr(), MainMenuTextureManager::cursorTexturePoint.getSize(), { 0, 0 })) {
         return false;
     }
     
     windowPtr->setMouseCursor(defaultCursor);
-   
     return true;
 }
 
@@ -31,10 +30,6 @@ bool MainMenu::loadMusic() {
 }
 
 bool MainMenu::init() {
-    if (!loadTextures()) {
-        std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( MainMenu )\n";
-        return false;
-    }
     if (!loadMouse()) {
         std::cout << "\n[ Error ]: Failed to load the cursor ( MainMenu )\n";
         return false;
@@ -47,6 +42,7 @@ bool MainMenu::init() {
     backgroundMusicPtr->play();
     backgroundMusicPtr->loop(true);
 
+    setTextures();
     initSprites();
     sf::Event event;
 
@@ -62,12 +58,7 @@ bool MainMenu::init() {
                 PopupReturnValues checker{};
 
                 menuConfirmationExit.init(windowPtr, background, checker, defaultCursor, pointCursor);
-
-                if (checker == PopupReturnValues::TEXTURE_FAIL) {
-                    std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( MenuConfirmationExit )";
-                    exitRequested = true;
-                }
-                else if (checker == PopupReturnValues::EXIT) {
+                if (checker == PopupReturnValues::EXIT) {
                     exitRequested = true;
                 }
             }
@@ -127,11 +118,6 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
             PopupReturnValues checker{};
 
             optionsMainMenu.init(windowPtr, backgroundMusicPtr, background, checker);
-      
-            if (checker == PopupReturnValues::TEXTURE_FAIL) {
-                std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( OptionsMainMenu )";
-                exitRequested = true;
-            }
         }
         /* EXIT MENU */
         else if (exitBtn.isInside(position)) {
@@ -139,12 +125,7 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
             PopupReturnValues checker{};
 
             menuConfirmationExit.init(windowPtr, background, checker, defaultCursor, pointCursor);
-
-            if (checker == PopupReturnValues::TEXTURE_FAIL) {
-                std::cout << "\n[ Error ]: Failed to load some / all Game's textures ( MenuConfirmationExit )";
-                exitRequested = true;
-            }
-            else if (checker == PopupReturnValues::EXIT) {
+            if (checker == PopupReturnValues::EXIT) {
                 exitRequested = true;
             }
         }

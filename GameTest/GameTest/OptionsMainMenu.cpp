@@ -1,16 +1,13 @@
 #include "OptionsMainMenu.h"
 
 void OptionsMainMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, Entity& background, PopupReturnValues& checker) {
-    if (!loadTextures()) {
-        checker = PopupReturnValues::TEXTURE_FAIL;
-        return;
-    }
     this->windowPtr = windowPtr;
 
     sf::Cursor defaultCursor;
     defaultCursor.loadFromSystem(sf::Cursor::Arrow);
     windowPtr->setMouseCursor(defaultCursor);
     
+    setTextures();
     initSprites(backgroundMusicPtr);
 
     bool requestExit = false;
@@ -110,15 +107,11 @@ void OptionsMainMenu::initSprites(std::shared_ptr<Music> backgroundMusicPtr) {
     }
 }
 
-bool OptionsMainMenu::loadTextures() {
-    /* load the volume numbers */
-    int pathNumber = 0;
-    std::string pathStr;
+void OptionsMainMenu::setTextures() {
+    /* set the volume numbers */
     for (int i = 0; i < 10; i++) {
-        pathStr = "assets/" + std::to_string(pathNumber) + "_Text.png";
-        if (!volumeLevelText[i].loadTexture(pathStr)) { return false; }
-        pathNumber += 10;
+        this->volumeLevelText[i].setTexture(MainMenuTextureManager::volumeTextLevel[i]);
     }
-
-    return volumeText.loadTexture("assets/Volume_Png.png") && backBtn.loadTexture("assets/Back_Button.png");
+    volumeText.setTexture(MainMenuTextureManager::optionsTextVolume);
+    backBtn.setTexture(MainMenuTextureManager::backBtn);
 }

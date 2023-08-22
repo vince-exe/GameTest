@@ -2,7 +2,6 @@
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-
 #include <iostream>
 
 class Entity : public sf::Drawable {
@@ -14,6 +13,8 @@ public:
 	sf::Sprite& getSprite();
 
 	sf::Texture& getTexture();
+
+	virtual void setTexture(sf::Texture& texture);
 
 	virtual bool loadTexture(const std::string& path);
 

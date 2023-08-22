@@ -7,6 +7,7 @@
 #include "Entity.h"
 #include "Music.h"
 #include "ui_utils.h"
+#include "MainMenuTextureManager.h"
 
 class OptionsMainMenu {
 public:
@@ -21,7 +22,7 @@ private:
 
 	void initSprites(std::shared_ptr<Music> backgroundMusicPtr);
 
-	bool loadTextures();
+	void setTextures();
 
 private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;

@@ -1,22 +1,11 @@
 #include "MenuConfirmationExit.h"
 
 void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor) {
-	if (!MenuConfirmationExit::loadTextures()) {
-		checker = PopupReturnValues::TEXTURE_FAIL;
-		return;
-	}
 	this->windowPtr = windowPtr;
-
 	windowPtr->setMouseCursor(defCursor);
-	backBtn.getSprite().setPosition(615.f, 550.f);
-	exitBtn.getSprite().setPosition(965.f, 550.f);
 
-	/* center the sprite */
-	sf::Vector2f spriteSize(text.getSprite().getGlobalBounds().width, text.getSprite().getGlobalBounds().height);
-	sf::Vector2f windowSize(windowPtr->getSize().x, windowPtr->getSize().y);
-	sf::Vector2f spritePosition((windowSize.x - spriteSize.x) / 2, (windowSize.y - spriteSize.y) / 2);
-	spritePosition.y -= 100.f;
-	text.getSprite().setPosition(spritePosition);
+	setTextures();
+	setSprite();
 
 	sf::Event event;
 	bool exitRequested = false;
@@ -40,9 +29,22 @@ void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Ent
 	}
 }
 
-bool MenuConfirmationExit::loadTextures() {
-	return backBtn.loadTexture("assets/Back_Button.png") && exitBtn.loadTexture("assets/exitBtn.png") &&
-		   text.loadTexture("assets/img.png");
+void MenuConfirmationExit::setTextures() {
+	backBtn.setTexture(MainMenuTextureManager::backBtn);
+	exitBtn.setTexture(MainMenuTextureManager::exitBtn);
+	text.setTexture(MainMenuTextureManager::confirmationExitText);
+}
+
+void MenuConfirmationExit::setSprite() {
+	backBtn.getSprite().setPosition(615.f, 550.f);
+	exitBtn.getSprite().setPosition(965.f, 550.f);
+
+	/* center the text */
+	sf::Vector2f spriteSize(text.getSprite().getGlobalBounds().width, text.getSprite().getGlobalBounds().height);
+	sf::Vector2f windowSize(windowPtr->getSize().x, windowPtr->getSize().y);
+	sf::Vector2f spritePosition((windowSize.x - spriteSize.x) / 2, (windowSize.y - spriteSize.y) / 2);
+	spritePosition.y -= 100.f;
+	text.getSprite().setPosition(spritePosition);
 }
 
 void MenuConfirmationExit::handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCursor) {

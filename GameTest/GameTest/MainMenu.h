@@ -8,12 +8,13 @@
 #include "Music.h"
 #include "MenuConfirmationExit.h"
 #include "OptionsMainMenu.h"
+#include "MainMenuTextureManager.h"
 
 class MainMenu {
 public:
 	MainMenu();
 
-	bool loadTextures();
+	void setTextures();
 
 	bool loadMouse();
 
@@ -35,9 +36,6 @@ private:
 	std::shared_ptr<Music> backgroundMusicPtr;
 
 	Entity background, playBtn, settingsBtn, exitBtn;
-
-	sf::Texture cursorTextureGrab;
-	sf::Texture cursorTexturePoint;
 
 	sf::Cursor defaultCursor, pointCursor;
 };

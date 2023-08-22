@@ -13,6 +13,11 @@ sf::Texture& Entity::getTexture() {
 	return this->texture;
 }
 
+void Entity::setTexture(sf::Texture& texture) {
+	this->texture = texture;
+	this->sprite.setTexture(texture);
+}
+
 bool Entity::loadTexture(const std::string& path) {
 	if (this->texture.loadFromFile(path)) {
 		this->sprite.setTexture(this->texture);

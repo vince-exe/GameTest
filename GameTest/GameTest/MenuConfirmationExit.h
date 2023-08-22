@@ -5,6 +5,7 @@
 
 #include "Entity.h"
 #include "ui_utils.h"
+#include "MainMenuTextureManager.h"
 
 class MenuConfirmationExit {
 public:
@@ -15,7 +16,9 @@ private:
 
 	void handleButtonClicks(PopupReturnValues& checker, bool& exitRequested);
 
-	bool loadTextures();
+	void setTextures();
+
+	void setSprite();
 
 	void renderWindow(Entity& background);
 

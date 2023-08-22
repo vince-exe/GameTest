@@ -28,6 +28,9 @@
     <Filter Include="File di intestazione\Utils">
       <UniqueIdentifier>{f15d97ae-f424-46a1-9e73-3c242074361e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File di origine\Utils">
+      <UniqueIdentifier>{70083e4c-7184-41dd-979f-d1c70f1ab94e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,6 +51,12 @@
     <ClCompile Include="Music.cpp">
       <Filter>File di origine\Game</Filter>
     </ClCompile>
+    <ClCompile Include="NicknameMenu.cpp">
+      <Filter>File di origine\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuTextureManager.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -67,6 +76,12 @@
     </ClInclude>
     <ClInclude Include="Music.h">
       <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="NicknameMenu.h">
+      <Filter>File di intestazione\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuTextureManager.h">
+      <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
