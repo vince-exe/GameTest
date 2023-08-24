@@ -8,6 +8,7 @@
 
 #include "network_utilities.h"
 #include "User.h"
+#include "NetPacket.h"
 
 using boost::asio::ip::tcp;
 

@@ -132,12 +132,14 @@
   <ItemGroup>
     <ClCompile Include="GameSession.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NetPacket.cpp" />
     <ClCompile Include="network_utilities.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameSession.h" />
+    <ClInclude Include="NetPacket.h" />
     <ClInclude Include="network_utilities.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="User.h" />

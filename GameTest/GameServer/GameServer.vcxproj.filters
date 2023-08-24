@@ -30,6 +30,9 @@
     <ClCompile Include="GameSession.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="NetPacket.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -42,6 +45,9 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="GameSession.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="NetPacket.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>

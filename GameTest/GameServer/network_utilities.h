@@ -3,26 +3,15 @@
 #include <iostream>
 #include <boost/asio.hpp>
 
+#include "NetPacket.h"
+
 using boost::asio::ip::tcp;
 
-namespace NetUtils {
-    const std::string MSG_DELIMETER = "\n";
-        
-    std::string read(tcp::socket& socket, const std::string& until);
+namespace NetUtils {        
+    NetPacket read_(tcp::socket& socket);
   
-    void send(tcp::socket& socket, const std::string& message, const std::string& delimeter);
+    void send_(tcp::socket& socket, NetPacket& packet);
+
+    void send_(tcp::socket& socket, const NetPacket& packet);
 }
 
-namespace NetMessages {
-    const std::string SERVER_FULL = "[!Server_Full!]";
-
-    const std::string NICK_ALREADY_EXIST = "[!Nick_Exist!]";
-
-    const std::string CLIENT_ACCEPTED = "[!Client_Accept!]";
-
-    const std::string MATCHMAKING_REQUEST = "[!Match_Request!]";
-
-    const std::string WAIT_FOR_MATCH = "[!Wait_Match!]";
-
-    const std::string UNDO_MATCHMAKING = "[!Undo_Match!]";
-}
