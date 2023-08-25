@@ -13,7 +13,7 @@ public:
 	static sf::Texture backBtn, exitBtn, playBtn, settingsBtn, doneBtn;
 	static sf::Texture background;
 	/* text */
-	static sf::Texture optionsTextVolume, confirmationExitText;
+	static sf::Texture optionsTextVolume, confirmationExitText, nicknameText;
 	/* single volume text: 0 / 10 / 20... */
 	static sf::Texture volumeTextLevel[10];
 	/* mouse */

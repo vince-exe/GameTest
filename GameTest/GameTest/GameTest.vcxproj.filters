@@ -57,6 +57,9 @@
     <ClCompile Include="MainMenuTextureManager.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="FontManager.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -81,6 +84,9 @@
       <Filter>File di intestazione\Menu</Filter>
     </ClInclude>
     <ClInclude Include="MainMenuTextureManager.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>

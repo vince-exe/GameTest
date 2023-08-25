@@ -8,6 +8,7 @@ sf::Texture MainMenuTextureManager::doneBtn;
 sf::Texture MainMenuTextureManager::background;
 sf::Texture MainMenuTextureManager::optionsTextVolume;
 sf::Texture MainMenuTextureManager::confirmationExitText;
+sf::Texture MainMenuTextureManager::nicknameText;
 sf::Texture MainMenuTextureManager::volumeTextLevel[10];
 sf::Texture MainMenuTextureManager::cursorTextureGrab;
 sf::Texture MainMenuTextureManager::cursorTexturePoint;
@@ -26,5 +27,6 @@ bool MainMenuTextureManager::init() {
         && playBtn.loadFromFile("assets/playBtn.png") && settingsBtn.loadFromFile("assets/settingsBtn.png")
         && doneBtn.loadFromFile("assets/doneBtn.png") && background.loadFromFile("assets/Background.png")
         && optionsTextVolume.loadFromFile("assets/Volume_Png.png") && confirmationExitText.loadFromFile("assets/img.png")
-        && cursorTextureGrab.loadFromFile("assets/Cursor_Grab.png") && cursorTexturePoint.loadFromFile("assets/Cursor_Point.png");
+        && cursorTextureGrab.loadFromFile("assets/Cursor_Grab.png") && cursorTexturePoint.loadFromFile("assets/Cursor_Point.png")
+        && nicknameText.loadFromFile("assets/nick_img.png");
 }

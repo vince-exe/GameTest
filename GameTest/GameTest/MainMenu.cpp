@@ -73,11 +73,11 @@ bool MainMenu::init() {
 }
 
 void MainMenu::initSprites() {
-    playBtn.getSprite().setPosition(800.f, 345.f);
+    float windowXSize = windowPtr->getSize().x;
 
-    settingsBtn.getSprite().setPosition(800.f, 465.f);
-
-    exitBtn.getSprite().setPosition(800.f, 585);
+    playBtn.getSprite().setPosition((windowXSize - playBtn.getTexture().getSize().x) / 2, 345.f);
+    settingsBtn.getSprite().setPosition((windowXSize - settingsBtn.getTexture().getSize().x) / 2, 465.f);
+    exitBtn.getSprite().setPosition((windowXSize - exitBtn.getTexture().getSize().x) / 2, 585.f);
 }
 
 void MainMenu::renderWindow() {
@@ -109,8 +109,12 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
+        /* OPEN THE NICKNAME MENU */
         if (playBtn.isInside(position)) {
+            NicknameMenu nicknameMenu;
+            PopupReturnValues checker{};
 
+            nicknameMenu.init(windowPtr, background, checker, defaultCursor, pointCursor);
         }
         /* SETTINGS MENU */
         else if (settingsBtn.isInside(position)) {

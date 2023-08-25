@@ -15,15 +15,13 @@ void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Ent
 			if (event.type == sf::Event::Closed) {
 				windowPtr->close();
 			}
-			handleMouseCursor(pointCursor, defCursor);
-
-			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-				handleButtonClicks(checker, exitRequested);
-			}
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
 				checker = PopupReturnValues::BACK;
 				exitRequested = true;
 			}
+
+			handleMouseCursor(pointCursor, defCursor);
+			handleButtonClicks(checker, event, exitRequested);
 		}
 		renderWindow(background);
 	}
@@ -58,17 +56,19 @@ void MenuConfirmationExit::handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor
 	}
 }
 
-void MenuConfirmationExit::handleButtonClicks(PopupReturnValues& checker, bool& exitRequested) {
+void MenuConfirmationExit::handleButtonClicks(PopupReturnValues& checker, sf::Event& event, bool& exitRequested) {
 	sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
-	if (exitBtn.isInside(position)) {
-		windowPtr->close();
-		checker = PopupReturnValues::EXIT;
-		exitRequested = true;
-	}
-	else if (backBtn.isInside(position)) {
-		checker = PopupReturnValues::BACK;
-		exitRequested = true;
+	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+		if (exitBtn.isInside(position)) {
+			windowPtr->close();
+			checker = PopupReturnValues::EXIT;
+			exitRequested = true;
+		}
+		else if (backBtn.isInside(position)) {
+			checker = PopupReturnValues::BACK;
+			exitRequested = true;
+		}
 	}
 }
 

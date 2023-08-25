@@ -75,6 +75,7 @@ void OptionsMainMenu::checkVolumeLevel(std::shared_ptr<Music> backgroundMusicPtr
 void OptionsMainMenu::initSprites(std::shared_ptr<Music> backgroundMusicPtr) {
     slider.setSize(sf::Vector2f(500, 10));
     slider.setFillColor(sf::Color(255, 51, 51));
+    /* center the sprite */
     slider.setPosition((windowPtr->getSize().x - slider.getSize().x) / 2, (windowPtr->getSize().y / 2) - 200);
 
     sf::Vector2u spriteSize = volumeText.getTexture().getSize();

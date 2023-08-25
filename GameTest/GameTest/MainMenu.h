@@ -6,9 +6,11 @@
 
 #include "Entity.h"
 #include "Music.h"
+
 #include "MenuConfirmationExit.h"
 #include "OptionsMainMenu.h"
 #include "MainMenuTextureManager.h"
+#include "NicknameMenu.h"
 
 class MainMenu {
 public:

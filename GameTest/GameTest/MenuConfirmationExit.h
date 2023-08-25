@@ -14,7 +14,7 @@ public:
 private:
 	void handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCursor);
 
-	void handleButtonClicks(PopupReturnValues& checker, bool& exitRequested);
+	void handleButtonClicks(PopupReturnValues& checker, sf::Event& event, bool& exitRequested);
 
 	void setTextures();
 
