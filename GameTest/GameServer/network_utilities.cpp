@@ -11,8 +11,7 @@ NetPacket NetUtils::read_(tcp::socket& socket) {
         return NetPacket::deserialize(receivedData);
     }
     catch (const std::exception& e) {
-        std::cerr << "Errore durante la ricezione del pacchetto: " << e.what() << std::endl;
-        // Restituisci un oggetto NetPacket vuoto o un oggetto con un messaggio di errore
+        std::cerr << e.what() << std::endl;
     }
 }
 
@@ -20,13 +19,13 @@ void NetUtils::send_(tcp::socket& socket, const NetPacket& packet) {
     try {
         std::vector<uint8_t> serializedData = packet.serialize();
 
-        // Calcola la dimensione del pacchetto
+        // calculate the dimension of the packet
         size_t packetSize = serializedData.size();
 
-        // Invia prima la dimensione del pacchetto
+        // send packet dimension
         boost::asio::write(socket, boost::asio::buffer(&packetSize, sizeof(packetSize)));
 
-        // Invia quindi i dati del pacchetto
+        // send datas
         boost::asio::write(socket, boost::asio::buffer(serializedData));
     }
     catch (const std::exception& e) {
