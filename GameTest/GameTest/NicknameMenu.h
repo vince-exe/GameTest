@@ -2,6 +2,7 @@
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 #include "Entity.h"
 #include "ui_utils.h"
@@ -10,7 +11,7 @@
 
 class NicknameMenu {
 public:
-	void init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor);
+	std::string init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor);
 
 private:
 	void draw(Entity& background);
@@ -22,6 +23,8 @@ private:
 	void handleTextEntered(sf::Event& event);
 
 	void handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCursor);
+	
+	void handleMouseButtons(sf::Event& event, PopupReturnValues& checker, bool& exitRequested);
 
 private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;

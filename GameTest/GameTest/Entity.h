@@ -20,10 +20,10 @@ public:
 
 	virtual bool isInside(const sf::Vector2f& pos);
 
-private:
+protected:
 	virtual void draw(sf::RenderTarget& window, sf::RenderStates state) const;
 
-private:
+protected:
 	sf::Texture texture;
 	sf::Sprite sprite;
 };

@@ -30,23 +30,34 @@ void Server::accept() {
 }
 
 void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
-	NetPacket p = NetUtils::read_(*socket);
-	std::string nick(reinterpret_cast<const char*>(&p.getData()[0]), p.getDataSize());
-
-	// if the nickname already exist 
-	if (this->nicknameAlreadyExist(nick)) {
-		std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << " [ NICK ]: " << nick << " | refused ( nick already exist )";
-
-		NetUtils::send_(*socket, NetPacket(NetMessages::NICK_EXITS, nullptr, 0));
-		socket->close();
-		return;
-	}
-	else {
-		/* creates the User */
-		this->usersMap[nick] = std::make_shared<User>(nick, socket);
-		std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << " [ NICK ]: " << nick << " | accepted.";
+	std::string nick;
 	
-		NetUtils::send_(*socket, NetPacket(NetMessages::CLIENT_ACCEPTED, nullptr, 0));
+	try {
+		NetPacket p = NetUtils::read_(*socket);
+		nick = p.getStr();
+
+		// if the nickname already exist 
+		if (this->nicknameAlreadyExist(nick)) {
+			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << " [ NICK ]: " << nick << " | refused ( nick already exist )";
+
+			NetUtils::send_(*socket, NetPacket(NetMessages::NICK_EXITS, nullptr, 0));
+			socket->close();
+			return;
+		}
+		else {
+			/* creates the User */
+			this->usersMap[nick] = std::make_shared<User>(nick, socket);
+			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << " [ NICK ]: " << nick << " | accepted.";
+
+			NetUtils::send_(*socket, NetPacket(NetMessages::CLIENT_ACCEPTED, nullptr, 0));
+		}
+	}
+	catch (const boost::system::system_error& ex) {
+		// temporary catch solution debug 
+		std::cout << "\nCatch in handle client...";
+		socket->close();
+		this->usersMap.erase(this->usersMap.find(nick));
+		return;
 	}
 
 	// temporary condition ( listen for client's messages )
@@ -74,7 +85,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 		}
 		catch (const boost::system::system_error& ex) {
 			// temporary catch solution debug 
-			std::cout << "\nError in handle client...";
+			std::cout << "\nCatch in handle client...";
 			socket->close();
 			this->usersMap.erase(this->usersMap.find(nick));
 			return;

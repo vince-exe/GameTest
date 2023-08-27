@@ -1,6 +1,6 @@
 #pragma once
 
-#include<iostream>
+#include <iostream>
 #include <vector>
 
 enum NetMessages {
@@ -24,7 +24,9 @@ public:
 
 	const std::vector<uint8_t>& getData() const;
 	
-	size_t getDataSize() const;
+	size_t getDataSize();
+
+	std::string getStr();
 
 	std::vector<uint8_t> serialize() const;
 

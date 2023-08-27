@@ -130,11 +130,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\GameServer\NetPacket.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="NetPacket.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NetPacket.h" />
+    <ClInclude Include="..\GameServer\NetPacket.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

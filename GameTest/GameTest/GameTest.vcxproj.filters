@@ -31,6 +31,12 @@
     <Filter Include="File di origine\Utils">
       <UniqueIdentifier>{70083e4c-7184-41dd-979f-d1c70f1ab94e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File di intestazione\Network">
+      <UniqueIdentifier>{ea928579-e5b3-4acb-95d4-b8fc3d282022}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di origine\Network">
+      <UniqueIdentifier>{98a6005c-9134-4db3-8651-d2fbc3fb3b51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -60,6 +66,15 @@
     <ClCompile Include="FontManager.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>File di origine\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameServer\NetPacket.cpp">
+      <Filter>File di origine\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameServer\network_utilities.cpp">
+      <Filter>File di origine\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -88,6 +103,15 @@
     </ClInclude>
     <ClInclude Include="FontManager.h">
       <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>File di intestazione\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameServer\NetPacket.h">
+      <Filter>File di intestazione\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameServer\network_utilities.h">
+      <Filter>File di intestazione\Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

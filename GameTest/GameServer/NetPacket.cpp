@@ -14,7 +14,7 @@ const std::vector<uint8_t>& NetPacket::getData() const {
     return this->data;
 }
 
-size_t NetPacket::getDataSize() const {
+size_t NetPacket::getDataSize() {
     return this->dataSize;
 }
 
@@ -26,6 +26,10 @@ std::vector<uint8_t> NetPacket::serialize() const {
     std::memcpy(serializedData.data() + sizeof(messageType) + sizeof(size_t), data.data(), dataSize);
 
     return serializedData;
+}
+
+std::string NetPacket::getStr() {
+    return std::string(reinterpret_cast<const char*>(&this->data[0]), this->getDataSize());
 }
 
 NetPacket NetPacket::deserialize(const std::vector<uint8_t>& serializedData) {

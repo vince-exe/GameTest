@@ -114,7 +114,17 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
             NicknameMenu nicknameMenu;
             PopupReturnValues checker{};
 
-            nicknameMenu.init(windowPtr, background, checker, defaultCursor, pointCursor);
+            std::string nick = nicknameMenu.init(windowPtr, background, checker, defaultCursor, pointCursor);
+            if (checker == PopupReturnValues::DONE) {
+                std::cout << "\nNickname: " << nick << "\n";
+
+                /* start the connection thread */
+                std::thread t([this]() {
+                    
+                    this->handleClientConnection();
+                });
+                t.detach();
+            }
         }
         /* SETTINGS MENU */
         else if (settingsBtn.isInside(position)) {
@@ -133,5 +143,17 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
                 exitRequested = true;
             }
         }
+    }
+}
+
+void MainMenu::handleClientConnection() {
+    Client client;
+    
+    if (!client.connect("127.0.0.1", 8888)) {
+        // ERROR
+    }
+    else {
+        std::cout << "\nSuccessfully connected\n";
+        client.close();
     }
 }

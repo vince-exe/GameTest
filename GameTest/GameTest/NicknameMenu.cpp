@@ -1,6 +1,6 @@
 #include "NicknameMenu.h"
 
-void NicknameMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor) {
+std::string NicknameMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor) {
 	this->windowPtr = windowPtr;
 
     setTextures();
@@ -15,14 +15,16 @@ void NicknameMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& bac
             }
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 checker = PopupReturnValues::BACK;
-                return;
+                return "";
             }
             handleTextEntered(event);
             handleMouseCursor(pointCursor, defCursor);
+            handleMouseButtons(event, checker, requestExit);
         }
-
         draw(background);
     }
+
+    return inputText;
 }
 
 void NicknameMenu::draw(Entity& background) {
@@ -91,5 +93,20 @@ void NicknameMenu::handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCur
     }
     else {
         windowPtr->setMouseCursor(defCursor);
+    }
+}
+
+void NicknameMenu::handleMouseButtons(sf::Event& event, PopupReturnValues& checker, bool& exitRequested) {
+    sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
+
+    if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+        if (backBtn.isInside(position)) {
+            checker = PopupReturnValues::BACK;
+            exitRequested = true;
+        }
+        else if (doneBtn.isInside(position)) {
+            checker = PopupReturnValues::DONE;
+            exitRequested = true;
+        }
     }
 }

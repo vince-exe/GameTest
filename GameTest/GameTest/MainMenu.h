@@ -3,6 +3,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <thread>
 
 #include "Entity.h"
 #include "Music.h"
@@ -11,20 +12,23 @@
 #include "OptionsMainMenu.h"
 #include "MainMenuTextureManager.h"
 #include "NicknameMenu.h"
+#include "Client.h"
 
 class MainMenu {
 public:
 	MainMenu();
 
-	void setTextures();
+	bool init();
 
+	void handleClientConnection();
+
+private:
 	bool loadMouse();
 
 	bool loadMusic();
 
-	bool init();
+	void setTextures();
 
-private:
 	void initSprites();
 
 	void renderWindow();
