@@ -13,6 +13,10 @@ void MainMenu::setTextures() {
     playBtn.setTexture(MainMenuTextureManager::playBtn);
     settingsBtn.setTexture(MainMenuTextureManager::settingsBtn);
     exitBtn.setTexture(MainMenuTextureManager::exitBtn);
+
+    for (int i = 0; i < 4; i++) {
+        menuMsgs[i].setTexture(MainMenuTextureManager::menuMsg[i]);
+    }
 }
 
 bool MainMenu::loadMouse() {
@@ -41,6 +45,8 @@ bool MainMenu::init() {
     backgroundMusicPtr->setVolume(60.f);
     backgroundMusicPtr->play();
     backgroundMusicPtr->loop(true);
+
+    displayText = false;
 
     setTextures();
     initSprites();
@@ -88,6 +94,10 @@ void MainMenu::renderWindow() {
     windowPtr->draw(settingsBtn);
     windowPtr->draw(exitBtn);
 
+    if (displayText) {
+        windowPtr->draw(*msgToDisplay);
+    }
+
     windowPtr->display();
 }
 
@@ -119,9 +129,9 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
                 std::cout << "\nNickname: " << nick << "\n";
 
                 /* start the connection thread */
-                std::thread t([this]() {
-                    
-                    this->handleClientConnection();
+                std::thread t([this, nick]() {
+                    /* here i pass the nick var by value, because of the lifetime of the var it self..*/
+                    this->handleClientConnection(nick);
                 });
                 t.detach();
             }
@@ -146,14 +156,49 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
     }
 }
 
-void MainMenu::handleClientConnection() {
-    Client client;
-    
-    if (!client.connect("127.0.0.1", 8888)) {
-        // ERROR
+bool MainMenu::handleConnectionMsg(const NetMessages& msg) {
+    if (msg == NetMessages::NICK_EXITS) {
+        displayTextFunc(menuMsgs[1]);
+        return false;
     }
     else {
-        std::cout << "\nSuccessfully connected\n";
-        client.close();
+        displayTextFunc(menuMsgs[3]);
+    }
+
+    return true;
+}
+
+void MainMenu::displayTextFunc(Entity& entity) {
+    msgToDisplay = &entity;
+    msgToDisplay->getSprite().setPosition(15.f, 480.f);
+    displayText = true;
+}
+
+void MainMenu::handleClientConnection(std::string nick) {
+    Client client;
+
+    try {
+        if (!client.connect("127.0.0.1", 8888)) {
+            /* "Server Down" message */
+            displayTextFunc(menuMsgs[0]);
+        }
+        else {
+            NetMessages msg = NetUtils::read_(*client.getSocket()).getMsgType();
+
+            if (msg == NetMessages::SERVER_FULL) {
+                /* display the "Server Full" message */
+                displayTextFunc(menuMsgs[2]);
+                return;
+            }
+            else {
+                /* send the nickname */
+                NetUtils::send_(*client.getSocket(), NetPacket(NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
+                handleConnectionMsg(NetUtils::read_(*client.getSocket()).getMsgType());
+            }
+        }
+    }
+    catch (const boost::system::system_error& e) {
+        std::cerr << "\nError while connecting: " << e.what() << std::endl;
+        displayTextFunc(menuMsgs[0]);
     }
 }

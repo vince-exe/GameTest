@@ -7,14 +7,8 @@ Client::Client() {
 bool Client::connect(const std::string& ip, int port) {
     boost::system::error_code ec;
 
-    try {
-        socketPtr->connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ip), port), ec);
-    }
-    catch (const boost::system::system_error& e) {
-        std::cerr << "Error while connecting: " << e.what() << std::endl;
-        return false;
-    }
-
+    socketPtr->connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ip), port), ec);
+    
     if (ec) {
         std::cerr << "Errore while connecting: " << ec.message() << std::endl;
         return false;

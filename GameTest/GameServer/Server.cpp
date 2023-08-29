@@ -33,8 +33,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 	std::string nick;
 	
 	try {
-		NetPacket p = NetUtils::read_(*socket);
-		nick = p.getStr();
+		nick = NetUtils::read_(*socket).getStr();
 
 		// if the nickname already exist 
 		if (this->nicknameAlreadyExist(nick)) {

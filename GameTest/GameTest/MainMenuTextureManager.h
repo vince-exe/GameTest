@@ -18,4 +18,6 @@ public:
 	static sf::Texture volumeTextLevel[10];
 	/* mouse */
 	static sf::Texture cursorTextureGrab, cursorTexturePoint;
+	/* menu texts / errors */
+	static sf::Texture menuMsg[4];
 };

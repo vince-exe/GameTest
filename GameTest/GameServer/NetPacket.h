@@ -4,6 +4,7 @@
 #include <vector>
 
 enum NetMessages {
+	SERVER_DOWN,
 	IDLE,
 	STANDARD_MESSAGE,
 	SERVER_FULL,
