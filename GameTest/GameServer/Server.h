@@ -23,6 +23,12 @@ private:
 	
 	bool nicknameAlreadyExist(const std::string& nick);
 
+	bool handleUserNickname(std::shared_ptr<tcp::socket> socket, std::string& nick);
+
+	void handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string& nick);
+
+	void handleUndoMatchmaking(const std::string& nick);
+
 private:
 	boost::asio::io_service ioServicePtr;
 	std::unique_ptr<tcp::acceptor> acceptorPtr;

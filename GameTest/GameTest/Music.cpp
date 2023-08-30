@@ -1,5 +1,9 @@
 #include "Music.h"
 
+bool Music::openFromFile(const std::string& path) {
+    return this->music.openFromFile(path);
+}
+
 sf::Music& Music::getMusic() {
     return this->music;
 }

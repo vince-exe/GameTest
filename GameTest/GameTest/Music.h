@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Audio.hpp>
+#include <iostream>
 
 class Music {
 private:
@@ -9,6 +10,8 @@ private:
 
 public:
 	Music() = default;
+
+	bool openFromFile(const std::string& path);
 
 	sf::Music& getMusic();
 

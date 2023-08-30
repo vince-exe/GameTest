@@ -30,7 +30,7 @@ bool MainMenu::loadMouse() {
 }
 
 bool MainMenu::loadMusic() {
-    return backgroundMusicPtr->getMusic().openFromFile("assets/Background_Menu_Music.ogg");
+    return backgroundMusicPtr->openFromFile("assets/Music-Sound/Background_Menu_Music.ogg");
 }
 
 bool MainMenu::init() {
