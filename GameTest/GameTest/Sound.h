@@ -1,15 +1,14 @@
 #pragma once
 
 #include <SFML/Audio.hpp>
-#include <iostream>
 
-class Music {
+class Sound {
 public:
-	Music() = default;
+	Sound() = default;
 
 	bool openFromFile(const std::string& path);
 
-	sf::Music& getMusic();
+	sf::Sound& getSound();
 
 	void setVolume(float v);
 
@@ -17,10 +16,8 @@ public:
 
 	void play();
 
-	void loop(bool loop);
-
 private:
-	sf::Music music;
-	int currentVolume;
+	sf::SoundBuffer soundBuff;
+	sf::Sound sound;
 };
 

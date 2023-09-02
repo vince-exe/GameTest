@@ -75,6 +75,9 @@
     <ClCompile Include="..\GameServer\network_utilities.cpp">
       <Filter>File di origine\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>File di origine\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="..\GameServer\network_utilities.h">
       <Filter>File di intestazione\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>File di intestazione\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

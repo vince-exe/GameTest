@@ -35,7 +35,7 @@ bool MainMenuTextureManager::init() {
     return backBtn.loadFromFile("assets/Back_Button.png") && exitBtn.loadFromFile("assets/exitBtn.png")
         && playBtn.loadFromFile("assets/playBtn.png") && settingsBtn.loadFromFile("assets/settingsBtn.png")
         && doneBtn.loadFromFile("assets/doneBtn.png") && background.loadFromFile("assets/Background.png")
-        && optionsTextVolume.loadFromFile("assets/VolumeNumbers/Volume_Png.png") && confirmationExitText.loadFromFile("assets/img.png")
+        && optionsTextVolume.loadFromFile("assets/VolumeNumbers/music_text.png") && confirmationExitText.loadFromFile("assets/img.png")
         && cursorTextureGrab.loadFromFile("assets/Cursor_Grab.png") && cursorTexturePoint.loadFromFile("assets/Cursor_Point.png")
         && nicknameText.loadFromFile("assets/nick_img.png");
 }

@@ -2,7 +2,9 @@
 
 MainMenu::MainMenu() {
     this->windowPtr = std::make_shared<sf::RenderWindow>();
+
     this->backgroundMusicPtr = std::make_shared<Music>();
+    this->notificationSound = std::make_shared<Sound>();
 
 	this->windowPtr->create(sf::VideoMode::getDesktopMode(), "SkyFall Showdown", sf::Style::None);
     this->windowPtr->setFramerateLimit(60);
@@ -29,8 +31,17 @@ bool MainMenu::loadMouse() {
     return true;
 }
 
-bool MainMenu::loadMusic() {
-    return backgroundMusicPtr->openFromFile("assets/Music-Sound/Background_Menu_Music.ogg");
+bool MainMenu::loadMusicSound() {
+    return backgroundMusicPtr->openFromFile("assets/Music-Sound/Background_Menu_Music.ogg") &&
+           notificationSound->openFromFile("assets/Music-Sound/notification.ogg");
+}
+
+void MainMenu::setMusicSound() {
+    backgroundMusicPtr->setVolume(10.f);
+    backgroundMusicPtr->play();
+    backgroundMusicPtr->loop(true);
+
+    notificationSound->setVolume(70.f);
 }
 
 bool MainMenu::init() {
@@ -38,14 +49,13 @@ bool MainMenu::init() {
         std::cout << "\n[ Error ]: Failed to load the cursor ( MainMenu )\n";
         return false;
     }
-    if (!loadMusic()) {
-        std::cout << "\n[ Error ]: Failed to load the music ( MainMenu )\n";
+    if (!loadMusicSound()) {
+        std::cout << "\n[ Error ]: Failed to load the music/sound ( MainMenu )\n";
         return false;
     }
-    backgroundMusicPtr->setVolume(60.f);
-    backgroundMusicPtr->play();
-    backgroundMusicPtr->loop(true);
+    setMusicSound();
 
+    /* if true, a message from the server will be displayed on the screen */
     displayText = false;
 
     setTextures();
@@ -58,16 +68,8 @@ bool MainMenu::init() {
             if (event.type == sf::Event::Closed) {
                 windowPtr->close();
             }
-            /* OPEN THE EXIT MENU */
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                MenuConfirmationExit menuConfirmationExit;
-                PopupReturnValues checker{};
 
-                menuConfirmationExit.init(windowPtr, background, checker, defaultCursor, pointCursor);
-                if (checker == PopupReturnValues::EXIT) {
-                    exitRequested = true;
-                }
-            }
+            handleKeyBoard(event, exitRequested);
             handleMouseCursor(event);
             handleButtonClicks(event, exitRequested);
         }
@@ -94,6 +96,7 @@ void MainMenu::renderWindow() {
     windowPtr->draw(settingsBtn);
     windowPtr->draw(exitBtn);
 
+    /* display the notification message from the server */
     if (displayText) {
         windowPtr->draw(*msgToDisplay);
     }
@@ -115,12 +118,26 @@ void MainMenu::handleMouseCursor(sf::Event& event) {
     }
 }
 
+void MainMenu::handleKeyBoard(sf::Event& event, bool& exitRequested) {
+    /* OPEN THE EXIT MENU */
+    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+        MenuConfirmationExit menuConfirmationExit;
+        PopupReturnValues checker{};
+
+        menuConfirmationExit.init(windowPtr, background, checker, defaultCursor, pointCursor);
+        if (checker == PopupReturnValues::EXIT) {
+            exitRequested = true;
+        }
+    }
+}
+
 void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
-        /* OPEN THE NICKNAME MENU */
+        /* OPEN THE NICKNAME MENU (then the match is requested if all is correct)*/
         if (playBtn.isInside(position)) {
+            displayText = false;
             NicknameMenu nicknameMenu;
             PopupReturnValues checker{};
 
@@ -158,10 +175,14 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
 
 bool MainMenu::handleConnectionMsg(const NetMessages& msg) {
     if (msg == NetMessages::NICK_EXITS) {
-        displayTextFunc(menuMsgs[1]);
+        /* Nick exists text */
+        notificationSound->play();
+        displayTextFuncTime(menuMsgs[1], 7);
         return false;
     }
     else {
+        /* in queue for a match text */
+        notificationSound->play();
         displayTextFunc(menuMsgs[3]);
     }
 
@@ -174,20 +195,38 @@ void MainMenu::displayTextFunc(Entity& entity) {
     displayText = true;
 }
 
+void MainMenu::displayTextFuncTime(Entity& entity, int seconds) {
+    std::thread t([this, &entity, seconds]() {
+        using namespace std::chrono_literals;
+        
+        this->msgToDisplay = &entity;
+        this->msgToDisplay->getSprite().setPosition(15.f, 480.f);
+        this->displayText = true;
+
+        for (int i = 0; i < seconds; i++) {
+            std::this_thread::sleep_for(1s);
+        }
+        displayText = false;
+    });
+    t.detach();
+}
+
 void MainMenu::handleClientConnection(std::string nick) {
     Client client;
 
     try {
         if (!client.connect("127.0.0.1", 8888)) {
             /* "Server Down" message */
-            displayTextFunc(menuMsgs[0]);
+            notificationSound->play();
+            displayTextFuncTime(menuMsgs[0], 7);
         }
         else {
             NetMessages msg = NetUtils::read_(*client.getSocket()).getMsgType();
 
             if (msg == NetMessages::SERVER_FULL) {
                 /* display the "Server Full" message */
-                displayTextFunc(menuMsgs[2]);
+                notificationSound->play();
+                displayTextFuncTime(menuMsgs[2], 7);
                 return;
             }
             else {
@@ -199,6 +238,8 @@ void MainMenu::handleClientConnection(std::string nick) {
     }
     catch (const boost::system::system_error& e) {
         std::cerr << "\nError while connecting: " << e.what() << std::endl;
-        displayTextFunc(menuMsgs[0]);
+        /* "Server Down" message */
+        notificationSound->play();
+        displayTextFuncTime(menuMsgs[0], 7);
     }
 }

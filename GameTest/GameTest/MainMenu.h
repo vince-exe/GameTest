@@ -7,12 +7,14 @@
 
 #include "Entity.h"
 #include "Music.h"
+#include "Client.h"
+#include "Sound.h"
 
 #include "MenuConfirmationExit.h"
 #include "OptionsMainMenu.h"
 #include "MainMenuTextureManager.h"
 #include "NicknameMenu.h"
-#include "Client.h"
+
 
 #include "../GameServer/NetPacket.h"
 #include "../GameServer/network_utilities.h"
@@ -25,10 +27,14 @@ public:
 
 	void handleClientConnection(std::string nick);
 
+	void displayTextFuncTime(Entity& entity, int seconds);
+
 private:
 	bool loadMouse();
 
-	bool loadMusic();
+	bool loadMusicSound();
+
+	void setMusicSound();
 
 	void setTextures();
 
@@ -38,6 +44,8 @@ private:
 
 	void handleMouseCursor(sf::Event& event);
 
+	void handleKeyBoard(sf::Event& event, bool& exitRequested);
+
 	void handleButtonClicks(sf::Event& event, bool& exitRequested);
 
 	bool handleConnectionMsg(const NetMessages& msg);
@@ -46,7 +54,9 @@ private:
 
 private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;
+
 	std::shared_ptr<Music> backgroundMusicPtr;
+	std::shared_ptr<Sound> notificationSound;
 
 	Entity background, playBtn, settingsBtn, exitBtn;
 	Entity menuMsgs[4];
