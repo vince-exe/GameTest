@@ -37,7 +37,7 @@ bool MainMenu::loadMusicSound() {
 }
 
 void MainMenu::setMusicSound() {
-    backgroundMusicPtr->setVolume(10.f);
+    backgroundMusicPtr->setVolume(30.f);
     backgroundMusicPtr->play();
     backgroundMusicPtr->loop(true);
 
@@ -146,10 +146,7 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
                 std::cout << "\nNickname: " << nick << "\n";
 
                 /* start the connection thread */
-                std::thread t([this, nick]() {
-                    /* here i pass the nick var by value, because of the lifetime of the var it self..*/
-                    this->handleClientConnection(nick);
-                });
+                std::thread t(&MainMenu::handleClientConnection, this, nick);
                 t.detach();
             }
         }

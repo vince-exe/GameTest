@@ -21,10 +21,7 @@ void Server::accept() {
 			NetUtils::send_(*socket, NetPacket(NetMessages::IDLE, nullptr, 0));
 		}
 		
-		std::thread t([this, socket]() {
-			/* creates a copy of the socket's pointer to use in the handleClient func */
-			this->handleClient(socket);
-		});
+		std::thread t(&Server::handleClient, this, socket);
 		t.detach();
 	}
 }
@@ -48,6 +45,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 			}
 			else if (netMsg == NetMessages::UNDO_MATCHMAKING) {
 				handleUndoMatchmaking(nick);
+				return;
 			}
 		}
 		catch (const boost::system::system_error& ex) {
@@ -103,13 +101,26 @@ void Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::s
 
 		std::cout << "\nClient [nick]: " << nick << " in queue for a match!";
 	}
-	// match this client with the last client who requested the match 
 	else {
+		// match this client with the last client who requested the match 
 
+		std::shared_ptr<User> player1 = this->matchmakingQueue.front();
+		this->matchmakingQueue.pop();
+	
+		std::shared_ptr<User> player2 = this->usersMap[nick];
+
+		// send the nicknames 
+		NetUtils::send_(*player1->getSocket(), NetPacket(NetMessages::MATCH_FOUND, reinterpret_cast<const uint8_t*>(player2->getNick().c_str()), player2->getNick().size()));
+		NetUtils::send_(*player2->getSocket(), NetPacket(NetMessages::MATCH_FOUND, reinterpret_cast<const uint8_t*>(player1->getNick().c_str()), player1->getNick().size()));
+		
+		std::cout << "\nMatchmaking between " << nick << " and " << player1->getNick() << " started!\n";
+
+		/* TO-DO: start the game session */
 	}
 }
 
 void Server::handleUndoMatchmaking(const std::string& nick) {
 	this->matchmakingQueue.pop();
+	this->usersMap.erase(this->usersMap.find(nick));
 	std::cout << "\nClient [nick]: " << nick << " undo the matchmaking";
 }

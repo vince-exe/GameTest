@@ -82,16 +82,39 @@ int main() {
         switch (option) {
         case 1:
             send_(socket, NetPacket(NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
-            if (read_(socket).getMsgType() == NetMessages::WAIT_FOR_MATCH) {
+            NetPacket p = read_(socket);
+            if (p.getMsgType() == NetMessages::WAIT_FOR_MATCH) {
                 std::cout << "\nIn queue for a match!\n";
+
+                NetPacket p = read_(socket);
+                if (p.getMsgType() == NetMessages::MATCH_FOUND) {
+                    /* print the enemy nickname */
+                    std::cout << "\nMatchmaking found with: " << p.getStr();
+                    
+                    /* idling... */
+                    while (true) {
+                        read_(socket);
+                    }
+                }
             }
+            /* if the match is already found */
+            else if(p.getMsgType() == NetMessages::MATCH_FOUND) {
+                std::cout << "\nMatch found with: " << p.getStr();
+                /* idling... */
+                while (true) {
+                    read_(socket);
+                }
+            }
+            /* UNDO MATCHMAKING
             std::cout << "\n5) Exit Matchmaking: ";
             std::cin >> option;
 
             if (option == 5) {
                 send_(socket, NetPacket(NetMessages::UNDO_MATCHMAKING, nullptr, 0));
-                break;
+                socket.close();
+                return 0;
             }
+            */
         }
     }
     

@@ -25,10 +25,6 @@ public:
 
 	bool init();
 
-	void handleClientConnection(std::string nick);
-
-	void displayTextFuncTime(Entity& entity, int seconds);
-
 private:
 	bool loadMouse();
 
@@ -47,6 +43,10 @@ private:
 	void handleKeyBoard(sf::Event& event, bool& exitRequested);
 
 	void handleButtonClicks(sf::Event& event, bool& exitRequested);
+
+	void handleClientConnection(std::string nick);
+
+	void displayTextFuncTime(Entity& entity, int seconds);
 
 	bool handleConnectionMsg(const NetMessages& msg);
 
