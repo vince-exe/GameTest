@@ -139,6 +139,7 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FontManager.cpp" />
+    <ClCompile Include="IpPortMenu.cpp" />
     <ClCompile Include="MainMenuTextureManager.cpp" />
     <ClCompile Include="NicknameMenu.cpp" />
     <ClCompile Include="main.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="FontManager.h" />
+    <ClInclude Include="IpPortMenu.h" />
     <ClInclude Include="MainMenuTextureManager.h" />
     <ClInclude Include="NicknameMenu.h" />
     <ClInclude Include="MainMenu.h" />

@@ -8,11 +8,15 @@ sf::Texture MainMenuTextureManager::doneBtn;
 sf::Texture MainMenuTextureManager::background;
 sf::Texture MainMenuTextureManager::optionsTextVolume;
 sf::Texture MainMenuTextureManager::confirmationExitText;
+sf::Texture MainMenuTextureManager::connectText;
 sf::Texture MainMenuTextureManager::nicknameText;
 sf::Texture MainMenuTextureManager::volumeTextLevel[10];
 sf::Texture MainMenuTextureManager::menuMsg[4];
 sf::Texture MainMenuTextureManager::cursorTextureGrab;
 sf::Texture MainMenuTextureManager::cursorTexturePoint;
+sf::Texture MainMenuTextureManager::connectBtn;
+sf::Texture MainMenuTextureManager::cancelBtn;
+sf::Texture MainMenuTextureManager::invalidFormatText;
 
 bool MainMenuTextureManager::init() {
     /* load the volume numbers */
@@ -37,5 +41,7 @@ bool MainMenuTextureManager::init() {
         && doneBtn.loadFromFile("assets/doneBtn.png") && background.loadFromFile("assets/Background.png")
         && optionsTextVolume.loadFromFile("assets/VolumeNumbers/music_text.png") && confirmationExitText.loadFromFile("assets/img.png")
         && cursorTextureGrab.loadFromFile("assets/Cursor_Grab.png") && cursorTexturePoint.loadFromFile("assets/Cursor_Point.png")
-        && nicknameText.loadFromFile("assets/nick_img.png");
+        && nicknameText.loadFromFile("assets/nick_img.png") && connectBtn.loadFromFile("assets/connectBtn.png")
+        && cancelBtn.loadFromFile("assets/cancelBtn.png") && connectText.loadFromFile("assets/connect_to_server.png")
+        && invalidFormatText.loadFromFile("assets/invalid_format.png");
 }

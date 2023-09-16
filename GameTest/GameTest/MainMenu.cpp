@@ -135,7 +135,7 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
 
-        /* OPEN THE NICKNAME MENU (then the match is requested if all is correct)*/
+        /* OPEN THE NICKNAME MENU */
         if (playBtn.isInside(position)) {
             displayText = false;
             NicknameMenu nicknameMenu;
@@ -144,10 +144,17 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
             std::string nick = nicknameMenu.init(windowPtr, background, checker, defaultCursor, pointCursor);
             if (checker == PopupReturnValues::DONE) {
                 std::cout << "\nNickname: " << nick << "\n";
+                /* OPEN THE CONNECT MENU */
+                IpPortMenu ipPortMenu;
 
-                /* start the connection thread */
-                std::thread t(&MainMenu::handleClientConnection, this, nick);
-                t.detach();
+                std::pair<std::string, int> ipPort = ipPortMenu.init(windowPtr, notificationSound, background, checker, defaultCursor, pointCursor);           
+                
+                if (checker == PopupReturnValues::DONE) {
+                    std::cout << "\nIp Address: " << ipPort.first << "\tPort: " << ipPort.second << "\n";
+                    /* start the connection thread */
+                    std::thread t(&MainMenu::handleClientConnection, this, nick, ipPort.first, ipPort.second);
+                    t.detach();
+                }
             }
         }
         /* SETTINGS MENU */
@@ -208,11 +215,11 @@ void MainMenu::displayTextFuncTime(Entity& entity, int seconds) {
     t.detach();
 }
 
-void MainMenu::handleClientConnection(std::string nick) {
+void MainMenu::handleClientConnection(std::string nick, std::string ip, int port) {
     Client client;
 
     try {
-        if (!client.connect("127.0.0.1", 8888)) {
+        if (!client.connect(ip, port)) {
             /* "Server Down" message */
             notificationSound->play();
             displayTextFuncTime(menuMsgs[0], 7);

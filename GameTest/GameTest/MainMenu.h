@@ -14,7 +14,7 @@
 #include "OptionsMainMenu.h"
 #include "MainMenuTextureManager.h"
 #include "NicknameMenu.h"
-
+#include "IpPortMenu.h"
 
 #include "../GameServer/NetPacket.h"
 #include "../GameServer/network_utilities.h"
@@ -44,7 +44,7 @@ private:
 
 	void handleButtonClicks(sf::Event& event, bool& exitRequested);
 
-	void handleClientConnection(std::string nick);
+	void handleClientConnection(std::string nick, std::string ip, int port);
 
 	void displayTextFuncTime(Entity& entity, int seconds);
 

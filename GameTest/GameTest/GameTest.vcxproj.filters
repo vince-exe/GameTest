@@ -78,6 +78,9 @@
     <ClCompile Include="Sound.cpp">
       <Filter>File di origine\Game</Filter>
     </ClCompile>
+    <ClCompile Include="IpPortMenu.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -118,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="Sound.h">
       <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="IpPortMenu.h">
+      <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

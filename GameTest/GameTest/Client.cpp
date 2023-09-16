@@ -6,7 +6,7 @@ Client::Client() {
 
 bool Client::connect(const std::string& ip, int port) {
     boost::system::error_code ec;
-
+  
     socketPtr->connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ip), port), ec);
     
     if (ec) {

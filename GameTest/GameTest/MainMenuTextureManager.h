@@ -10,10 +10,10 @@ public:
 
 public:
 	/* buttons */
-	static sf::Texture backBtn, exitBtn, playBtn, settingsBtn, doneBtn;
+	static sf::Texture backBtn, exitBtn, playBtn, settingsBtn, doneBtn, connectBtn, cancelBtn;
 	static sf::Texture background;
 	/* text */
-	static sf::Texture optionsTextVolume, confirmationExitText, nicknameText;
+	static sf::Texture optionsTextVolume, confirmationExitText, nicknameText, connectText, invalidFormatText;
 	/* single volume text: 0 / 10 / 20... */
 	static sf::Texture volumeTextLevel[10];
 	/* mouse */
