@@ -79,7 +79,10 @@
       <Filter>File di origine\Game</Filter>
     </ClCompile>
     <ClCompile Include="IpPortMenu.cpp">
-      <Filter>File di origine</Filter>
+      <Filter>File di origine\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsManager.cpp">
+      <Filter>File di origine\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,7 +126,10 @@
       <Filter>File di intestazione\Game</Filter>
     </ClInclude>
     <ClInclude Include="IpPortMenu.h">
-      <Filter>File di intestazione</Filter>
+      <Filter>File di intestazione\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsManager.h">
+      <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

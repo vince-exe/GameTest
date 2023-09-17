@@ -72,7 +72,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ExternalIncludePath>D:\C++Libs\boost_1_82_0;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>D:\C++Libs\rapidjson-1.1.0\include;D:\C++Libs\boost_1_82_0;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -109,6 +109,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\C++Libs\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,6 +148,7 @@
     <ClCompile Include="MenuConfirmationExit.cpp" />
     <ClCompile Include="Music.cpp" />
     <ClCompile Include="OptionsMainMenu.cpp" />
+    <ClCompile Include="SettingsManager.cpp" />
     <ClCompile Include="Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +164,7 @@
     <ClInclude Include="MenuConfirmationExit.h" />
     <ClInclude Include="Music.h" />
     <ClInclude Include="OptionsMainMenu.h" />
+    <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="ui_utils.h" />
   </ItemGroup>
