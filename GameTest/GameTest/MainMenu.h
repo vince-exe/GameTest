@@ -10,6 +10,8 @@
 #include "Client.h"
 #include "Sound.h"
 
+#include "SettingsManager.h"
+
 #include "MenuConfirmationExit.h"
 #include "OptionsMainMenu.h"
 #include "MainMenuTextureManager.h"

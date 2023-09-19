@@ -21,4 +21,10 @@ public:
 	static bool init();
 
 	static bool storeSettings();
+
+	static rapidjson::Value& getValue (const std::string& key);
+
+	static void setInt_(const std::string& key, int v);
+
+	static void setString_(const std::string& key, std::string v);
 };

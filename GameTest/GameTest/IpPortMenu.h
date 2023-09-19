@@ -6,6 +6,8 @@
 #include <iostream>
 #include <thread>
 
+#include  "SettingsManager.h"
+
 #include "Entity.h"
 #include "ui_utils.h"
 #include "MainMenuTextureManager.h"
@@ -18,6 +20,8 @@ public:
 
 private:
 	void setTextures();
+
+	void setPlaceholder();
 
 	void initSprites();
 

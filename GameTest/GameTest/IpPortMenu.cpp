@@ -5,7 +5,8 @@ std::pair<std::string, int> IpPortMenu::init(std::shared_ptr<sf::RenderWindow> w
     
     setTextures();
     initSprites();
-    
+    setPlaceholder();
+
     bool requestExit = false;
     sf::Event event;
 
@@ -34,6 +35,21 @@ void IpPortMenu::setTextures() {
     this->connectBtn.setTexture(MainMenuTextureManager::connectBtn);
     this->cancelBtn.setTexture(MainMenuTextureManager::cancelBtn);
     this->entityToDisplay.setTexture(MainMenuTextureManager::invalidFormatText);
+}
+
+void IpPortMenu::setPlaceholder() {
+    std::string ipPort = SettingsManager::getValue("DefaultIpPort").GetString();
+
+    for (int i = 0; i < ipPort.length(); i++) {
+        pair.first += ipPort[i];
+
+        inputDisplay.setString(inputDisplay.getString() + static_cast<char>(ipPort[i]));
+
+        /* set the text at the center of the line */
+        sf::FloatRect textBounds = inputDisplay.getLocalBounds();
+        inputDisplay.setOrigin(textBounds.left + textBounds.width / 2.f, textBounds.top + textBounds.height / 2.f);
+        inputDisplay.setPosition(line.getPosition().x + line.getSize().x / 2.f, (line.getPosition().y - textBounds.height / 2.f) - 8.f);
+    }
 }
 
 void IpPortMenu::initSprites() {
@@ -114,7 +130,9 @@ void IpPortMenu::handleMouseButtons(sf::Event& event, PopupReturnValues& checker
         }
         else if (connectBtn.isInside(position)) {
             /* check if the format is valid */
-            if (setIpPort(pair.first)) {
+            std::string check = pair.first;
+            if (setIpPort(check)) {
+                SettingsManager::setString_("DefaultIpPort", check);
                 checker = PopupReturnValues::DONE;
                 exitRequested = true;
             }

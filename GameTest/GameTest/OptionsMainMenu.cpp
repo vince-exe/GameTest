@@ -67,6 +67,7 @@ void OptionsMainMenu::checkVolumeLevel(std::shared_ptr<Music> backgroundMusicPtr
             
             checkPoints[i].setFillColor(selectedCheckpointColor);
             backgroundMusicPtr->setVolume(volumeLevel);
+            SettingsManager::setInt_("VolumeMenu", volumeLevel);
         }
         volumeLevel += 10;
     }

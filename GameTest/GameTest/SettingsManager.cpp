@@ -68,3 +68,35 @@ bool SettingsManager::init() {
 
     return true;
 }
+
+rapidjson::Value& SettingsManager::getValue(const std::string& key) {
+    auto it = document.FindMember(key.c_str());
+
+    if (it != document.MemberEnd()) {
+        return it->value;
+    }
+
+    throw std::runtime_error("Key not found");
+}
+
+void SettingsManager::setInt_(const std::string& key, int v) {
+    auto it = document.FindMember(key.c_str());
+
+    if (it != document.MemberEnd() && it->value.IsInt()) {
+        it->value.SetInt(v);
+    }
+    else {
+        throw std::runtime_error("Update error");
+    }
+}
+
+void SettingsManager::setString_(const std::string& key, std::string v) {
+    auto it = document.FindMember(key.c_str());
+    
+    if (it != document.MemberEnd() && it->value.IsString()) {
+        it->value.SetString(v.c_str(), static_cast<rapidjson::SizeType>(v.length()), document.GetAllocator());
+    }
+    else {
+        throw std::runtime_error("Update error");
+    }
+}

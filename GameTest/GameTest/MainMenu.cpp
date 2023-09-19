@@ -37,7 +37,7 @@ bool MainMenu::loadMusicSound() {
 }
 
 void MainMenu::setMusicSound() {
-    backgroundMusicPtr->setVolume(30.f);
+    backgroundMusicPtr->setVolume(SettingsManager::getValue("VolumeMenu").GetInt());
     backgroundMusicPtr->play();
     backgroundMusicPtr->loop(true);
 

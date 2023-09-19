@@ -8,6 +8,7 @@
 #include "Music.h"
 #include "ui_utils.h"
 #include "MainMenuTextureManager.h"
+#include "SettingsManager.h"
 
 class OptionsMainMenu {
 public:
