@@ -6,6 +6,7 @@
 #include <boost/asio.hpp>
 #include <queue>
 
+#include "GameSession.h"
 #include "network_utilities.h"
 #include "User.h"
 #include "NetPacket.h"

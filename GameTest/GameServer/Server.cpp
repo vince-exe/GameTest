@@ -108,14 +108,11 @@ void Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::s
 		this->matchmakingQueue.pop();
 	
 		std::shared_ptr<User> player2 = this->usersMap[nick];
-
-		// send the nicknames 
-		NetUtils::send_(*player1->getSocket(), NetPacket(NetMessages::MATCH_FOUND, reinterpret_cast<const uint8_t*>(player2->getNick().c_str()), player2->getNick().size()));
-		NetUtils::send_(*player2->getSocket(), NetPacket(NetMessages::MATCH_FOUND, reinterpret_cast<const uint8_t*>(player1->getNick().c_str()), player1->getNick().size()));
 		
-		std::cout << "\nMatchmaking between " << nick << " and " << player1->getNick() << " started!\n";
-
 		/* TO-DO: start the game session */
+		GameSession gameSession(player1, player2);
+		gameSession.startGame();
+		std::cout << "\nMatchmaking between " << nick << " and " << player1->getNick() << " started!\n";
 	}
 }
 

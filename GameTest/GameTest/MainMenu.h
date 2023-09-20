@@ -50,7 +50,7 @@ private:
 
 	void displayTextFuncTime(Entity& entity, int seconds);
 
-	bool handleConnectionMsg(const NetMessages& msg);
+	void handleConnectionMsg(const NetMessages& msg);
 
 	void displayTextFunc(Entity& entity);
 

@@ -177,42 +177,21 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
     }
 }
 
-bool MainMenu::handleConnectionMsg(const NetMessages& msg) {
+void MainMenu::handleConnectionMsg(const NetMessages& msg) {
     if (msg == NetMessages::NICK_EXITS) {
         /* Nick exists text */
         notificationSound->play();
         displayTextFuncTime(menuMsgs[1], 7);
-        return false;
     }
-    else {
+    else if (msg == NetMessages::WAIT_FOR_MATCH) {
         /* in queue for a match text */
         notificationSound->play();
         displayTextFunc(menuMsgs[3]);
     }
+    /* start the game window */
+    else if (msg == NetMessages::MATCH_FOUND) {
 
-    return true;
-}
-
-void MainMenu::displayTextFunc(Entity& entity) {
-    msgToDisplay = &entity;
-    msgToDisplay->getSprite().setPosition(15.f, 480.f);
-    displayText = true;
-}
-
-void MainMenu::displayTextFuncTime(Entity& entity, int seconds) {
-    std::thread t([this, &entity, seconds]() {
-        using namespace std::chrono_literals;
-        
-        this->msgToDisplay = &entity;
-        this->msgToDisplay->getSprite().setPosition(15.f, 480.f);
-        this->displayText = true;
-
-        for (int i = 0; i < seconds; i++) {
-            std::this_thread::sleep_for(1s);
-        }
-        displayText = false;
-    });
-    t.detach();
+    }
 }
 
 void MainMenu::handleClientConnection(std::string nick, std::string ip, int port) {
@@ -246,4 +225,26 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
         notificationSound->play();
         displayTextFuncTime(menuMsgs[0], 7);
     }
+}
+
+void MainMenu::displayTextFunc(Entity& entity) {
+    msgToDisplay = &entity;
+    msgToDisplay->getSprite().setPosition(15.f, 480.f);
+    displayText = true;
+}
+
+void MainMenu::displayTextFuncTime(Entity& entity, int seconds) {
+    std::thread t([this, &entity, seconds]() {
+        using namespace std::chrono_literals;
+        
+        this->msgToDisplay = &entity;
+        this->msgToDisplay->getSprite().setPosition(15.f, 480.f);
+        this->displayText = true;
+
+        for (int i = 0; i < seconds; i++) {
+            std::this_thread::sleep_for(1s);
+        }
+        displayText = false;
+    });
+    t.detach();
 }
