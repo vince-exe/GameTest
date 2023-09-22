@@ -50,7 +50,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 		}
 		catch (const boost::system::system_error& ex) {
 			// temporary catch solution debug 
-			std::cout << "\nCatch in handle client...";
+			std::cout << "\nCatch in handle client\t" << ex.what() << "\n";
 			socket->close();
 			this->usersMap.erase(this->usersMap.find(nick));
 			return;

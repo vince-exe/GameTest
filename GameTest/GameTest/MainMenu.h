@@ -50,7 +50,9 @@ private:
 
 	void displayTextFuncTime(Entity& entity, int seconds);
 
-	void handleConnectionMsg(const NetMessages& msg);
+	void handleMatchmakingResponse(const NetMessages& msg, std::shared_ptr<Client>);
+
+	void listenForMatchmaking(std::shared_ptr<Client>);
 
 	void displayTextFunc(Entity& entity);
 

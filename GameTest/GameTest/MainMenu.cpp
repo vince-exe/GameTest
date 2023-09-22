@@ -168,7 +168,7 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
         else if (exitBtn.isInside(position)) {
             MenuConfirmationExit menuConfirmationExit;
             PopupReturnValues checker{};
-
+         
             menuConfirmationExit.init(windowPtr, background, checker, defaultCursor, pointCursor);
             if (checker == PopupReturnValues::EXIT) {
                 exitRequested = true;
@@ -177,34 +177,42 @@ void MainMenu::handleButtonClicks(sf::Event& event, bool& exitRequested) {
     }
 }
 
-void MainMenu::handleConnectionMsg(const NetMessages& msg) {
-    if (msg == NetMessages::NICK_EXITS) {
-        /* Nick exists text */
-        notificationSound->play();
-        displayTextFuncTime(menuMsgs[1], 7);
-    }
-    else if (msg == NetMessages::WAIT_FOR_MATCH) {
+void MainMenu::handleMatchmakingResponse(const NetMessages& msg, std::shared_ptr<Client> client) {
+    if (msg == NetMessages::WAIT_FOR_MATCH) {
         /* in queue for a match text */
         notificationSound->play();
         displayTextFunc(menuMsgs[3]);
+
+        /* start a thread to listen if the matchmaking is requested */
+        std::thread t(&MainMenu::listenForMatchmaking, this, client);
+        t.detach();
     }
     /* start the game window */
     else if (msg == NetMessages::MATCH_FOUND) {
+        /* TO-DO */
+    }
+}
 
+void MainMenu::listenForMatchmaking(std::shared_ptr<Client> client) {
+    NetPacket p;
+    while (true) {
+        std::cout << "\nlistening for matchmaking..";
+
+        p = NetUtils::read_(*client->getSocket());
     }
 }
 
 void MainMenu::handleClientConnection(std::string nick, std::string ip, int port) {
-    Client client;
+    std::shared_ptr<Client> client = std::make_shared<Client>();
 
     try {
-        if (!client.connect(ip, port)) {
+        if (!client->connect(ip, port)) {
             /* "Server Down" message */
             notificationSound->play();
             displayTextFuncTime(menuMsgs[0], 7);
         }
         else {
-            NetMessages msg = NetUtils::read_(*client.getSocket()).getMsgType();
+            NetMessages msg = NetUtils::read_(*client->getSocket()).getMsgType();
 
             if (msg == NetMessages::SERVER_FULL) {
                 /* display the "Server Full" message */
@@ -214,13 +222,24 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
             }
             else {
                 /* send the nickname */
-                NetUtils::send_(*client.getSocket(), NetPacket(NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
-                handleConnectionMsg(NetUtils::read_(*client.getSocket()).getMsgType());
+                NetUtils::send_(*client->getSocket(), NetPacket(NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
+
+                /* check nickname */
+                if (NetUtils::read_(*client->getSocket()).getMsgType() == NetMessages::NICK_EXITS) {
+                    /* Nick exists text */
+                    notificationSound->play();
+                    displayTextFuncTime(menuMsgs[1], 7);
+                }
+                /* send the matchmaking request */
+                else {
+                    NetUtils::send_(*client->getSocket(), NetPacket(NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
+                    handleMatchmakingResponse(NetUtils::read_(*client->getSocket()).getMsgType(), client);
+                }
             }
         }
     }
     catch (const boost::system::system_error& e) {
-        std::cerr << "\nError while connecting: " << e.what() << std::endl;
+        std::cerr << "\nError in handle client connection: " << e.what() << std::endl;
         /* "Server Down" message */
         notificationSound->play();
         displayTextFuncTime(menuMsgs[0], 7);
