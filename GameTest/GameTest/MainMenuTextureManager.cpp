@@ -17,6 +17,7 @@ sf::Texture MainMenuTextureManager::cursorTexturePoint;
 sf::Texture MainMenuTextureManager::connectBtn;
 sf::Texture MainMenuTextureManager::cancelBtn;
 sf::Texture MainMenuTextureManager::invalidFormatText;
+sf::Texture MainMenuTextureManager::undoMatchBtn;
 
 bool MainMenuTextureManager::init() {
     /* load the volume numbers */
@@ -43,5 +44,5 @@ bool MainMenuTextureManager::init() {
         && cursorTextureGrab.loadFromFile("assets/Cursor_Grab.png") && cursorTexturePoint.loadFromFile("assets/Cursor_Point.png")
         && nicknameText.loadFromFile("assets/nick_img.png") && connectBtn.loadFromFile("assets/connectBtn.png")
         && cancelBtn.loadFromFile("assets/cancelBtn.png") && connectText.loadFromFile("assets/connect_to_server.png")
-        && invalidFormatText.loadFromFile("assets/invalid_format.png");
+        && invalidFormatText.loadFromFile("assets/invalid_format.png") && undoMatchBtn.loadFromFile("assets/undoMatch.png");
 }

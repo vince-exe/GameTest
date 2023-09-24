@@ -42,19 +42,23 @@ private:
 
 	void handleMouseCursor(sf::Event& event);
 
-	void handleKeyBoard(sf::Event& event, bool& exitRequested);
+	void handleKeyBoard(sf::Event& event);
 
-	void handleButtonClicks(sf::Event& event, bool& exitRequested);
+	void handleButtonClicks(sf::Event& event);
 
 	void handleClientConnection(std::string nick, std::string ip, int port);
 
 	void displayTextFuncTime(Entity& entity, int seconds);
 
-	void handleMatchmakingResponse(const NetMessages& msg, std::shared_ptr<Client>);
+	void handleMatchmakingResponse(const NetMessages& msg);
 
-	void listenForMatchmaking(std::shared_ptr<Client>);
+	void listenForMatchmaking();
 
 	void displayTextFunc(Entity& entity);
+
+	void undoMatchmaking();
+
+	void exitMenu();
 
 private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;
@@ -62,11 +66,15 @@ private:
 	std::shared_ptr<Music> backgroundMusicPtr;
 	std::shared_ptr<Sound> notificationSound;
 
-	Entity background, playBtn, settingsBtn, exitBtn;
+	Entity background, playBtn, settingsBtn, exitBtn, undoMatchBtn;
 	Entity menuMsgs[4];
 	Entity* msgToDisplay;
 
 	sf::Cursor defaultCursor, pointCursor;
 
 	bool displayText;
+	bool exitRequested;
+	std::atomic<bool> inMatchmaking;
+
+	std::shared_ptr<Client> client;
 };

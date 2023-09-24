@@ -99,7 +99,7 @@ void Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::s
 		this->matchmakingQueue.push(this->usersMap[nick]);
 		NetUtils::send_(*socket, NetPacket(NetMessages::WAIT_FOR_MATCH, nullptr, 0));
 
-		std::cout << "\nClient [nick]: " << nick << " in queue for a match!";
+		std::cout << "\nClient [nick]: " << nick << " in queue for a match.";
 	}
 	else {
 		// match this client with the last client who requested the match 
@@ -112,12 +112,13 @@ void Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::s
 		/* TO-DO: start the game session */
 		GameSession gameSession(player1, player2);
 		gameSession.startGame();
-		std::cout << "\nMatchmaking between " << nick << " and " << player1->getNick() << " started!\n";
+		std::cout << "\nMatchmaking between " << nick << " and " << player1->getNick() << " started.\n";
 	}
 }
 
 void Server::handleUndoMatchmaking(const std::string& nick) {
 	this->matchmakingQueue.pop();
 	this->usersMap.erase(this->usersMap.find(nick));
-	std::cout << "\nClient [nick]: " << nick << " undo the matchmaking";
+
+	std::cout << "\nClient [nick]: " << nick << " undo the matchmaking | Current Players in in Match Queue: " << this->matchmakingQueue.size();
 }

@@ -10,7 +10,7 @@ public:
 
 public:
 	/* buttons */
-	static sf::Texture backBtn, exitBtn, playBtn, settingsBtn, doneBtn, connectBtn, cancelBtn;
+	static sf::Texture backBtn, exitBtn, playBtn, settingsBtn, doneBtn, connectBtn, cancelBtn, undoMatchBtn;
 	static sf::Texture background;
 	/* text */
 	static sf::Texture optionsTextVolume, confirmationExitText, nicknameText, connectText, invalidFormatText;
