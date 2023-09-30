@@ -59,6 +59,8 @@ bool MainMenu::init() {
     /* Menu Variables */
     displayText = false;
     exitRequested = false;
+    displayGameWindow = false;
+
     inMatchmaking.store(false);
     std::shared_ptr<Client> client = std::make_shared<Client>();
 
@@ -67,6 +69,10 @@ bool MainMenu::init() {
     sf::Event event;
 
     while (windowPtr->isOpen() && !exitRequested) {
+        if (displayGameWindow) {
+            MainGameWindow mainGameWindow;
+            // temp for testing mainGameWindow.init(this->windowPtr);
+        }
         while (windowPtr->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 windowPtr->close();
@@ -112,7 +118,7 @@ void MainMenu::renderWindow() {
     if (displayText) {
         windowPtr->draw(*msgToDisplay);
     }
-
+    
     windowPtr->display();
 }
 
@@ -201,6 +207,8 @@ void MainMenu::handleMatchmakingResponse(const NetMessages& msg) {
     /* start the game window */
     else if (msg == NetMessages::MATCH_FOUND) {
         /* TO-DO */
+        std::cout << "\nmatch found\n";
+        this->displayGameWindow = true;
     }
 }
 
@@ -219,6 +227,12 @@ void MainMenu::listenForMatchmaking() {
             std::cout << "\nlistening for matchmaking..";
             
             p = NetUtils::read_(*this->client->getSocket());
+
+            if (p.getMsgType() == NetMessages::MATCH_FOUND) {
+                std::cout << "\nStop listening match found\n";
+                this->displayGameWindow = true;
+                return;
+            }
         }
         catch (const boost::system::system_error& e) {
             if (e.code() != boost::asio::error::would_block) {
@@ -275,6 +289,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
         notificationSound->play();
         displayTextFuncTime(menuMsgs[0], 7);
     }
+    std::cout << "\nexit thread handle client connection...\n";
 }
 
 void MainMenu::displayTextFunc(Entity& entity) {

@@ -1,29 +1,41 @@
 #include "MainMenu.h"
 #include "MainMenuTextureManager.h"
+#include "MainGameTextureManager.h"
 #include "FontManager.h"
 #include "SettingsManager.h"
 
+/* temp include */
+#include "MainGameWindow.h"
+
 int main() {
     if (!SettingsManager::init()) {
-        std::cout << "\n[ ERROR ]: Settings init method failed.\n";
+        std::cout << "\n[ ERROR ]: Settings init method failed";
         return 1;
     }
     if (!MainMenuTextureManager::init()) {
-        std::cout << "\n[ ERROR ]: Failed to load some / all MainMenu textures\n";
+        std::cout << "\n[ ERROR ]: Failed to load some / all MainMenu textures";
+        return 1;
+    }
+    if (!MainGameTextureManager::init()) {
+        std::cout << "\n[ ERROR ]: Failed to load some / all Game textures";
         return 1;
     }
     if (!FontManager::init()) {
-        std::cout << "\n[ ERROR ]: Failed to load game's fonts\n";
+        std::cout << "\n[ ERROR ]: Failed to load game's fonts";
         return 1;
     }
 
+    /* TEMP 
     MainMenu mainMenu;
     mainMenu.init();
-    
+    */
+    MainGameWindow mainGameWindow;
+    mainGameWindow.init();
+
     if (SettingsManager::storeSettings()) {
-        std::cout << "\nSuccessfully stored the settings\n";
+        std::cout << "\nSuccessfully stored the settings";
     }
     else {
-        std::cout << "\nFailed to store the settings\n";
+        std::cout << "\nFailed to store the settings";
     }
 }

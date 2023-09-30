@@ -17,6 +17,7 @@
 #include "MainMenuTextureManager.h"
 #include "NicknameMenu.h"
 #include "IpPortMenu.h"
+#include "MainGameWindow.h"
 
 #include "../GameServer/NetPacket.h"
 #include "../GameServer/network_utilities.h"
@@ -68,12 +69,13 @@ private:
 
 	Entity background, playBtn, settingsBtn, exitBtn, undoMatchBtn;
 	Entity menuMsgs[4];
-	Entity* msgToDisplay;
+	Entity* msgToDisplay;			
 
 	sf::Cursor defaultCursor, pointCursor;
 
 	bool displayText;
 	bool exitRequested;
+	bool displayGameWindow;
 	std::atomic<bool> inMatchmaking;
 
 	std::shared_ptr<Client> client;

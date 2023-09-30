@@ -84,6 +84,12 @@
     <ClCompile Include="SettingsManager.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="MainGameWindow.cpp">
+      <Filter>File di origine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGameTextureManager.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -129,6 +135,12 @@
       <Filter>File di intestazione\Menu</Filter>
     </ClInclude>
     <ClInclude Include="SettingsManager.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGameWindow.h">
+      <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGameTextureManager.h">
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>
