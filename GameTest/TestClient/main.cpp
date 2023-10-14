@@ -91,9 +91,10 @@ int main() {
                     /* print the enemy nickname */
                     std::cout << "\nMatchmaking found with: " << p.getStr();
                     
+                    std::cout << "\nEnemy nickname: " << read_(socket).getStr();
                     /* idling... */
                     while (true) {
-                        read_(socket);
+                        
                     }
                 }
             }

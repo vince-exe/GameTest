@@ -109,10 +109,11 @@ void Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::s
 	
 		std::shared_ptr<User> player2 = this->usersMap[nick];
 		
-		/* TO-DO: start the game session */
+		/* start the game session */
+		std::cout << "\nMatchmaking between " << nick << " and " << player1->getNick() << " started.\n";
+
 		GameSession gameSession(player1, player2);
 		gameSession.startGame();
-		std::cout << "\nMatchmaking between " << nick << " and " << player1->getNick() << " started.\n";
 	}
 }
 

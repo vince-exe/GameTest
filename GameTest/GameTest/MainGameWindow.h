@@ -5,11 +5,15 @@
 #include <iostream>
 
 #include "Entity.h"
+#include "FontManager.h"
+#include "Client.h"
+#include "../GameServer/network_utilities.h"
+
 #include "MainGameTextureManager.h"
 
 class MainGameWindow {
 public:
-	void init();
+	void init(std::shared_ptr<sf::RenderWindow> windowPtr_, const std::string nickname, std::shared_ptr<Client> client);
 
 private:
 	void draw();
@@ -18,10 +22,21 @@ private:
 
 	void initSprites();
 
+	void handleEnemyNickname();
+
 private:
+
 	std::shared_ptr<sf::RenderWindow> windowPtr;
+	std::shared_ptr<Client> client;
 
 	Entity background;
 	sf::RectangleShape line;
+
+	sf::Text myNickname, enemyNickname;
+
+	Entity myCheckBtns[4];
+	Entity myAnimalCounters[4];
+
+	Entity enemyCheckBtn[4];
 };
 

@@ -6,6 +6,9 @@
 
 /* temp include */
 #include "MainGameWindow.h"
+#include "../GameServer/network_utilities.h"
+
+#include <iostream>
 
 int main() {
     if (!SettingsManager::init()) {
@@ -24,13 +27,14 @@ int main() {
         std::cout << "\n[ ERROR ]: Failed to load game's fonts";
         return 1;
     }
-
+    
+    MainGameWindow mainGameWindow;
+    mainGameWindow.init(nullptr, "VINZ", nullptr);
+    
     /* TEMP 
     MainMenu mainMenu;
     mainMenu.init();
     */
-    MainGameWindow mainGameWindow;
-    mainGameWindow.init();
 
     if (SettingsManager::storeSettings()) {
         std::cout << "\nSuccessfully stored the settings";

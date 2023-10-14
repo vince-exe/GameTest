@@ -10,5 +10,9 @@ public:
 
 public:
 	static sf::Texture background;
+	/* checkpoint-buttons */
+	static sf::Texture catCheckBtn, rabbitCheckBtn, foxCheckBtn, mouseCheckBtn;
+	/* counters */
+	static sf::Texture catCounter, foxCounter, mouseCounter, rabbitCounter;
 };
 

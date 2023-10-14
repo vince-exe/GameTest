@@ -3,5 +3,5 @@
 sf::Font FontManager::fredokaOne;
 
 bool FontManager::init() {
-    return fredokaOne.loadFromFile("assets/FredokaOne-Regular.ttf");
+    return fredokaOne.loadFromFile("assets/Fonts/FredokaOne-Regular.ttf");
 }

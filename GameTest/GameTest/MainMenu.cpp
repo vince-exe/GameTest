@@ -10,41 +10,6 @@ MainMenu::MainMenu() {
     this->windowPtr->setFramerateLimit(60);
 }
 
-void MainMenu::setTextures() {
-    background.setTexture(MainMenuTextureManager::background);
-    playBtn.setTexture(MainMenuTextureManager::playBtn);
-    settingsBtn.setTexture(MainMenuTextureManager::settingsBtn);
-    exitBtn.setTexture(MainMenuTextureManager::exitBtn);
-    undoMatchBtn.setTexture(MainMenuTextureManager::undoMatchBtn);
-
-    for (int i = 0; i < 4; i++) {
-        menuMsgs[i].setTexture(MainMenuTextureManager::menuMsg[i]);
-    }
-}
-
-bool MainMenu::loadMouse() {
-    if (!defaultCursor.loadFromPixels(MainMenuTextureManager::cursorTextureGrab.copyToImage().getPixelsPtr(), MainMenuTextureManager::cursorTextureGrab.getSize(), { 0, 0 }) ||
-        !pointCursor.loadFromPixels(MainMenuTextureManager::cursorTexturePoint.copyToImage().getPixelsPtr(), MainMenuTextureManager::cursorTexturePoint.getSize(), { 0, 0 })) {
-        return false;
-    }
-    
-    windowPtr->setMouseCursor(defaultCursor);
-    return true;
-}
-
-bool MainMenu::loadMusicSound() {
-    return backgroundMusicPtr->openFromFile("assets/Music-Sound/Background_Menu_Music.ogg") &&
-           notificationSound->openFromFile("assets/Music-Sound/notification.ogg");
-}
-
-void MainMenu::setMusicSound() {
-    backgroundMusicPtr->setVolume(SettingsManager::getValue("VolumeMenu").GetInt());
-    backgroundMusicPtr->play();
-    backgroundMusicPtr->loop(true);
-
-    notificationSound->setVolume(70.f);
-}
-
 bool MainMenu::init() {
     if (!loadMouse()) {
         std::cout << "\n[ Error ]: Failed to load the cursor ( MainMenu )\n";
@@ -87,6 +52,41 @@ bool MainMenu::init() {
 
     backgroundMusicPtr->getMusic().stop();
     return (exitRequested == false);
+}
+
+void MainMenu::setTextures() {
+    background.setTexture(MainMenuTextureManager::background);
+    playBtn.setTexture(MainMenuTextureManager::playBtn);
+    settingsBtn.setTexture(MainMenuTextureManager::settingsBtn);
+    exitBtn.setTexture(MainMenuTextureManager::exitBtn);
+    undoMatchBtn.setTexture(MainMenuTextureManager::undoMatchBtn);
+
+    for (int i = 0; i < 4; i++) {
+        menuMsgs[i].setTexture(MainMenuTextureManager::menuMsg[i]);
+    }
+}
+
+bool MainMenu::loadMouse() {
+    if (!defaultCursor.loadFromPixels(MainMenuTextureManager::cursorTextureGrab.copyToImage().getPixelsPtr(), MainMenuTextureManager::cursorTextureGrab.getSize(), { 0, 0 }) ||
+        !pointCursor.loadFromPixels(MainMenuTextureManager::cursorTexturePoint.copyToImage().getPixelsPtr(), MainMenuTextureManager::cursorTexturePoint.getSize(), { 0, 0 })) {
+        return false;
+    }
+
+    windowPtr->setMouseCursor(defaultCursor);
+    return true;
+}
+
+bool MainMenu::loadMusicSound() {
+    return backgroundMusicPtr->openFromFile("assets/Music-Sound/Background_Menu_Music.ogg") &&
+        notificationSound->openFromFile("assets/Music-Sound/notification.ogg");
+}
+
+void MainMenu::setMusicSound() {
+    backgroundMusicPtr->setVolume(SettingsManager::getValue("VolumeMenu").GetInt());
+    backgroundMusicPtr->play();
+    backgroundMusicPtr->loop(true);
+
+    notificationSound->setVolume(70.f);
 }
 
 void MainMenu::initSprites() {

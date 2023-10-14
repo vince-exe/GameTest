@@ -37,12 +37,12 @@ bool MainMenuTextureManager::init() {
         pathNumber++;
     }
 
-    return backBtn.loadFromFile("assets/Back_Button.png") && exitBtn.loadFromFile("assets/exitBtn.png")
-        && playBtn.loadFromFile("assets/playBtn.png") && settingsBtn.loadFromFile("assets/settingsBtn.png")
-        && doneBtn.loadFromFile("assets/doneBtn.png") && background.loadFromFile("assets/Background.png")
-        && optionsTextVolume.loadFromFile("assets/VolumeNumbers/music_text.png") && confirmationExitText.loadFromFile("assets/img.png")
-        && cursorTextureGrab.loadFromFile("assets/Cursor_Grab.png") && cursorTexturePoint.loadFromFile("assets/Cursor_Point.png")
-        && nicknameText.loadFromFile("assets/nick_img.png") && connectBtn.loadFromFile("assets/connectBtn.png")
-        && cancelBtn.loadFromFile("assets/cancelBtn.png") && connectText.loadFromFile("assets/connect_to_server.png")
-        && invalidFormatText.loadFromFile("assets/invalid_format.png") && undoMatchBtn.loadFromFile("assets/undoMatch.png");
+    return backBtn.loadFromFile("assets/Buttons/Back_Button.png") && exitBtn.loadFromFile("assets/Buttons/exitBtn.png")
+        && playBtn.loadFromFile("assets/Buttons/playBtn.png") && settingsBtn.loadFromFile("assets/Buttons/settingsBtn.png")
+        && doneBtn.loadFromFile("assets/Buttons/doneBtn.png") && background.loadFromFile("assets/Backgrounds/Background.png")
+        && optionsTextVolume.loadFromFile("assets/VolumeNumbers/music_text.png") && confirmationExitText.loadFromFile("assets/Messages-Texts/img.png")
+        && cursorTextureGrab.loadFromFile("assets/Cursor/Cursor_Grab.png") && cursorTexturePoint.loadFromFile("assets/Cursor/Cursor_Point.png")
+        && nicknameText.loadFromFile("assets/Messages-Texts/nick_img.png") && connectBtn.loadFromFile("assets/Buttons/connectBtn.png")
+        && cancelBtn.loadFromFile("assets/Buttons/cancelBtn.png") && connectText.loadFromFile("assets/Messages-Texts/connect_to_server.png")
+        && invalidFormatText.loadFromFile("assets/Messages-Texts/invalid_format.png") && undoMatchBtn.loadFromFile("assets/Buttons/undoMatch.png");
 }
