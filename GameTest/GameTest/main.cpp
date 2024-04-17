@@ -4,7 +4,7 @@
 #include "FontManager.h"
 #include "SettingsManager.h"
 
-/* temp include */
+/* temp incude ( testing purpose ) */
 #include "MainGameWindow.h"
 #include "../GameServer/network_utilities.h"
 
@@ -27,14 +27,13 @@ int main() {
         std::cout << "\n[ ERROR ]: Failed to load game's fonts";
         return 1;
     }
-    
-    MainGameWindow mainGameWindow;
-    mainGameWindow.init(nullptr, "VINZ", nullptr);
-    
-    /* TEMP 
-    MainMenu mainMenu;
-    mainMenu.init();
+
+    /* testing purpose 
+        MainMenu mainMenu;
+        mainMenu.init();
     */
+    MainGameWindow window;
+    window.init(nullptr, "Vinforte", nullptr);
 
     if (SettingsManager::storeSettings()) {
         std::cout << "\nSuccessfully stored the settings";

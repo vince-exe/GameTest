@@ -29,14 +29,6 @@ private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;
 	std::shared_ptr<Client> client;
 
-	Entity background;
-	sf::RectangleShape line;
-
 	sf::Text myNickname, enemyNickname;
-
-	Entity myCheckBtns[4];
-	Entity myAnimalCounters[4];
-
-	Entity enemyCheckBtn[4];
 };
 
