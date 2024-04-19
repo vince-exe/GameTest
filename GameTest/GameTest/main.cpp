@@ -28,13 +28,13 @@ int main() {
         return 1;
     }
 
-    /* testing purpose 
+    /*  testing purpose
         MainMenu mainMenu;
         mainMenu.init();
-    */
+    */    
     MainGameWindow window;
     window.init(nullptr, "Vinforte", nullptr);
-
+    
     if (SettingsManager::storeSettings()) {
         std::cout << "\nSuccessfully stored the settings";
     }

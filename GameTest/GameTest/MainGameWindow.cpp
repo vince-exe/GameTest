@@ -27,8 +27,34 @@ void MainGameWindow::init(std::shared_ptr<sf::RenderWindow> windowPtr_, const st
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 ;
             }
+            handlePlayerMovement(event);
         }
         draw();
+    }
+}
+
+void MainGameWindow::handlePlayerMovement(sf::Event& event) {
+    if (event.type == sf::Event::KeyPressed) {
+        if (event.key.code == sf::Keyboard::Key::W) {
+            if (youPlayer.getPosition().y - 10 >= 0) {
+                youPlayer.setPosition(youPlayer.getPosition().x, youPlayer.getPosition().y - 10);
+            }
+        }
+        if (event.key.code == sf::Keyboard::Key::A) {
+            if (youPlayer.getPosition().x - 10 >= 0) {
+                youPlayer.setPosition(youPlayer.getPosition().x - 10, youPlayer.getPosition().y);
+            }
+        }
+        if (event.key.code == sf::Keyboard::Key::S) {
+            if (youPlayer.getPosition().y + 10 < 475) {
+                youPlayer.setPosition(youPlayer.getPosition().x, youPlayer.getPosition().y + 10);
+            }
+        }
+        if (event.key.code == sf::Keyboard::Key::D) {
+            if (youPlayer.getPosition().x + 10 < 832) {
+                youPlayer.setPosition(youPlayer.getPosition().x + 10, youPlayer.getPosition().y);
+            }
+        }
     }
 }
 
@@ -37,7 +63,8 @@ void MainGameWindow::draw() {
 
     this->windowPtr->draw(myNickname);
     this->windowPtr->draw(enemyNickname);
-   
+    this->windowPtr->draw(youPlayer);
+
     this->windowPtr->display();
 }
 
@@ -53,6 +80,10 @@ void MainGameWindow::initSprites() {
     enemyNickname.setFont(FontManager::fredokaOne);
     enemyNickname.setCharacterSize(35);
     enemyNickname.setPosition(((windowPtr->getSize().x - enemyNickname.getGlobalBounds().width) - 20), (windowPtr->getSize().y - 60));
+
+    youPlayer.setSize(sf::Vector2f(70.f, 70.f));
+    youPlayer.setPosition(sf::Vector2f(300.f, 200.f));
+    youPlayer.setFillColor(sf::Color(2, 35, 89));
 }
 
 void MainGameWindow::handleEnemyNickname() {

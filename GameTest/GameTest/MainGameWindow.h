@@ -24,11 +24,16 @@ private:
 
 	void handleEnemyNickname();
 
+	void handlePlayerMovement(sf::Event& event);
+
 private:
 
 	std::shared_ptr<sf::RenderWindow> windowPtr;
 	std::shared_ptr<Client> client;
 
 	sf::Text myNickname, enemyNickname;
+
+	/* temp for testing */
+	sf::RectangleShape youPlayer;
 };
 
