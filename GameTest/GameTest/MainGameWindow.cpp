@@ -1,18 +1,17 @@
 #include "MainGameWindow.h"
 
-void MainGameWindow::init(std::shared_ptr<sf::RenderWindow> windowPtr_, const std::string nickname, std::shared_ptr<Client> client) {
-    /* testing area */
-    // tmp this->windowPtr = windowPtr;
+void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client) {
     this->client = client;
-    
+
     this->windowPtr = std::make_shared<sf::RenderWindow>();
     this->windowPtr->create(sf::VideoMode(900, 600), "SkyFall Showdown", sf::Style::Close);
     this->windowPtr->setFramerateLimit(60);
     
-    //handleEnemyNickname();
+    if (!handleEnemyNickname()) {
+        this->quitGame();
+        return;
+    }
     this->myNickname.setString(nickname);
-    this->enemyNickname.setString("Dragofinale012");
-    /* end testing area */
 
     sf::Event event;
 
@@ -22,7 +21,7 @@ void MainGameWindow::init(std::shared_ptr<sf::RenderWindow> windowPtr_, const st
     while (windowPtr->isOpen()) {
         while (windowPtr->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
-                windowPtr->close();
+                this->quitGame();
             }
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 ;
@@ -46,7 +45,7 @@ void MainGameWindow::handlePlayerMovement(sf::Event& event) {
             }
         }
         if (event.key.code == sf::Keyboard::Key::S) {
-            if (youPlayer.getPosition().y + 10 < 475) {
+            if (youPlayer.getPosition().y + 10 < 470) {
                 youPlayer.setPosition(youPlayer.getPosition().x, youPlayer.getPosition().y + 10);
             }
         }
@@ -56,6 +55,11 @@ void MainGameWindow::handlePlayerMovement(sf::Event& event) {
             }
         }
     }
+}
+
+void MainGameWindow::quitGame() {
+    this->client->close();
+    this->windowPtr->close();
 }
 
 void MainGameWindow::draw() {
@@ -86,12 +90,14 @@ void MainGameWindow::initSprites() {
     youPlayer.setFillColor(sf::Color(2, 35, 89));
 }
 
-void MainGameWindow::handleEnemyNickname() {
+bool MainGameWindow::handleEnemyNickname() {
     try {
-        this->enemyNickname.setString(NetUtils::read_(*this->client->getSocket()).getStr());
+        NetPacket p = NetUtils::read_(*this->client->getSocket());
+        this->enemyNickname.setString(p.getStr());
+        return true;
     }
     catch (const boost::system::system_error& e) {
-        std::cout << "\nError in handle enemy nickname\n";
-        this->client->close();
+        std::cerr << "\nError in handle enemy nickname: " << e.what() << " Codice errore: " << e.code() << std::endl;
+        return false;
     }
 }

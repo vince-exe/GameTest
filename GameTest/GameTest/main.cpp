@@ -4,10 +4,6 @@
 #include "FontManager.h"
 #include "SettingsManager.h"
 
-/* temp incude ( testing purpose ) */
-#include "MainGameWindow.h"
-#include "../GameServer/network_utilities.h"
-
 #include <iostream>
 
 int main() {
@@ -28,13 +24,9 @@ int main() {
         return 1;
     }
 
-    /*  testing purpose
-        MainMenu mainMenu;
-        mainMenu.init();
-    */    
-    MainGameWindow window;
-    window.init(nullptr, "Vinforte", nullptr);
-    
+    MainMenu mainMenu;
+    mainMenu.init();
+      
     if (SettingsManager::storeSettings()) {
         std::cout << "\nSuccessfully stored the settings";
     }

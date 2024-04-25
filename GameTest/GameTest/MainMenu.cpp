@@ -6,7 +6,7 @@ MainMenu::MainMenu() {
     this->backgroundMusicPtr = std::make_shared<Music>();
     this->notificationSound = std::make_shared<Sound>();
 
-	this->windowPtr->create(sf::VideoMode::getDesktopMode(), "SkyFall Showdown", sf::Style::None);
+	this->windowPtr->create(sf::VideoMode::getDesktopMode(), "SkyFall Showdown", sf::Style::Close);
     this->windowPtr->setFramerateLimit(60);
 }
 
@@ -25,9 +25,10 @@ bool MainMenu::init() {
     displayText = false;
     exitRequested = false;
     displayGameWindow = false;
-
+    /* for matchmaking */
     inMatchmaking.store(false);
-    std::shared_ptr<Client> client = std::make_shared<Client>();
+
+    this->client = std::make_shared<Client>();
 
     setTextures();
     initSprites();
@@ -35,8 +36,9 @@ bool MainMenu::init() {
 
     while (windowPtr->isOpen() && !exitRequested) {
         if (displayGameWindow) {
+            this->windowPtr->setVisible(false);
             MainGameWindow mainGameWindow;
-            // temp for testing mainGameWindow.init(this->windowPtr);
+            mainGameWindow.init(this->nickname, this->client);
         }
         while (windowPtr->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -194,25 +196,24 @@ void MainMenu::handleButtonClicks(sf::Event& event) {
     }
 }
 
-void MainMenu::handleMatchmakingResponse(const NetMessages& msg) {
+void MainMenu::handleMatchmakingResponse(const NetMessages& msg, std::string nickname) {
     if (msg == NetMessages::WAIT_FOR_MATCH) {
         /* in queue for a match text */
         notificationSound->play();
         displayTextFunc(menuMsgs[3]);
 
         /* start a thread to listen if the matchmaking is requested */
-        std::thread t(&MainMenu::listenForMatchmaking, this);
+        std::thread t(&MainMenu::listenForMatchmaking, this, nickname);
         t.detach();
     }
     /* start the game window */
     else if (msg == NetMessages::MATCH_FOUND) {
-        /* TO-DO */
         std::cout << "\nmatch found\n";
-        this->displayGameWindow = true;
+        this->matchFound(nickname);
     }
 }
 
-void MainMenu::listenForMatchmaking() {
+void MainMenu::listenForMatchmaking(std::string nickname) {
     using namespace std::chrono_literals;
 
     NetPacket p;
@@ -230,7 +231,7 @@ void MainMenu::listenForMatchmaking() {
 
             if (p.getMsgType() == NetMessages::MATCH_FOUND) {
                 std::cout << "\nStop listening match found\n";
-                this->displayGameWindow = true;
+                this->matchFound(nickname);
                 return;
             }
         }
@@ -248,8 +249,6 @@ void MainMenu::listenForMatchmaking() {
 }
 
 void MainMenu::handleClientConnection(std::string nick, std::string ip, int port) {
-    this->client = std::make_shared<Client>();
-
     try {
         if (!this->client->connect(ip, port)) {
             /* "Server Down" message */
@@ -278,7 +277,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 /* send the matchmaking request */
                 else {
                     NetUtils::send_(*this->client->getSocket(), NetPacket(NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
-                    handleMatchmakingResponse(NetUtils::read_(*this->client->getSocket()).getMsgType());
+                    handleMatchmakingResponse(NetUtils::read_(*this->client->getSocket()).getMsgType(), nick);
                 }
             }
         }
@@ -323,6 +322,11 @@ void MainMenu::exitMenu() {
         }
         this->exitRequested = true;
     }
+}
+
+void MainMenu::matchFound(std::string nickname) {
+    this->displayGameWindow = true;
+    this->nickname = nickname;
 }
 
 void MainMenu::displayTextFuncTime(Entity& entity, int seconds) {

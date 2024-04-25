@@ -51,15 +51,17 @@ private:
 
 	void displayTextFuncTime(Entity& entity, int seconds);
 
-	void handleMatchmakingResponse(const NetMessages& msg);
+	void handleMatchmakingResponse(const NetMessages& msg, std::string nickname);
 
-	void listenForMatchmaking();
+	void listenForMatchmaking(std::string nickname);
 
 	void displayTextFunc(Entity& entity);
 
 	void undoMatchmaking();
 
 	void exitMenu();
+
+	void matchFound(std::string nickname);
 
 private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;
@@ -79,4 +81,5 @@ private:
 	std::atomic<bool> inMatchmaking;
 
 	std::shared_ptr<Client> client;
+	std::string nickname;
 };

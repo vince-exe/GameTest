@@ -38,6 +38,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 	NetMessages netMsg;
 	while (true) {
 		try {
+			/* the read continue even after the match request because the client may interrupt the matchmaking */
 			netMsg = NetUtils::read_(*socket).getMsgType();
 			
 			if (netMsg == NetMessages::MATCHMAKING_REQUEST) {
@@ -56,6 +57,33 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 			return;
 		}
 	}
+}
+
+void Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string& nick) {
+	if (this->matchmakingQueue.empty()) {
+		this->matchmakingQueue.push(this->usersMap[nick]);
+		NetUtils::send_(*socket, NetPacket(NetMessages::WAIT_FOR_MATCH, nullptr, 0));
+
+		std::cout << "\nClient [nick]: " << nick << " in queue for a match.";
+	}
+	else {
+		// match this client with the last client who requested the match 
+
+		std::shared_ptr<User> player1 = this->matchmakingQueue.front();
+		this->matchmakingQueue.pop();
+	
+		std::shared_ptr<User> player2 = this->usersMap[nick];
+		
+		GameSession gameSession(player1, player2);
+		gameSession.startGame();
+	}
+}
+
+void Server::handleUndoMatchmaking(const std::string& nick) {
+	this->matchmakingQueue.pop();
+	this->usersMap.erase(this->usersMap.find(nick));
+
+	std::cout << "\nClient [nick]: " << nick << " undo the matchmaking | Current Players in in Match Queue: " << this->matchmakingQueue.size();
 }
 
 bool Server::nicknameAlreadyExist(const std::string& nick) {
@@ -92,34 +120,4 @@ bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, std::string
 
 		return false;
 	}
-}
-
-void Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string& nick) {
-	if (this->matchmakingQueue.empty()) {
-		this->matchmakingQueue.push(this->usersMap[nick]);
-		NetUtils::send_(*socket, NetPacket(NetMessages::WAIT_FOR_MATCH, nullptr, 0));
-
-		std::cout << "\nClient [nick]: " << nick << " in queue for a match.";
-	}
-	else {
-		// match this client with the last client who requested the match 
-
-		std::shared_ptr<User> player1 = this->matchmakingQueue.front();
-		this->matchmakingQueue.pop();
-	
-		std::shared_ptr<User> player2 = this->usersMap[nick];
-		
-		/* start the game session */
-		std::cout << "\nMatchmaking between " << nick << " and " << player1->getNick() << " started.\n";
-
-		GameSession gameSession(player1, player2);
-		gameSession.startGame();
-	}
-}
-
-void Server::handleUndoMatchmaking(const std::string& nick) {
-	this->matchmakingQueue.pop();
-	this->usersMap.erase(this->usersMap.find(nick));
-
-	std::cout << "\nClient [nick]: " << nick << " undo the matchmaking | Current Players in in Match Queue: " << this->matchmakingQueue.size();
 }

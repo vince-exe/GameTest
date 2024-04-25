@@ -13,7 +13,7 @@
 
 class MainGameWindow {
 public:
-	void init(std::shared_ptr<sf::RenderWindow> windowPtr_, const std::string nickname, std::shared_ptr<Client> client);
+	void init(const std::string nickname, std::shared_ptr<Client> client);
 
 private:
 	void draw();
@@ -22,9 +22,11 @@ private:
 
 	void initSprites();
 
-	void handleEnemyNickname();
+	bool handleEnemyNickname();
 
 	void handlePlayerMovement(sf::Event& event);
+
+	void quitGame();
 
 private:
 
