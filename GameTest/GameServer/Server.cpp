@@ -22,6 +22,7 @@ void Server::accept() {
 		}
 		
 		std::thread t(&Server::handleClient, this, socket);
+		/* with detach the thread code is execute indipendedly */
 		t.detach();
 	}
 }
@@ -50,8 +51,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 			}
 		}
 		catch (const boost::system::system_error& ex) {
-			// temporary catch solution debug 
-			std::cout << "\nCatch in handle client\t" << ex.what() << "\n";
+			std::cerr << "\nCatch in handle client [ Server.cpp ] |" << ex.what() << "\n";
 			socket->close();
 			this->usersMap.erase(this->usersMap.find(nick));
 			return;

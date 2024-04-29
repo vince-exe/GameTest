@@ -37,8 +37,13 @@ bool MainMenu::init() {
     while (windowPtr->isOpen() && !exitRequested) {
         if (displayGameWindow) {
             this->windowPtr->setVisible(false);
+
             MainGameWindow mainGameWindow;
             mainGameWindow.init(this->nickname, this->client);
+
+            displayGameWindow = false;
+            displayText = false;
+            this->windowPtr->setVisible(true);
         }
         while (windowPtr->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -231,6 +236,7 @@ void MainMenu::listenForMatchmaking(std::string nickname) {
 
             if (p.getMsgType() == NetMessages::MATCH_FOUND) {
                 std::cout << "\nStop listening match found\n";
+                this->client->getSocket()->non_blocking(false);
                 this->matchFound(nickname);
                 return;
             }

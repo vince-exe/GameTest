@@ -28,6 +28,8 @@ private:
 
 	void quitGame();
 
+	void handleMessages();
+
 private:
 
 	std::shared_ptr<sf::RenderWindow> windowPtr;
@@ -36,6 +38,6 @@ private:
 	sf::Text myNickname, enemyNickname;
 
 	/* temp for testing */
-	sf::RectangleShape youPlayer;
+	sf::RectangleShape youPlayer, enemyPlayer;
 };
 
