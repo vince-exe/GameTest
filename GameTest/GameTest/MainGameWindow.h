@@ -3,6 +3,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <random>
 
 #include "Entity.h"
 #include "FontManager.h"
@@ -29,6 +30,8 @@ private:
 	void quitGame();
 
 	void handleMessages();
+
+	void initPlayerAndEnemyStats();
 
 private:
 

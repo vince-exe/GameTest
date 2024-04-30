@@ -14,12 +14,14 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     }
     this->myNickname.setString(nickname);
 
-    setTextures();
-    initSprites();
-
     /* start the thread to listen for game messages */
     std::thread t(&MainGameWindow::handleMessages, this);
     t.detach();
+
+    setTextures();
+    initSprites();
+
+    initPlayerAndEnemyStats();
 
     sf::Event event;
     while (windowPtr->isOpen()) {
@@ -34,6 +36,34 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
             handlePlayerMovement(event);
         }
         draw();
+    }
+}
+
+void MainGameWindow::initPlayerAndEnemyStats() {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    /* generate the X and Y*/
+    std::uniform_int_distribution<std::mt19937::result_type> xPositionGenerator(100, 800);
+    std::uniform_int_distribution<std::mt19937::result_type> yPositionGenerator(100, 500);
+
+    int xPosition = xPositionGenerator(rng), yPosition = yPositionGenerator(rng);
+    /* set the player to a random position*/
+    youPlayer.setPosition(xPosition, yPosition);
+
+    /* TO-DO ( SEND THE POSITION AND RECEIVE THE ENEMY POSITION ) */
+}
+
+void MainGameWindow::handleMessages() {
+    NetPacket packet;
+
+    while (true) {
+        try {
+            packet = NetUtils::read_(*this->client->getSocket());
+        }
+        catch (const boost::system::system_error& ex) {
+            std::cerr << "\nError in handleMessages() | " << ex.what();
+            return;
+        }
     }
 }
 
@@ -58,20 +88,6 @@ void MainGameWindow::handlePlayerMovement(sf::Event& event) {
             if (youPlayer.getPosition().x + 10 < 832) {
                 youPlayer.setPosition(youPlayer.getPosition().x + 10, youPlayer.getPosition().y);
             }
-        }
-    }
-}
-
-void MainGameWindow::handleMessages() {
-    NetPacket packet;
-
-    while (true) {
-        try {
-            packet = NetUtils::read_(*this->client->getSocket());
-        }
-        catch (const boost::system::system_error& ex) {
-            std::cerr << "\nError in handleMessages() | " << ex.what();
-            return;
         }
     }
 }
@@ -107,7 +123,6 @@ void MainGameWindow::initSprites() {
     enemyNickname.setFillColor(sf::Color(110, 6, 2));
 
     youPlayer.setSize(sf::Vector2f(70.f, 70.f));
-    youPlayer.setPosition(sf::Vector2f(300.f, 200.f));
     youPlayer.setFillColor(sf::Color(2, 35, 89));
 
     enemyPlayer.setSize(sf::Vector2f(70.f, 70.f));
