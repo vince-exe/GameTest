@@ -31,7 +31,7 @@ private:
 
 	void handleMessages();
 
-	void initPlayerAndEnemyStats();
+	bool initPlayerAndEnemyPosition();
 
 private:
 

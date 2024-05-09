@@ -14,7 +14,7 @@ enum NetMessages {
 	WAIT_FOR_MATCH,
 	UNDO_MATCHMAKING,
 	MATCH_FOUND,
-	PLAYER_MOVED
+	PLAYER_POSITION
 };
 
 class NetPacket  {

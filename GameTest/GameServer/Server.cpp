@@ -35,7 +35,6 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 		return;
 	}
 
-	// temporary condition ( listen for client's messages )
 	NetMessages netMsg;
 	while (true) {
 		try {
@@ -44,9 +43,9 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 			
 			if (netMsg == NetMessages::MATCHMAKING_REQUEST) {
 				handleMatchmaking(socket, nick);
-			}
-			else if (netMsg == NetMessages::UNDO_MATCHMAKING) {
-				handleUndoMatchmaking(nick);
+				
+				/* start the thread to listen if the client wants to undo the matchmaking */
+				undoMatchThreadsDeque.push_back(std::thread(&Server::handleUndoMatchmaking, this, socket, nick));
 				return;
 			}
 		}
@@ -68,28 +67,56 @@ void Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::s
 	}
 	else {
 		// match this client with the last client who requested the match 
-
 		std::shared_ptr<User> player1 = this->matchmakingQueue.front();
-		this->matchmakingQueue.pop();
-	
 		std::shared_ptr<User> player2 = this->usersMap[nick];
-		
-		GameSession gameSession(player1, player2);
+
+		/* send the match found message */
+		NetUtils::send_(*player1->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
+		NetUtils::send_(*player2->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
+
+		this->undoMatchThreadsDeque.back().join();
+		this->undoMatchThreadsDeque.pop_back();
+
+		GameSession gameSession(&this->usersMap, player1, player2);
 		gameSession.startGame();
 	}
 }
 
-void Server::handleUndoMatchmaking(const std::string& nick) {
-	this->matchmakingQueue.pop();
-	this->usersMap.erase(this->usersMap.find(nick));
+void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string& nick) {
+	using namespace std::chrono_literals;
+	NetPacket p;
 
-	std::cout << "\nClient [nick]: " << nick << " undo the matchmaking | Current Players in in Match Queue: " << this->matchmakingQueue.size();
-}
+	socket->non_blocking(true);
+	while (true) {
+		try {
+			std::this_thread::sleep_for(300ms);
+	
+			p = NetUtils::read_(*socket);
+			if (p.getMsgType() == NetMessages::UNDO_MATCHMAKING) {
+				this->matchmakingQueue.pop();
+				this->usersMap.erase(this->usersMap.find(nick));
+				
+				std::cout << "\nClient [ " << nick << " ]: " << " undo the matchmaking | Current Players in in Match Queue: " << this->matchmakingQueue.size();
+				socket->non_blocking(false);
+				return;
+			}
+			else if (p.getMsgType() == NetMessages::MATCH_FOUND) {
+				this->matchmakingQueue.pop();
 
-bool Server::nicknameAlreadyExist(const std::string& nick) {
-	auto it = usersMap.find(nick);
+				socket->non_blocking(false);
+				return;
+			}
+		}
+		catch (const boost::system::system_error& e) {
+			if (e.code() != boost::asio::error::would_block) {
+				std::cerr << "\nCatch in listen for UndoMatchmaking: " << e.what() << std::endl;
 
-	return it != usersMap.end();
+				this->matchmakingQueue.pop();
+				this->usersMap.erase(this->usersMap.find(nick));
+				return;
+			}
+		}
+	}
 }
 
 bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, std::string& nick) {
@@ -120,4 +147,14 @@ bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, std::string
 
 		return false;
 	}
+}
+
+bool Server::nicknameAlreadyExist(const std::string& nick) {
+	auto it = usersMap.find(nick);
+
+	return it != usersMap.end();
+}
+
+std::unordered_map<std::string, std::shared_ptr<User>> Server::getUsersMap() {
+	return this->usersMap;
 }

@@ -10,6 +10,6 @@ using boost::asio::ip::tcp;
 namespace NetUtils {        
     NetPacket read_(tcp::socket& socket);
 
-    void send_(tcp::socket& socket, const NetPacket& packet);
+    bool send_(tcp::socket& socket, const NetPacket& packet);
 }
 

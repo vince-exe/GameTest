@@ -10,15 +10,22 @@ NetPacket NetUtils::read_(tcp::socket& socket) {
     return NetPacket::deserialize(receivedData);
 }
 
-void NetUtils::send_(tcp::socket& socket, const NetPacket& packet) {
+bool NetUtils::send_(tcp::socket& socket, const NetPacket& packet) {
     std::vector<uint8_t> serializedData = packet.serialize();
-
     // calculate the dimension of the packet
     size_t packetSize = serializedData.size();
 
-    // send packet dimension
-    boost::asio::write(socket, boost::asio::buffer(&packetSize, sizeof(packetSize)));
+    // send the packet dimension 
+    size_t bytes_sent_size = boost::asio::write(socket, boost::asio::buffer(&packetSize, sizeof(packetSize)));
+    if (bytes_sent_size != sizeof(packetSize)) {
+        return false;
+    }
 
-    // send datas
-    boost::asio::write(socket, boost::asio::buffer(serializedData));
+    // send the serialized data
+    size_t bytes_sent_data = boost::asio::write(socket, boost::asio::buffer(serializedData));
+    if (bytes_sent_data != packetSize) {
+        return false;
+    }
+
+    return true;
 }

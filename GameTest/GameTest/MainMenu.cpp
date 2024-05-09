@@ -236,6 +236,8 @@ void MainMenu::listenForMatchmaking(std::string nickname) {
 
             if (p.getMsgType() == NetMessages::MATCH_FOUND) {
                 std::cout << "\nStop listening match found\n";
+                NetUtils::send_(*client->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
+
                 this->client->getSocket()->non_blocking(false);
                 this->matchFound(nickname);
                 return;
@@ -274,7 +276,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 /* send the nickname */
                 NetUtils::send_(*this->client->getSocket(), NetPacket(NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
 
-                /* check nickname */
+                /* check the nickname */
                 if (NetUtils::read_(*this->client->getSocket()).getMsgType() == NetMessages::NICK_EXITS) {
                     /* Nick exists text */
                     notificationSound->play();
@@ -331,6 +333,7 @@ void MainMenu::exitMenu() {
 }
 
 void MainMenu::matchFound(std::string nickname) {
+    this->inMatchmaking.store(false);
     this->displayGameWindow = true;
     this->nickname = nickname;
 }

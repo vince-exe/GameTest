@@ -14,14 +14,16 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     }
     this->myNickname.setString(nickname);
 
+    setTextures();
+    initSprites();
+    
+    if(!initPlayerAndEnemyPosition()) {
+        this->quitGame();
+        return;
+    }
     /* start the thread to listen for game messages */
     std::thread t(&MainGameWindow::handleMessages, this);
     t.detach();
-
-    setTextures();
-    initSprites();
-
-    initPlayerAndEnemyStats();
 
     sf::Event event;
     while (windowPtr->isOpen()) {
@@ -39,7 +41,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     }
 }
 
-void MainGameWindow::initPlayerAndEnemyStats() {
+bool MainGameWindow::initPlayerAndEnemyPosition() {
     std::random_device dev;
     std::mt19937 rng(dev());
     /* generate the X and Y*/
@@ -50,7 +52,20 @@ void MainGameWindow::initPlayerAndEnemyStats() {
     /* set the player to a random position*/
     youPlayer.setPosition(xPosition, yPosition);
 
-    /* TO-DO ( SEND THE POSITION AND RECEIVE THE ENEMY POSITION ) */
+    int playerPosition[2] = { xPosition, yPosition };
+    /* send the position*/
+    if (!NetUtils::send_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(playerPosition), sizeof(playerPosition)))) {
+        std::cerr << "\nError in sending position to the server";
+    }   
+    
+    int enemyPosition[2];
+    /* get the enemy position */
+    NetPacket p = NetUtils::read_(*this->client->getSocket());
+    if (p.getMsgType() == NetMessages::PLAYER_POSITION) {
+        std::cout << "\nTest Superato!";
+        return true;
+    }
+    return true;
 }
 
 void MainGameWindow::handleMessages() {
