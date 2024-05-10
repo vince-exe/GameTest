@@ -4,14 +4,15 @@
 #include <unordered_map>
 #include <thread>
 #include <boost/asio.hpp>
-#include <deque>
+#include <list>
 #include <queue>
+#include <mutex>
 
 #include "GameSession.h"
 #include "network_utilities.h"
 #include "User.h"
 #include "NetPacket.h"
-
+#include "UndoMatchThreadClass.h"
 
 using boost::asio::ip::tcp;
 
@@ -20,6 +21,8 @@ public:
 	Server(int port, int maxConnections);
 
 	void accept();
+
+	void startRoutines();
 
 	std::unordered_map<std::string, std::shared_ptr<User>> getUsersMap();
 
@@ -34,13 +37,22 @@ private:
 
 	void handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string& nick);
 
+	void addUselessThread();
+
+	void clearUselessThreads();
+
 private:
 	boost::asio::io_service ioServicePtr;
 	std::unique_ptr<tcp::acceptor> acceptorPtr;
 
 	int maxConnections;
+	bool doRoutines;
+
 	std::unordered_map<std::string, std::shared_ptr<User>> usersMap;
 
 	std::queue<std::shared_ptr<User>> matchmakingQueue;
-	std::deque<std::thread> undoMatchThreadsDeque;
+	std::list<UndoMatchThreadClass> undoMatchThreadList;
+
+	std::mutex mtx;
+	std::shared_ptr<std::thread> clearThread;
 };

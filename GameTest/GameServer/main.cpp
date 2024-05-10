@@ -9,8 +9,11 @@ int main() {
 	std::cin >> maxConnections;
 	
 	Server server(8888, maxConnections);
+	std::cout << "\nServer Started";
 
-	std::cout << "\nServer Started\n";
+	server.startRoutines();
+	std::cout << "\nSuccessfully started the server routines";
+
 	server.accept();
 
 	return 0;

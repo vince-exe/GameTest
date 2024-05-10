@@ -2,8 +2,10 @@
 
 Server::Server(int port, int maxConnections) {
 	this->acceptorPtr = std::make_unique<tcp::acceptor>(this->ioServicePtr, tcp::endpoint(tcp::v4(), port));
-
+	
+	UndoMatchThreadClass::uselessThreadCounter = 0;
 	this->maxConnections = maxConnections;
+	this->doRoutines = true;
 }
 
 void Server::accept() {
@@ -45,7 +47,8 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 				handleMatchmaking(socket, nick);
 				
 				/* start the thread to listen if the client wants to undo the matchmaking */
-				undoMatchThreadsDeque.push_back(std::thread(&Server::handleUndoMatchmaking, this, socket, nick));
+				undoMatchThreadList.push_back(UndoMatchThreadClass(std::make_shared<std::thread>(&Server::handleUndoMatchmaking, this, socket, nick), false));
+				undoMatchThreadList.back().getThread()->detach();
 				return;
 			}
 		}
@@ -73,10 +76,15 @@ void Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::s
 		/* send the match found message */
 		NetUtils::send_(*player1->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
 		NetUtils::send_(*player2->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
+		
+		/* delete the thread because the match has been found and it's useless to have. */
+		this->mtx.lock();
+		if (this->undoMatchThreadList.size()) {
+			this->undoMatchThreadList.pop_back();
+		}
+		this->mtx.unlock();
 
-		this->undoMatchThreadsDeque.back().join();
-		this->undoMatchThreadsDeque.pop_back();
-
+		Sleep(1000);
 		GameSession gameSession(&this->usersMap, player1, player2);
 		gameSession.startGame();
 	}
@@ -95,7 +103,9 @@ void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const st
 			if (p.getMsgType() == NetMessages::UNDO_MATCHMAKING) {
 				this->matchmakingQueue.pop();
 				this->usersMap.erase(this->usersMap.find(nick));
-				
+				/* add this thread to the cancellable threads, so it will be deleted */
+				addUselessThread();
+
 				std::cout << "\nClient [ " << nick << " ]: " << " undo the matchmaking | Current Players in in Match Queue: " << this->matchmakingQueue.size();
 				socket->non_blocking(false);
 				return;
@@ -157,4 +167,48 @@ bool Server::nicknameAlreadyExist(const std::string& nick) {
 
 std::unordered_map<std::string, std::shared_ptr<User>> Server::getUsersMap() {
 	return this->usersMap;
+}
+
+void Server::addUselessThread() {
+	this->mtx.lock();
+
+	UndoMatchThreadClass::uselessThreadCounter++;
+	int i = 0;
+	std::list<UndoMatchThreadClass>::iterator it = this->undoMatchThreadList.begin();
+
+	while (it != this->undoMatchThreadList.end() && i < UndoMatchThreadClass::uselessThreadCounter) {
+		it->setCancellable();
+		i++;
+		it++;
+	}
+	this->mtx.unlock();
+}
+
+void Server::clearUselessThreads() {
+	while (this->doRoutines) {
+		using namespace std::chrono_literals;
+		std::this_thread::sleep_for(15s);
+
+		this->mtx.lock();
+		std::list<UndoMatchThreadClass>::iterator it = this->undoMatchThreadList.begin();
+		int i = 0;
+
+		while (it != this->undoMatchThreadList.end() && i < UndoMatchThreadClass::uselessThreadCounter) {
+			if (it->isCancellable()) {
+				it = undoMatchThreadList.erase(it);
+				i++;
+				continue;
+			}
+			it++;
+		}
+		UndoMatchThreadClass::uselessThreadCounter -= i;
+		std::cout << "\n[ LOG ]: Useless Threads Cleared: " << i;
+		this->mtx.unlock();
+	}
+	std::cout << "\n[ LOG ]: End ClearUselessThreads routine.";
+}
+
+void Server::startRoutines() {
+	/* start the thread that will host the function to clear useless threads */
+	this->clearThread = std::make_shared<std::thread>(&Server::clearUselessThreads, this);
 }

@@ -33,6 +33,9 @@
     <ClCompile Include="GameSession.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="UndoMatchThreadClass.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -48,6 +51,9 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="GameSession.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="UndoMatchThreadClass.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
