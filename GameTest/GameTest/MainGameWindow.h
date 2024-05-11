@@ -42,5 +42,7 @@ private:
 
 	/* temp for testing */
 	sf::RectangleShape youPlayer, enemyPlayer;
+
+	bool displayWindow;
 };
 

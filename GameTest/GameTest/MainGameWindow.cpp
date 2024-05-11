@@ -26,7 +26,8 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     t.detach();
 
     sf::Event event;
-    while (windowPtr->isOpen()) {
+    displayWindow = true;
+    while (windowPtr->isOpen() && displayWindow) {
         while (windowPtr->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 this->quitGame();
@@ -62,10 +63,9 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
     /* get the enemy position */
     NetPacket p = NetUtils::read_(*this->client->getSocket());
     if (p.getMsgType() == NetMessages::PLAYER_POSITION) {
-        std::cout << "\nTest Superato!";
         return true;
     }
-    return true;
+    return false;
 }
 
 void MainGameWindow::handleMessages() {
@@ -74,6 +74,12 @@ void MainGameWindow::handleMessages() {
     while (true) {
         try {
             packet = NetUtils::read_(*this->client->getSocket());
+
+            if (packet.getMsgType() == NetMessages::QUIT_GAME) {
+                std::cout << "\nMatch end becasue [ " << this->enemyNickname.getString().toAnsiString() << " ] quit.";
+                this->quitGame();
+                return;
+            }
         }
         catch (const boost::system::system_error& ex) {
             std::cerr << "\nError in handleMessages() | " << ex.what();
@@ -109,7 +115,7 @@ void MainGameWindow::handlePlayerMovement(sf::Event& event) {
 
 void MainGameWindow::quitGame() {
     this->client->close();
-    this->windowPtr->close();
+    this->displayWindow = false;
 }
 
 void MainGameWindow::draw() {

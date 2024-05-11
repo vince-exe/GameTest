@@ -44,11 +44,15 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 			netMsg = NetUtils::read_(*socket).getMsgType();
 			
 			if (netMsg == NetMessages::MATCHMAKING_REQUEST) {
-				handleMatchmaking(socket, nick);
-				
-				/* start the thread to listen if the client wants to undo the matchmaking */
-				undoMatchThreadList.push_back(UndoMatchThreadClass(std::make_shared<std::thread>(&Server::handleUndoMatchmaking, this, socket, nick), false));
-				undoMatchThreadList.back().getThread()->detach();
+				if (handleMatchmaking(socket, nick)) {
+					std::thread t(&Server::gameSessionThread, this, nick);
+					t.detach();
+				}
+				else {
+					/* start the thread to listen if the client wants to undo the matchmaking */
+					undoMatchThreadList.push_back(UndoMatchThreadClass(std::make_shared<std::thread>(&Server::handleUndoMatchmaking, this, socket, nick), false));
+					undoMatchThreadList.back().getThread()->detach();
+				}
 				return;
 			}
 		}
@@ -61,36 +65,39 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 	}
 }
 
-void Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string& nick) {
+bool Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick) {
 	if (this->matchmakingQueue.empty()) {
 		this->matchmakingQueue.push(this->usersMap[nick]);
 		NetUtils::send_(*socket, NetPacket(NetMessages::WAIT_FOR_MATCH, nullptr, 0));
 
 		std::cout << "\nClient [nick]: " << nick << " in queue for a match.";
+		return false;
 	}
-	else {
-		// match this client with the last client who requested the match 
-		std::shared_ptr<User> player1 = this->matchmakingQueue.front();
-		std::shared_ptr<User> player2 = this->usersMap[nick];
-
-		/* send the match found message */
-		NetUtils::send_(*player1->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
-		NetUtils::send_(*player2->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
-		
-		/* delete the thread because the match has been found and it's useless to have. */
-		this->mtx.lock();
-		if (this->undoMatchThreadList.size()) {
-			this->undoMatchThreadList.pop_back();
-		}
-		this->mtx.unlock();
-
-		Sleep(1000);
-		GameSession gameSession(&this->usersMap, player1, player2);
-		gameSession.startGame();
-	}
+	return true;
 }
 
-void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string& nick) {
+void Server::gameSessionThread(const std::string nick) {
+	// match this client with the last client who requested the match 
+	std::shared_ptr<User> player1 = this->matchmakingQueue.front();
+	std::shared_ptr<User> player2 = this->usersMap[nick];
+
+	/* send the match found message */
+	NetUtils::send_(*player1->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
+	NetUtils::send_(*player2->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
+
+	/* delete the thread because the match has been found and it's useless to have. */
+	this->mtx.lock();
+	if (this->undoMatchThreadList.size()) {
+		this->undoMatchThreadList.pop_back();
+	}
+	this->mtx.unlock();
+
+	Sleep(1000);
+	GameSession gameSession(&this->usersMap, player1, player2);
+	gameSession.startGame();
+}
+
+void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick) {
 	using namespace std::chrono_literals;
 	NetPacket p;
 

@@ -1,8 +1,4 @@
--Continuare il lato client:
-	- Mettere che quando il client disdice un matchmaking, deve aspettare 3 secondi prima di poterne avviare un altro.
-
-	- Quando esce uno dalla GameSession, deve uscire anche l'altro.
-
+-Continuare:
 	- I quadrati spawnano casualmente e si mandano le posizioni a vicenda.
 	
 	- Ogni volta che si muovono si mandano le posizioni a vicenda.

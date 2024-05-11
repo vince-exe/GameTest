@@ -17,6 +17,10 @@ void GameSession::handleClient(std::shared_ptr<User> client, std::shared_ptr<Use
 		catch (const boost::system::system_error& ex) {
 			std::cerr << "\nCatch in handle client [ " << client->getNick() << " ] GameSession.cpp | " << ex.what();
 
+			if (otherClient->getSocket()->is_open()) {
+				NetUtils::send_(*otherClient->getSocket(), NetPacket(NetMessages::QUIT_GAME, nullptr, 0));
+			}
+			
 			client->getSocket()->close();
 			usersMap->erase(usersMap->find(client->getNick()));
 			return;
@@ -33,12 +37,10 @@ void GameSession::startGame() {
 	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " started.\n";
 
 	std::thread thUser1(&GameSession::handleClient, this, this->user1, this->user2);
-	thUser1.detach();
-
 	std::thread thUser2(&GameSession::handleClient, this, this->user2, this->user1);
-	thUser2.detach();
 	
-	while (true);
+	thUser1.join();
+	thUser2.join();
 
 	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " end.\n";
 }

@@ -33,9 +33,12 @@ private:
 
 	bool handleUserNickname(std::shared_ptr<tcp::socket> socket, std::string& nick);
 
-	void handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string& nick);
+	/* return true if a match has been found */
+	bool handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick);
 
-	void handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string& nick);
+	void handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick);
+	
+	void gameSessionThread(const std::string nick);
 
 	void addUselessThread();
 
