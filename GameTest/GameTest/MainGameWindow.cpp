@@ -14,7 +14,6 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     }
     this->myNickname.setString(nickname);
 
-    setTextures();
     initSprites();
     
     if(!initPlayerAndEnemyPosition()) {
@@ -51,7 +50,7 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
 
     int xPosition = xPositionGenerator(rng), yPosition = yPositionGenerator(rng);
     /* set the player to a random position*/
-    youPlayer.setPosition(xPosition, yPosition);
+    youPlayer->setPosition(xPosition, yPosition);
 
     int playerPosition[2] = { xPosition, yPosition };
     /* send the position*/
@@ -59,12 +58,13 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
         std::cerr << "\nError in sending position to the server";
     }   
     
-    int enemyPosition[2];
     /* get the enemy position */
     NetPacket p = NetUtils::read_(*this->client->getSocket());
     if (p.getMsgType() == NetMessages::PLAYER_POSITION) {
+        this->enemyPlayer->setPosition(p.getIntVec()[0], p.getIntVec()[1]);
         return true;
     }
+
     return false;
 }
 
@@ -91,23 +91,23 @@ void MainGameWindow::handleMessages() {
 void MainGameWindow::handlePlayerMovement(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Key::W) {
-            if (youPlayer.getPosition().y - 10 >= 0) {
-                youPlayer.setPosition(youPlayer.getPosition().x, youPlayer.getPosition().y - 10);
+            if (youPlayer->getPosition().y - 10 >= 0) {
+                youPlayer->setPosition(youPlayer->getPosition().x, youPlayer->getPosition().y - 10);
             }
         }
         if (event.key.code == sf::Keyboard::Key::A) {
-            if (youPlayer.getPosition().x - 10 >= 0) {
-                youPlayer.setPosition(youPlayer.getPosition().x - 10, youPlayer.getPosition().y);
+            if (youPlayer->getPosition().x - 10 >= 0) {
+                youPlayer->setPosition(youPlayer->getPosition().x - 10, youPlayer->getPosition().y);
             }
         }
         if (event.key.code == sf::Keyboard::Key::S) {
-            if (youPlayer.getPosition().y + 10 < 470) {
-                youPlayer.setPosition(youPlayer.getPosition().x, youPlayer.getPosition().y + 10);
+            if (youPlayer->getPosition().y + 10 < 470) {
+                youPlayer->setPosition(youPlayer->getPosition().x, youPlayer->getPosition().y + 10);
             }
         }
         if (event.key.code == sf::Keyboard::Key::D) {
-            if (youPlayer.getPosition().x + 10 < 832) {
-                youPlayer.setPosition(youPlayer.getPosition().x + 10, youPlayer.getPosition().y);
+            if (youPlayer->getPosition().x + 10 < 832) {
+                youPlayer->setPosition(youPlayer->getPosition().x + 10, youPlayer->getPosition().y);
             }
         }
     }
@@ -123,13 +123,10 @@ void MainGameWindow::draw() {
 
     this->windowPtr->draw(myNickname);
     this->windowPtr->draw(enemyNickname);
-    this->windowPtr->draw(youPlayer);
+    this->windowPtr->draw(*youPlayer);
+    this->windowPtr->draw(*enemyPlayer);
 
     this->windowPtr->display();
-}
-
-void MainGameWindow::setTextures() {
-
 }
 
 void MainGameWindow::initSprites() {
@@ -143,12 +140,8 @@ void MainGameWindow::initSprites() {
     enemyNickname.setPosition(((windowPtr->getSize().x - enemyNickname.getGlobalBounds().width) - 20), (windowPtr->getSize().y - 60));
     enemyNickname.setFillColor(sf::Color(110, 6, 2));
 
-    youPlayer.setSize(sf::Vector2f(70.f, 70.f));
-    youPlayer.setFillColor(sf::Color(2, 35, 89));
-
-    enemyPlayer.setSize(sf::Vector2f(70.f, 70.f));
-    enemyPlayer.setPosition(sf::Vector2f(300.f, 200.f));
-    enemyPlayer.setFillColor(sf::Color(2, 35, 89));
+    youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.f);
+    enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.f);
 }
 
 bool MainGameWindow::handleEnemyNickname() {

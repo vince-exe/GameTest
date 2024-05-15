@@ -150,6 +150,7 @@
     <ClCompile Include="MenuConfirmationExit.cpp" />
     <ClCompile Include="Music.cpp" />
     <ClCompile Include="OptionsMainMenu.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="SettingsManager.cpp" />
     <ClCompile Include="Sound.cpp" />
   </ItemGroup>
@@ -168,6 +169,7 @@
     <ClInclude Include="MenuConfirmationExit.h" />
     <ClInclude Include="Music.h" />
     <ClInclude Include="OptionsMainMenu.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="ui_utils.h" />

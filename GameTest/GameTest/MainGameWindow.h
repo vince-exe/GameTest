@@ -8,6 +8,7 @@
 #include "Entity.h"
 #include "FontManager.h"
 #include "Client.h"
+#include "Player.h"
 #include "../GameServer/network_utilities.h"
 
 #include "MainGameTextureManager.h"
@@ -18,8 +19,6 @@ public:
 
 private:
 	void draw();
-
-	void setTextures();
 
 	void initSprites();
 
@@ -40,8 +39,7 @@ private:
 
 	sf::Text myNickname, enemyNickname;
 
-	/* temp for testing */
-	sf::RectangleShape youPlayer, enemyPlayer;
+	std::shared_ptr<Player> youPlayer, enemyPlayer;
 
 	bool displayWindow;
 };

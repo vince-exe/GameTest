@@ -32,6 +32,15 @@ std::string NetPacket::getStr() {
     return std::string(reinterpret_cast<const char*>(&this->data[0]), this->getDataSize());
 }
 
+std::vector<int> NetPacket::getIntVec() {
+    std::vector<int> intVec(2);
+
+    std::memcpy(&intVec[0], &this->data[0], sizeof(int));
+    std::memcpy(&intVec[1], &this->data[sizeof(int)], sizeof(int));
+
+    return intVec;
+}
+
 NetPacket NetPacket::deserialize(const std::vector<uint8_t>& serializedData) {
     NetMessages messageType;
     std::memcpy(&messageType, serializedData.data(), sizeof(messageType));

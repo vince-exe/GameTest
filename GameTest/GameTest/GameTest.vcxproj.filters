@@ -90,6 +90,9 @@
     <ClCompile Include="MainGameTextureManager.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>File di origine\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -142,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="MainGameTextureManager.h">
       <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>File di intestazione\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

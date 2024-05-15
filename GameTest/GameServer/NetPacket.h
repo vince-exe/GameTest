@@ -32,6 +32,8 @@ public:
 
 	std::string getStr();
 
+	std::vector<int> getIntVec();
+
 	std::vector<uint8_t> serialize() const;
 
 	static NetPacket deserialize(const std::vector<uint8_t>& serializedData);

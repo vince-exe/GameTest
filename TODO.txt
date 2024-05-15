@@ -1,5 +1,5 @@
 -Continuare:
-	- I quadrati spawnano casualmente e si mandano le posizioni a vicenda.
+	- I quadrati spawnano casualmente e si mandano le posizioni a vicenda. ( UPDATE: mandare le posizioni in float )
 	
 	- Ogni volta che si muovono si mandano le posizioni a vicenda.
 
