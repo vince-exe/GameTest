@@ -17,7 +17,7 @@ Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorCo
 	this->indicator.setPoint(2, sf::Vector2f(0.f, this->indicatorHeight));
 }
 
-sf::RectangleShape Player::getRect() {
+sf::RectangleShape& Player::getRect() {
 	return this->rectangle;
 }
 
@@ -33,6 +33,11 @@ void Player::setPosition(float x, float y) {
 
 sf::Vector2f Player::getPosition() {
 	return this->rectangle.getPosition();
+}
+
+void Player::move(const sf::Vector2f& offset) {
+	this->rectangle.move(offset);
+	this->updateIndicatorPos();
 }
 
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const {

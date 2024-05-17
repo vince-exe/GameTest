@@ -40,7 +40,6 @@ private:
 	sf::Text myNickname, enemyNickname;
 
 	std::shared_ptr<Player> youPlayer, enemyPlayer;
-
 	bool displayWindow;
 };
 

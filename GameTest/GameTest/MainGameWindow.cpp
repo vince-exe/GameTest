@@ -48,11 +48,11 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
     std::uniform_int_distribution<std::mt19937::result_type> xPositionGenerator(100, 800);
     std::uniform_int_distribution<std::mt19937::result_type> yPositionGenerator(100, 500);
 
-    int xPosition = xPositionGenerator(rng), yPosition = yPositionGenerator(rng);
+    float xPosition = xPositionGenerator(rng), yPosition = yPositionGenerator(rng);
     /* set the player to a random position*/
     youPlayer->setPosition(xPosition, yPosition);
 
-    int playerPosition[2] = { xPosition, yPosition };
+    float playerPosition[2] = { xPosition, yPosition };
     /* send the position*/
     if (!NetUtils::send_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(playerPosition), sizeof(playerPosition)))) {
         std::cerr << "\nError in sending position to the server";
@@ -61,7 +61,7 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
     /* get the enemy position */
     NetPacket p = NetUtils::read_(*this->client->getSocket());
     if (p.getMsgType() == NetMessages::PLAYER_POSITION) {
-        this->enemyPlayer->setPosition(p.getIntVec()[0], p.getIntVec()[1]);
+        this->enemyPlayer->setPosition(p.getFloatVec()[0], p.getFloatVec()[1]);
         return true;
     }
 
@@ -80,6 +80,10 @@ void MainGameWindow::handleMessages() {
                 this->quitGame();
                 return;
             }
+            if (packet.getMsgType() == NetMessages::PLAYER_POSITION) {
+                sf::Vector2f newPos(packet.getFloatVec()[0], packet.getFloatVec()[1]);
+                this->enemyPlayer->move(newPos - this->enemyPlayer->getPosition());
+            }
         }
         catch (const boost::system::system_error& ex) {
             std::cerr << "\nError in handleMessages() | " << ex.what();
@@ -89,28 +93,38 @@ void MainGameWindow::handleMessages() {
 }
 
 void MainGameWindow::handlePlayerMovement(sf::Event& event) {
-    if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::Key::W) {
-            if (youPlayer->getPosition().y - 10 >= 0) {
-                youPlayer->setPosition(youPlayer->getPosition().x, youPlayer->getPosition().y - 10);
-            }
-        }
-        if (event.key.code == sf::Keyboard::Key::A) {
-            if (youPlayer->getPosition().x - 10 >= 0) {
-                youPlayer->setPosition(youPlayer->getPosition().x - 10, youPlayer->getPosition().y);
-            }
-        }
-        if (event.key.code == sf::Keyboard::Key::S) {
-            if (youPlayer->getPosition().y + 10 < 470) {
-                youPlayer->setPosition(youPlayer->getPosition().x, youPlayer->getPosition().y + 10);
-            }
-        }
-        if (event.key.code == sf::Keyboard::Key::D) {
-            if (youPlayer->getPosition().x + 10 < 832) {
-                youPlayer->setPosition(youPlayer->getPosition().x + 10, youPlayer->getPosition().y);
-            }
-        }
+    const float speed = 10.f;
+    sf::Vector2f velocity(0.f, 0.f);
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+        velocity.y -= speed;
     }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        velocity.x -= speed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+        velocity.y += speed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        velocity.x += speed;
+    }
+
+    if (velocity.x != 0.f || velocity.y != 0.f) {
+        float length = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+        velocity /= length;
+        velocity *= speed;
+    }
+
+    sf::Vector2f newPos = youPlayer->getPosition() + velocity;
+    if (newPos.x < 0.f) newPos.x = 0.f;
+    if (newPos.x > 900.f - 70.f) newPos.x = 900.f - 70.f; 
+    if (newPos.y < 0.f) newPos.y = 0.f;
+    if (newPos.y > 540.f - 70.f) newPos.y = 540.f - 70.f;
+
+    youPlayer->move(newPos - youPlayer->getPosition());
+    float sendPosition[2] = {youPlayer->getPosition().x, youPlayer->getPosition().y};
+
+    NetUtils::send_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(sendPosition), sizeof(sendPosition)));
 }
 
 void MainGameWindow::quitGame() {

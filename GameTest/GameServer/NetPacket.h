@@ -32,7 +32,7 @@ public:
 
 	std::string getStr();
 
-	std::vector<int> getIntVec();
+	std::vector<float> getFloatVec();
 
 	std::vector<uint8_t> serialize() const;
 

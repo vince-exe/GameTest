@@ -19,11 +19,13 @@ private:
 public:
 	Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove = 10.f);
 
-	sf::RectangleShape getRect();
+	sf::RectangleShape& getRect();
 
 	void setPosition(sf::Vector2f pos);
 
 	void setPosition(float x, float y);
+
+	void move(const sf::Vector2f& offset);
 
 	sf::Vector2f getPosition();
 
