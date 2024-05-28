@@ -236,7 +236,7 @@ void MainMenu::listenForMatchmaking(std::string nickname) {
 
             if (p.getMsgType() == NetMessages::MATCH_FOUND) {
                 std::cout << "\nStop listening match found\n";
-                NetUtils::send_(*client->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
+                NetUtils::write_(*client->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
 
                 this->client->getSocket()->non_blocking(false);
                 this->matchFound(nickname);
@@ -274,7 +274,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
             }
             else {
                 /* send the nickname */
-                NetUtils::send_(*this->client->getSocket(), NetPacket(NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
+                NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
 
                 /* check the nickname */
                 if (NetUtils::read_(*this->client->getSocket()).getMsgType() == NetMessages::NICK_EXITS) {
@@ -284,7 +284,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 }
                 /* send the matchmaking request */
                 else {
-                    NetUtils::send_(*this->client->getSocket(), NetPacket(NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
+                    NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
                     handleMatchmakingResponse(NetUtils::read_(*this->client->getSocket()).getMsgType(), nick);
                 }
             }
@@ -309,7 +309,7 @@ void MainMenu::undoMatchmaking() {
     std::cout << "\nundo matchmaking.\n";
     try {
         inMatchmaking.store(false);
-        NetUtils::send_(*this->client->getSocket(), NetPacket(NetMessages::UNDO_MATCHMAKING, nullptr, 0));
+        NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::UNDO_MATCHMAKING, nullptr, 0));
     }
     catch (const boost::system::system_error& e) {
         std::cerr << "\nError in undo matchmaking " << e.what() << std::endl;

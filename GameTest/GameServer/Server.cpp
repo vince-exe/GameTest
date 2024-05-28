@@ -15,12 +15,12 @@ void Server::accept() {
 		
 		// SERVER FULL
 		if (this->usersMap.size() >= this->maxConnections) {
-			NetUtils::send_(*socket, NetPacket(NetMessages::SERVER_FULL, nullptr, 0));
+			NetUtils::write_(*socket, NetPacket(NetMessages::SERVER_FULL, nullptr, 0));
 			socket.reset();
 			continue;
 		}
 		else {
-			NetUtils::send_(*socket, NetPacket(NetMessages::IDLE, nullptr, 0));
+			NetUtils::write_(*socket, NetPacket(NetMessages::IDLE, nullptr, 0));
 		}
 		
 		std::thread t(&Server::handleClient, this, socket);
@@ -68,7 +68,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 bool Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick) {
 	if (this->matchmakingQueue.empty()) {
 		this->matchmakingQueue.push(this->usersMap[nick]);
-		NetUtils::send_(*socket, NetPacket(NetMessages::WAIT_FOR_MATCH, nullptr, 0));
+		NetUtils::write_(*socket, NetPacket(NetMessages::WAIT_FOR_MATCH, nullptr, 0));
 
 		std::cout << "\nClient [nick]: " << nick << " in queue for a match.";
 		return false;
@@ -82,8 +82,8 @@ void Server::gameSessionThread(const std::string nick) {
 	std::shared_ptr<User> player2 = this->usersMap[nick];
 
 	/* send the match found message */
-	NetUtils::send_(*player1->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
-	NetUtils::send_(*player2->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
+	NetUtils::write_(*player1->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
+	NetUtils::write_(*player2->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
 
 	/* delete the thread because the match has been found and it's useless to have. */
 	this->mtx.lock();
@@ -145,7 +145,7 @@ bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, std::string
 		if (this->nicknameAlreadyExist(nick)) {
 			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << " [ NICK ]: " << nick << " | refused ( nick already exist )";
 
-			NetUtils::send_(*socket, NetPacket(NetMessages::NICK_EXITS, nullptr, 0));
+			NetUtils::write_(*socket, NetPacket(NetMessages::NICK_EXITS, nullptr, 0));
 			return false;
 		}
 		else {
@@ -153,7 +153,7 @@ bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, std::string
 			this->usersMap[nick] = std::make_shared<User>(nick, socket);
 			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << " [ NICK ]: " << nick << " | accepted.";
 
-			NetUtils::send_(*socket, NetPacket(NetMessages::CLIENT_ACCEPTED, nullptr, 0));
+			NetUtils::write_(*socket, NetPacket(NetMessages::CLIENT_ACCEPTED, nullptr, 0));
 			return true;
 		}
 	}

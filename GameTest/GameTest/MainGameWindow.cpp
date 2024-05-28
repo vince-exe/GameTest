@@ -54,7 +54,7 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
 
     float playerPosition[2] = { xPosition, yPosition };
     /* send the position*/
-    if (!NetUtils::send_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(playerPosition), sizeof(playerPosition)))) {
+    if (!NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(playerPosition), sizeof(playerPosition)))) {
         std::cerr << "\nError in sending position to the server";
     }   
     
@@ -124,7 +124,7 @@ void MainGameWindow::handlePlayerMovement(sf::Event& event) {
     youPlayer->move(newPos - youPlayer->getPosition());
     float sendPosition[2] = {youPlayer->getPosition().x, youPlayer->getPosition().y};
 
-    NetUtils::send_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(sendPosition), sizeof(sendPosition)));
+    NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(sendPosition), sizeof(sendPosition)));
 }
 
 void MainGameWindow::quitGame() {
