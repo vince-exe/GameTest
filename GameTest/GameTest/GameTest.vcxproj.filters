@@ -37,6 +37,12 @@
     <Filter Include="File di origine\Network">
       <UniqueIdentifier>{98a6005c-9134-4db3-8651-d2fbc3fb3b51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File di origine\GameMenus">
+      <UniqueIdentifier>{3938a967-b8d0-4e68-9f22-486ccdeafeb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di intestazione\GameMenus">
+      <UniqueIdentifier>{f9e3020b-74bf-4cf7-94fd-d23736ca3368}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -93,6 +99,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>File di origine\Game</Filter>
     </ClCompile>
+    <ClCompile Include="GameSettingsMenu.cpp">
+      <Filter>File di origine\GameMenus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -148,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSettingsMenu.h">
+      <Filter>File di intestazione\GameMenus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

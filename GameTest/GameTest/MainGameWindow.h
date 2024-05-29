@@ -10,8 +10,8 @@
 #include "Client.h"
 #include "Player.h"
 #include "../GameServer/network_utilities.h"
-
 #include "MainGameTextureManager.h"
+#include "GameSettingsMenu.h"
 
 class MainGameWindow {
 public:

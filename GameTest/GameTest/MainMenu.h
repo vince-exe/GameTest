@@ -69,7 +69,7 @@ private:
 	std::shared_ptr<Music> backgroundMusicPtr;
 	std::shared_ptr<Sound> notificationSound;
 
-	Entity background, playBtn, settingsBtn, exitBtn, undoMatchBtn;
+	Entity background, playBtn, settingsBtn, exitBtn, undoMatchBtn, mainText;
 	Entity menuMsgs[4];
 	Entity* msgToDisplay;			
 

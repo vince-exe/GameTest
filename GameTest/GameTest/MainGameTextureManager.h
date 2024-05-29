@@ -6,8 +6,9 @@
 
 class MainGameTextureManager {
 public:
-	static bool init();
-
+	static sf::Texture backGameOptions;
+	
 public:
+	static bool init();
 };
 

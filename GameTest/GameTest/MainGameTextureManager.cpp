@@ -1,5 +1,7 @@
 #include "MainGameTextureManager.h"
 
+sf::Texture MainGameTextureManager::backGameOptions;
+
 bool MainGameTextureManager::init() {
-	return true;
+	return backGameOptions.loadFromFile("assets/Game/GameOptionsBackText.png");
 }

@@ -18,6 +18,7 @@ sf::Texture MainMenuTextureManager::connectBtn;
 sf::Texture MainMenuTextureManager::cancelBtn;
 sf::Texture MainMenuTextureManager::invalidFormatText;
 sf::Texture MainMenuTextureManager::undoMatchBtn;
+sf::Texture MainMenuTextureManager::mainLobbyText;
 
 bool MainMenuTextureManager::init() {
     /* load the volume numbers */
@@ -37,7 +38,7 @@ bool MainMenuTextureManager::init() {
         pathNumber++;
     }
 
-    return backBtn.loadFromFile("assets/Buttons/Back_Button.png") && exitBtn.loadFromFile("assets/Buttons/exitBtn.png")
+    return mainLobbyText.loadFromFile("assets/MenuTexts/mainLobbyText.png") && backBtn.loadFromFile("assets/Buttons/Back_Button.png") && exitBtn.loadFromFile("assets/Buttons/exitBtn.png")
         && playBtn.loadFromFile("assets/Buttons/playBtn.png") && settingsBtn.loadFromFile("assets/Buttons/settingsBtn.png")
         && doneBtn.loadFromFile("assets/Buttons/doneBtn.png") && background.loadFromFile("assets/Backgrounds/Background.png")
         && optionsTextVolume.loadFromFile("assets/VolumeNumbers/music_text.png") && confirmationExitText.loadFromFile("assets/Messages-Texts/img.png")

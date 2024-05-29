@@ -67,10 +67,23 @@ void MainMenu::setTextures() {
     settingsBtn.setTexture(MainMenuTextureManager::settingsBtn);
     exitBtn.setTexture(MainMenuTextureManager::exitBtn);
     undoMatchBtn.setTexture(MainMenuTextureManager::undoMatchBtn);
+    mainText.setTexture(MainMenuTextureManager::mainLobbyText);
 
     for (int i = 0; i < 4; i++) {
         menuMsgs[i].setTexture(MainMenuTextureManager::menuMsg[i]);
     }
+}
+
+void MainMenu::initSprites() {
+    float windowXSize = windowPtr->getSize().x;
+
+    playBtn.getSprite().setPosition((windowXSize - playBtn.getTexture().getSize().x) / 2, 345.f);
+    undoMatchBtn.getSprite().setPosition((windowXSize - playBtn.getTexture().getSize().x) / 2, 345.f);
+
+    settingsBtn.getSprite().setPosition((windowXSize - settingsBtn.getTexture().getSize().x) / 2, 465.f);
+    exitBtn.getSprite().setPosition((windowXSize - exitBtn.getTexture().getSize().x) / 2, 585.f);
+
+    mainText.getSprite().setPosition(20.f, windowPtr->getSize().y - 150);
 }
 
 bool MainMenu::loadMouse() {
@@ -96,16 +109,6 @@ void MainMenu::setMusicSound() {
     notificationSound->setVolume(70.f);
 }
 
-void MainMenu::initSprites() {
-    float windowXSize = windowPtr->getSize().x;
-
-    playBtn.getSprite().setPosition((windowXSize - playBtn.getTexture().getSize().x) / 2, 345.f);
-    undoMatchBtn.getSprite().setPosition((windowXSize - playBtn.getTexture().getSize().x) / 2, 345.f);
-
-    settingsBtn.getSprite().setPosition((windowXSize - settingsBtn.getTexture().getSize().x) / 2, 465.f);
-    exitBtn.getSprite().setPosition((windowXSize - exitBtn.getTexture().getSize().x) / 2, 585.f);
-}
-
 void MainMenu::renderWindow() {
     windowPtr->clear();
     
@@ -113,6 +116,7 @@ void MainMenu::renderWindow() {
     windowPtr->draw(playBtn);
     windowPtr->draw(settingsBtn);
     windowPtr->draw(exitBtn);
+    windowPtr->draw(mainText);
 
     if (inMatchmaking.load()) {
         windowPtr->draw(undoMatchBtn);
@@ -173,7 +177,6 @@ void MainMenu::handleButtonClicks(sf::Event& event) {
 
              std::string nick = nicknameMenu.init(windowPtr, background, checker, defaultCursor, pointCursor);
              if (checker == PopupReturnValues::DONE) {
-                std::cout << "\nNickname: " << nick << "\n";
                 /* OPEN THE CONNECT MENU */
                 IpPortMenu ipPortMenu;
 

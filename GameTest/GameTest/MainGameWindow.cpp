@@ -33,7 +33,8 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
                 return;
             }
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                ;
+                GameSettingsMenu gameSettingsMenu;
+                gameSettingsMenu.init(this->windowPtr);
             }
             handlePlayerMovement(event);
         }
