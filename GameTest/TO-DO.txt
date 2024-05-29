@@ -1,0 +1,9 @@
+DA FARE
+
+- sostituire i pulsanti del MAIN_MENU con solo le scritte ed una stecchetta di un colore sotto che cambia colore quando il mouse va sulla scritta
+
+- quando un giocatore sta aspettando il matchmaking non può andare nelle opzioni ( questo bloccherrebbe l'altro )
+
+- quando un giocatore sta nelle opzioni mentre è in gioco e l'altro abbandona crasha ( aggiustare )
+
+- continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )
