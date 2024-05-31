@@ -397,3 +397,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 *.vcxproj
+GameTest/GameTest/GameTest.vcxproj
