@@ -12,10 +12,10 @@
 
 class OptionsMainMenu {
 public:
-	void init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, Entity& background, PopupReturnValues& checker);
+	void init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, PopupReturnValues& checker);
 
 private:
-	void draw(Entity& background);
+	void draw();
 
 	void handleMouseButtons(std::shared_ptr<Music> backgroundMusicPtr, sf::Event& event, bool& requestExit, PopupReturnValues& checker);
 

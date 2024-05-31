@@ -1,23 +1,20 @@
 #include "MainMenuTextureManager.h"
 
-sf::Texture MainMenuTextureManager::backBtn;
-sf::Texture MainMenuTextureManager::exitBtn;
-sf::Texture MainMenuTextureManager::playBtn;
-sf::Texture MainMenuTextureManager::settingsBtn;
-sf::Texture MainMenuTextureManager::doneBtn;
-sf::Texture MainMenuTextureManager::background;
+sf::Texture MainMenuTextureManager::backText;
+sf::Texture MainMenuTextureManager::exitText;
+sf::Texture MainMenuTextureManager::matchText;
+sf::Texture MainMenuTextureManager::settingsText;
+sf::Texture MainMenuTextureManager::doneText;
 sf::Texture MainMenuTextureManager::optionsTextVolume;
 sf::Texture MainMenuTextureManager::confirmationExitText;
-sf::Texture MainMenuTextureManager::connectText;
+sf::Texture MainMenuTextureManager::connectionText;
 sf::Texture MainMenuTextureManager::nicknameText;
 sf::Texture MainMenuTextureManager::volumeTextLevel[10];
 sf::Texture MainMenuTextureManager::menuMsg[4];
-sf::Texture MainMenuTextureManager::cursorTextureGrab;
-sf::Texture MainMenuTextureManager::cursorTexturePoint;
-sf::Texture MainMenuTextureManager::connectBtn;
-sf::Texture MainMenuTextureManager::cancelBtn;
+sf::Texture MainMenuTextureManager::connectText;
+sf::Texture MainMenuTextureManager::cancelText;
 sf::Texture MainMenuTextureManager::invalidFormatText;
-sf::Texture MainMenuTextureManager::undoMatchBtn;
+sf::Texture MainMenuTextureManager::undoMatchText;
 sf::Texture MainMenuTextureManager::mainLobbyText;
 
 bool MainMenuTextureManager::init() {
@@ -38,12 +35,10 @@ bool MainMenuTextureManager::init() {
         pathNumber++;
     }
 
-    return mainLobbyText.loadFromFile("assets/MenuTexts/mainLobbyText.png") && backBtn.loadFromFile("assets/Buttons/Back_Button.png") && exitBtn.loadFromFile("assets/Buttons/exitBtn.png")
-        && playBtn.loadFromFile("assets/Buttons/playBtn.png") && settingsBtn.loadFromFile("assets/Buttons/settingsBtn.png")
-        && doneBtn.loadFromFile("assets/Buttons/doneBtn.png") && background.loadFromFile("assets/Backgrounds/Background.png")
-        && optionsTextVolume.loadFromFile("assets/VolumeNumbers/music_text.png") && confirmationExitText.loadFromFile("assets/Messages-Texts/img.png")
-        && cursorTextureGrab.loadFromFile("assets/Cursor/Cursor_Grab.png") && cursorTexturePoint.loadFromFile("assets/Cursor/Cursor_Point.png")
-        && nicknameText.loadFromFile("assets/Messages-Texts/nick_img.png") && connectBtn.loadFromFile("assets/Buttons/connectBtn.png")
-        && cancelBtn.loadFromFile("assets/Buttons/cancelBtn.png") && connectText.loadFromFile("assets/Messages-Texts/connect_to_server.png")
-        && invalidFormatText.loadFromFile("assets/Messages-Texts/invalid_format.png") && undoMatchBtn.loadFromFile("assets/Buttons/undoMatch.png");
+    return mainLobbyText.loadFromFile("assets/MenuTexts/mainLobbyText.png") && backText.loadFromFile("assets/Buttons/backText.png") && exitText.loadFromFile("assets/Buttons/exitText.png")
+        && matchText.loadFromFile("assets/Buttons/matchText.png") && settingsText.loadFromFile("assets/Buttons/settingsText.png")
+        && doneText.loadFromFile("assets/Buttons/doneText.png") && optionsTextVolume.loadFromFile("assets/VolumeNumbers/music_text.png") && confirmationExitText.loadFromFile("assets/Messages-Texts/img.png")
+        && nicknameText.loadFromFile("assets/Messages-Texts/nick_img.png") && connectText.loadFromFile("assets/Buttons/connectText.png")
+        && cancelText.loadFromFile("assets/Buttons/cancelText.png") && connectionText.loadFromFile("assets/Messages-Texts/connect_to_server.png")
+        && invalidFormatText.loadFromFile("assets/Messages-Texts/invalid_format.png") && undoMatchText.loadFromFile("assets/Buttons/undoMatchText.png");
 }

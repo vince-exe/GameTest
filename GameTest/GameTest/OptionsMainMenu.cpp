@@ -1,6 +1,6 @@
 #include "OptionsMainMenu.h"
 
-void OptionsMainMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, Entity& background, PopupReturnValues& checker) {
+void OptionsMainMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Music> backgroundMusicPtr, PopupReturnValues& checker) {
     this->windowPtr = windowPtr;
 
     sf::Cursor defaultCursor;
@@ -23,14 +23,12 @@ void OptionsMainMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, std::sha
             }
             handleMouseButtons(backgroundMusicPtr, event, requestExit, checker);
         }
-
-        draw(background);
+        draw();
     }
 }
 
-void OptionsMainMenu::draw(Entity& background) {
+void OptionsMainMenu::draw() {
     windowPtr->clear();
-    windowPtr->draw(background);
     windowPtr->draw(backBtn);
     windowPtr->draw(slider);
     windowPtr->draw(volumeText);
@@ -115,5 +113,5 @@ void OptionsMainMenu::setTextures() {
         this->volumeLevelText[i].setTexture(MainMenuTextureManager::volumeTextLevel[i]);
     }
     volumeText.setTexture(MainMenuTextureManager::optionsTextVolume);
-    backBtn.setTexture(MainMenuTextureManager::backBtn);
+    backBtn.setTexture(MainMenuTextureManager::backText);
 }

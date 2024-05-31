@@ -23,14 +23,7 @@
 #include "../GameServer/network_utilities.h"
 
 class MainMenu {
-public:
-	MainMenu();
-
-	bool init();
-
 private:
-	bool loadMouse();
-
 	bool loadMusicSound();
 
 	void setMusicSound();
@@ -39,9 +32,7 @@ private:
 
 	void initSprites();
 
-	void renderWindow();
-
-	void handleMouseCursor(sf::Event& event);
+	void draw();
 
 	void handleKeyBoard(sf::Event& event);
 
@@ -49,9 +40,9 @@ private:
 
 	void handleClientConnection(std::string nick, std::string ip, int port);
 
-	void displayTextFuncTime(Entity& entity, int seconds);
+	void displayTextThread(Entity& entity, int seconds);
 
-	void handleMatchmakingResponse(const NetMessages& msg, std::string nickname);
+	void handleMatchmakingClient(const NetMessages& msg, std::string nickname);
 
 	void listenForMatchmaking(std::string nickname);
 
@@ -69,11 +60,9 @@ private:
 	std::shared_ptr<Music> backgroundMusicPtr;
 	std::shared_ptr<Sound> notificationSound;
 
-	Entity background, playBtn, settingsBtn, exitBtn, undoMatchBtn, mainText;
+	Entity matchText, settingsText, exitText, undoMatchText, mainText;
 	Entity menuMsgs[4];
-	Entity* msgToDisplay;			
-
-	sf::Cursor defaultCursor, pointCursor;
+	Entity* msgToDisplay;
 
 	bool displayText;
 	bool exitRequested;
@@ -82,4 +71,9 @@ private:
 
 	std::shared_ptr<Client> client;
 	std::string nickname;
+
+public:
+	MainMenu();
+
+	bool init();
 };

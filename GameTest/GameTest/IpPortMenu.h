@@ -16,7 +16,7 @@
 
 class IpPortMenu {
 public:
-	std::pair<std::string, int> init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Sound> notificationSound, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor);
+	std::pair<std::string, int> init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Sound> notificationSound, PopupReturnValues& checker);
 
 private:
 	void setTextures();
@@ -25,11 +25,9 @@ private:
 
 	void initSprites();
 
-	void draw(Entity& background);
+	void draw();
 
 	void handleTextEntered(sf::Event& event);
-
-	void handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCursor);
 
 	void handleMouseButtons(sf::Event& event, PopupReturnValues& checker, bool& exitRequested, std::shared_ptr<Sound> notificationSound);
 

@@ -1,8 +1,7 @@
 #include "MenuConfirmationExit.h"
 
-void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor) {
+void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, PopupReturnValues& checker) {
 	this->windowPtr = windowPtr;
-	windowPtr->setMouseCursor(defCursor);
 
 	setTextures();
 	setSprite();
@@ -19,17 +18,15 @@ void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Ent
 				checker = PopupReturnValues::BACK;
 				exitRequested = true;
 			}
-
-			handleMouseCursor(pointCursor, defCursor);
 			handleButtonClicks(checker, event, exitRequested);
 		}
-		renderWindow(background);
+		draw();
 	}
 }
 
 void MenuConfirmationExit::setTextures() {
-	backBtn.setTexture(MainMenuTextureManager::backBtn);
-	exitBtn.setTexture(MainMenuTextureManager::exitBtn);
+	backBtn.setTexture(MainMenuTextureManager::backText);
+	exitBtn.setTexture(MainMenuTextureManager::exitText);
 	text.setTexture(MainMenuTextureManager::confirmationExitText);
 }
 
@@ -43,17 +40,6 @@ void MenuConfirmationExit::setSprite() {
 	sf::Vector2f spritePosition((windowSize.x - spriteSize.x) / 2, (windowSize.y - spriteSize.y) / 2);
 	spritePosition.y -= 100.f;
 	text.getSprite().setPosition(spritePosition);
-}
-
-void MenuConfirmationExit::handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCursor) {
-	sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
-
-	if (backBtn.isInside(position) || exitBtn.isInside(position)) {
-		windowPtr->setMouseCursor(pointCursor);
-	}
-	else {
-		windowPtr->setMouseCursor(defCursor);
-	}
 }
 
 void MenuConfirmationExit::handleButtonClicks(PopupReturnValues& checker, sf::Event& event, bool& exitRequested) {
@@ -72,9 +58,8 @@ void MenuConfirmationExit::handleButtonClicks(PopupReturnValues& checker, sf::Ev
 	}
 }
 
-void MenuConfirmationExit::renderWindow(Entity& background) {
+void MenuConfirmationExit::draw() {
 	windowPtr->clear();
-	windowPtr->draw(background);
 	windowPtr->draw(backBtn);
 	windowPtr->draw(exitBtn);
 	windowPtr->draw(text);

@@ -26,7 +26,7 @@ int main() {
 
     MainMenu mainMenu;
     mainMenu.init();
-      
+   
     if (SettingsManager::storeSettings()) {
         std::cout << "\nSuccessfully stored the settings";
     }

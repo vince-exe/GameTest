@@ -29,6 +29,9 @@ bool Entity::loadTexture(const std::string& path) {
 
 bool Entity::isInside(const sf::Vector2f& pos) {
 	return this->sprite.getGlobalBounds().contains(pos);
+
+	sf::Text cao;
+
 }
 
 void Entity::draw(sf::RenderTarget& window, sf::RenderStates state) const {

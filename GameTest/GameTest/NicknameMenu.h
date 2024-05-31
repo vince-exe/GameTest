@@ -11,18 +11,16 @@
 
 class NicknameMenu {
 public:
-	std::string init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor);
+	std::string init(std::shared_ptr<sf::RenderWindow> windowPtr, PopupReturnValues& checker);
 
 private:
-	void draw(Entity& background);
+	void draw();
 
 	void setTextures();
 
 	void initSprites();
 
 	void handleTextEntered(sf::Event& event);
-
-	void handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCursor);
 	
 	void handleMouseButtons(sf::Event& event, PopupReturnValues& checker, bool& exitRequested);
 

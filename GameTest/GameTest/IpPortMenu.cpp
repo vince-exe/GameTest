@@ -1,6 +1,6 @@
 #include "IpPortMenu.h"
 
-std::pair<std::string, int> IpPortMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Sound> notificationSound, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor) {
+std::pair<std::string, int> IpPortMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Sound> notificationSound, PopupReturnValues& checker) {
     this->windowPtr = windowPtr;
     
     setTextures();
@@ -21,10 +21,9 @@ std::pair<std::string, int> IpPortMenu::init(std::shared_ptr<sf::RenderWindow> w
             }
             
             handleTextEntered(event);
-            handleMouseCursor(pointCursor, defCursor);
             handleMouseButtons(event, checker, requestExit, notificationSound);
         }
-        draw(background);
+        draw();
     }
     
     return pair;
@@ -32,8 +31,8 @@ std::pair<std::string, int> IpPortMenu::init(std::shared_ptr<sf::RenderWindow> w
 
 void IpPortMenu::setTextures() {
     this->text.setTexture(MainMenuTextureManager::connectText);
-    this->connectBtn.setTexture(MainMenuTextureManager::connectBtn);
-    this->cancelBtn.setTexture(MainMenuTextureManager::cancelBtn);
+    this->connectBtn.setTexture(MainMenuTextureManager::connectText);
+    this->cancelBtn.setTexture(MainMenuTextureManager::cancelText);
     this->entityToDisplay.setTexture(MainMenuTextureManager::invalidFormatText);
 }
 
@@ -70,9 +69,8 @@ void IpPortMenu::initSprites() {
     connectBtn.getSprite().setPosition((windowXSize - connectBtn.getTexture().getSize().x) / 2 + 230, line.getPosition().y + 100);
 }
 
-void IpPortMenu::draw(Entity& background) {
+void IpPortMenu::draw() {
     windowPtr->clear();
-    windowPtr->draw(background);
     windowPtr->draw(text);
     windowPtr->draw(cancelBtn);
     windowPtr->draw(connectBtn);
@@ -106,17 +104,6 @@ void IpPortMenu::handleTextEntered(sf::Event& event) {
                 inputDisplay.setPosition(line.getPosition().x + line.getSize().x / 2.f, (line.getPosition().y - textBounds.height / 2.f) - 8.f);
             }
         }
-    }
-}
-
-void IpPortMenu::handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCursor) {
-    sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
-
-    if (cancelBtn.isInside(position) || connectBtn.isInside(position)) {
-        windowPtr->setMouseCursor(pointCursor);
-    }
-    else {
-        windowPtr->setMouseCursor(defCursor);
     }
 }
 

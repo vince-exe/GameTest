@@ -1,11 +1,11 @@
 #include "NicknameMenu.h"
 
-std::string NicknameMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, Entity& background, PopupReturnValues& checker, sf::Cursor& defCursor, sf::Cursor& pointCursor) {
+std::string NicknameMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, PopupReturnValues& checker) {
 	this->windowPtr = windowPtr;
 
     setTextures();
     initSprites();
-
+    
     bool requestExit = false;
     sf::Event event;
     while (windowPtr->isOpen() && !requestExit) {
@@ -18,18 +18,16 @@ std::string NicknameMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, Enti
                 return "";
             }
             handleTextEntered(event);
-            handleMouseCursor(pointCursor, defCursor);
             handleMouseButtons(event, checker, requestExit);
         }
-        draw(background);
+        draw();
     }
 
     return inputText;
 }
 
-void NicknameMenu::draw(Entity& background) {
+void NicknameMenu::draw() {
 	windowPtr->clear();
-	windowPtr->draw(background);
     windowPtr->draw(text);
     windowPtr->draw(backBtn);
     windowPtr->draw(doneBtn);
@@ -43,8 +41,8 @@ void NicknameMenu::draw(Entity& background) {
 
 void NicknameMenu::setTextures() {
     this->text.setTexture(MainMenuTextureManager::nicknameText);
-    this->doneBtn.setTexture(MainMenuTextureManager::doneBtn);
-    this->backBtn.setTexture(MainMenuTextureManager::backBtn);
+    this->doneBtn.setTexture(MainMenuTextureManager::doneText);
+    this->backBtn.setTexture(MainMenuTextureManager::backText);
 }
 
 void NicknameMenu::initSprites() {
@@ -82,17 +80,6 @@ void NicknameMenu::handleTextEntered(sf::Event& event) {
                 inputDisplay.setPosition(line.getPosition().x + line.getSize().x / 2.f, (line.getPosition().y - textBounds.height / 2.f) - 8.f);
             }
         }
-    }
-}
-
-void NicknameMenu::handleMouseCursor(sf::Cursor& pointCursor, sf::Cursor& defCursor) {
-    sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
-
-    if (backBtn.isInside(position) || doneBtn.isInside(position)) {
-        windowPtr->setMouseCursor(pointCursor);
-    }
-    else {
-        windowPtr->setMouseCursor(defCursor);
     }
 }
 

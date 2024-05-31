@@ -10,14 +10,11 @@ public:
 
 public:
 	/* buttons */
-	static sf::Texture backBtn, exitBtn, playBtn, settingsBtn, doneBtn, connectBtn, cancelBtn, undoMatchBtn;
-	static sf::Texture background;
+	static sf::Texture backText, exitText, matchText, settingsText, doneText, connectText, cancelText, undoMatchText;
 	/* text */
-	static sf::Texture mainLobbyText, optionsTextVolume, confirmationExitText, nicknameText, connectText, invalidFormatText;
+	static sf::Texture mainLobbyText, optionsTextVolume, confirmationExitText, nicknameText, connectionText, invalidFormatText;
 	/* single volume text: 0 / 10 / 20... */
 	static sf::Texture volumeTextLevel[10];
-	/* mouse */
-	static sf::Texture cursorTextureGrab, cursorTexturePoint;
 	/* menu texts / errors */
 	static sf::Texture menuMsg[4];
 };
