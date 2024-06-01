@@ -58,9 +58,9 @@ bool MainMenu::init() {
 void MainMenu::setTextures() {
     matchText.setTexture(MainMenuTextureManager::matchText);
     settingsText.setTexture(MainMenuTextureManager::settingsText);
-    exitText.setTexture(MainMenuTextureManager::exitText);
     undoMatchText.setTexture(MainMenuTextureManager::undoMatchText);
     mainText.setTexture(MainMenuTextureManager::mainLobbyText);
+    quitText.setTexture(MainMenuTextureManager::quitText);
 
     for (int i = 0; i < 4; i++) {
         menuMsgs[i].setTexture(MainMenuTextureManager::menuMsg[i]);
@@ -71,10 +71,11 @@ void MainMenu::initSprites() {
     float windowXSize = windowPtr->getSize().x;
 
     matchText.getSprite().setPosition((windowXSize - matchText.getTexture().getSize().x) / 2, 130.f);
-    undoMatchText.getSprite().setPosition((windowXSize - matchText.getTexture().getSize().x) / 2, 130.f);
+    undoMatchText.getSprite().setPosition((windowXSize - undoMatchText.getTexture().getSize().x) / 2, 130.f);
 
     settingsText.getSprite().setPosition((windowXSize - settingsText.getTexture().getSize().x) / 2, 250.f);
-    exitText.getSprite().setPosition((windowXSize - exitText.getTexture().getSize().x) / 2, 370.f);
+
+    quitText.getSprite().setPosition((windowXSize - quitText.getTexture().getSize().x) / 2, 370.f);
 
     mainText.getSprite().setPosition(20.f, windowPtr->getSize().y - mainText.getSprite().getGlobalBounds().height - 10);
 }
@@ -95,10 +96,9 @@ void MainMenu::setMusicSound() {
 void MainMenu::draw() {
     windowPtr->clear();
 
-    windowPtr->draw(matchText);
     windowPtr->draw(settingsText);
-    windowPtr->draw(exitText);
     windowPtr->draw(mainText);
+    windowPtr->draw(quitText);
 
     if (inMatchmaking.load()) {
         windowPtr->draw(undoMatchText);
@@ -164,8 +164,15 @@ void MainMenu::handleButtonClicks(sf::Event& event) {
             optionsMainMenu.init(windowPtr, backgroundMusicPtr, checker);
         }
         /* EXIT MENU */
-        else if (exitText.isInside(position)) {
-            exitMenu();
+        else if (quitText.isInside(position)) {
+            MenuConfirmationExit menuConfirmationExit;
+            PopupReturnValues checker{};
+
+            menuConfirmationExit.init(windowPtr, checker);
+            if (checker == PopupReturnValues::EXIT) {
+                undoMatchmaking();
+                this->exitRequested = true;
+            }
         }
     }
 }
@@ -297,7 +304,7 @@ void MainMenu::matchFound(std::string nickname) {
 
 void MainMenu::displayTextFunc(Entity& entity) {
     msgToDisplay = &entity;
-    msgToDisplay->getSprite().setPosition(15.f, 480.f);
+    msgToDisplay->getSprite().setPosition((windowPtr->getSize().x - entity.getTexture().getSize().x) / 2, 50.f);
     displayText = true;
 }
 

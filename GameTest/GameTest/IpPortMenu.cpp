@@ -30,10 +30,28 @@ std::pair<std::string, int> IpPortMenu::init(std::shared_ptr<sf::RenderWindow> w
 }
 
 void IpPortMenu::setTextures() {
-    this->text.setTexture(MainMenuTextureManager::connectText);
-    this->connectBtn.setTexture(MainMenuTextureManager::connectText);
+    this->text.setTexture(MainMenuTextureManager::connectionText);
+    this->connectBtn.setTexture(MainMenuTextureManager::doneText);
     this->cancelBtn.setTexture(MainMenuTextureManager::cancelText);
     this->entityToDisplay.setTexture(MainMenuTextureManager::invalidFormatText);
+}
+
+void IpPortMenu::initSprites() {
+    float windowXSize = windowPtr->getSize().x;
+    float windowYSize = windowPtr->getSize().y;
+
+    text.getSprite().setPosition((windowXSize - text.getTexture().getSize().x) / 2, (windowYSize / 2) - 250.f);
+
+    line.setSize(sf::Vector2f(text.getSprite().getGlobalBounds().width, 5));
+    line.setFillColor(sf::Color(163, 163, 163));
+    line.setRotation(0);
+    line.setPosition(text.getSprite().getPosition().x, text.getSprite().getPosition().y + 240);
+
+    inputDisplay.setFont(FontManager::fredokaOne);
+    inputDisplay.setCharacterSize(45);
+
+    cancelBtn.getSprite().setPosition((windowXSize - cancelBtn.getTexture().getSize().x) / 2 - 230, line.getPosition().y + 100);
+    connectBtn.getSprite().setPosition((windowXSize - connectBtn.getTexture().getSize().x) / 2 + 230, line.getPosition().y + 100);
 }
 
 void IpPortMenu::setPlaceholder() {
@@ -49,24 +67,6 @@ void IpPortMenu::setPlaceholder() {
         inputDisplay.setOrigin(textBounds.left + textBounds.width / 2.f, textBounds.top + textBounds.height / 2.f);
         inputDisplay.setPosition(line.getPosition().x + line.getSize().x / 2.f, (line.getPosition().y - textBounds.height / 2.f) - 8.f);
     }
-}
-
-void IpPortMenu::initSprites() {
-    float windowXSize = windowPtr->getSize().x;
-    float windowYSize = windowPtr->getSize().y;
-
-    text.getSprite().setPosition((windowXSize - text.getTexture().getSize().x) / 2, (windowYSize / 2) - 250.f);
-
-    line.setSize(sf::Vector2f(text.getSprite().getGlobalBounds().width, 5));
-    line.setFillColor(sf::Color(255, 51, 51));
-    line.setRotation(0);
-    line.setPosition(text.getSprite().getPosition().x, text.getSprite().getPosition().y + 240);
-
-    inputDisplay.setFont(FontManager::fredokaOne);
-    inputDisplay.setCharacterSize(45);
-
-    cancelBtn.getSprite().setPosition((windowXSize - cancelBtn.getTexture().getSize().x) / 2 - 230, line.getPosition().y + 100);
-    connectBtn.getSprite().setPosition((windowXSize - connectBtn.getTexture().getSize().x) / 2 + 230, line.getPosition().y + 100);
 }
 
 void IpPortMenu::draw() {
@@ -150,7 +150,7 @@ void IpPortMenu::displayTextFuncTime(Entity& entity, int seconds) {
         using namespace std::chrono_literals;
 
         this->msgToDisplay = &entity;
-        this->msgToDisplay->getSprite().setPosition(15.f, 480.f);
+        this->msgToDisplay->getSprite().setPosition((windowPtr->getSize().x - entity.getTexture().getSize().x) / 2, 530);
         this->displayText = true;
 
         for (int i = 0; i < seconds; i++) {

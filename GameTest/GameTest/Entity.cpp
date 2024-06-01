@@ -15,7 +15,7 @@ sf::Texture& Entity::getTexture() {
 
 void Entity::setTexture(sf::Texture& texture) {
 	this->texture = texture;
-	this->sprite.setTexture(texture);
+	this->sprite.setTexture(texture, true);
 }
 
 bool Entity::loadTexture(const std::string& path) {

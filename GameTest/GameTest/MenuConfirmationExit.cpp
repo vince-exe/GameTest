@@ -25,21 +25,15 @@ void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Pop
 }
 
 void MenuConfirmationExit::setTextures() {
-	backBtn.setTexture(MainMenuTextureManager::backText);
-	exitBtn.setTexture(MainMenuTextureManager::exitText);
+	backBtn.setTexture(MainMenuTextureManager::cancelText);
+	exitBtn.setTexture(MainMenuTextureManager::doneText);
 	text.setTexture(MainMenuTextureManager::confirmationExitText);
 }
 
 void MenuConfirmationExit::setSprite() {
-	backBtn.getSprite().setPosition(615.f, 550.f);
-	exitBtn.getSprite().setPosition(965.f, 550.f);
-
-	/* center the text */
-	sf::Vector2f spriteSize(text.getSprite().getGlobalBounds().width, text.getSprite().getGlobalBounds().height);
-	sf::Vector2f windowSize(windowPtr->getSize().x, windowPtr->getSize().y);
-	sf::Vector2f spritePosition((windowSize.x - spriteSize.x) / 2, (windowSize.y - spriteSize.y) / 2);
-	spritePosition.y -= 100.f;
-	text.getSprite().setPosition(spritePosition);
+	text.getSprite().setPosition((windowPtr->getSize().x - text.getTexture().getSize().x) / 2, 230);
+	backBtn.getSprite().setPosition((windowPtr->getSize().x - backBtn.getTexture().getSize().x) / 2 - 120, 390.f);
+	exitBtn.getSprite().setPosition((windowPtr->getSize().x - exitBtn.getTexture().getSize().x) / 2 + 120, 390.f);
 }
 
 void MenuConfirmationExit::handleButtonClicks(PopupReturnValues& checker, sf::Event& event, bool& exitRequested) {

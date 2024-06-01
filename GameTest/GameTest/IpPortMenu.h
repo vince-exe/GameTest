@@ -15,9 +15,6 @@
 #include "Sound.h"
 
 class IpPortMenu {
-public:
-	std::pair<std::string, int> init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Sound> notificationSound, PopupReturnValues& checker);
-
 private:
 	void setTextures();
 
@@ -48,5 +45,8 @@ private:
 	Entity entityToDisplay;
 	bool displayText;
 	Entity* msgToDisplay;
+
+public:
+	std::pair<std::string, int> init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Sound> notificationSound, PopupReturnValues& checker);
 };
 

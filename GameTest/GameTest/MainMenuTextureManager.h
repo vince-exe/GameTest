@@ -10,11 +10,9 @@ public:
 
 public:
 	/* buttons */
-	static sf::Texture backText, exitText, matchText, settingsText, doneText, connectText, cancelText, undoMatchText;
+	static sf::Texture quitText, matchText, settingsText, doneText, connectText, cancelText, undoMatchText;
 	/* text */
 	static sf::Texture mainLobbyText, optionsTextVolume, confirmationExitText, nicknameText, connectionText, invalidFormatText;
-	/* single volume text: 0 / 10 / 20... */
-	static sf::Texture volumeTextLevel[10];
 	/* menu texts / errors */
 	static sf::Texture menuMsg[4];
 };

@@ -35,7 +35,6 @@ void OptionsMainMenu::draw() {
    
     for (int i = 0; i < 10; i++) {
         windowPtr->draw(checkPoints[i]);
-        windowPtr->draw(volumeLevelText[i]);
     }
     windowPtr->display();
 }
@@ -71,29 +70,30 @@ void OptionsMainMenu::checkVolumeLevel(std::shared_ptr<Music> backgroundMusicPtr
     }
 }
 
+void OptionsMainMenu::setTextures() {
+    volumeText.setTexture(MainMenuTextureManager::optionsTextVolume);
+    backBtn.setTexture(MainMenuTextureManager::cancelText);
+}
+
 void OptionsMainMenu::initSprites(std::shared_ptr<Music> backgroundMusicPtr) {
     slider.setSize(sf::Vector2f(500, 10));
-    slider.setFillColor(sf::Color(255, 51, 51));
+    slider.setFillColor(sf::Color(163, 163, 163));
     /* center the sprite */
-    slider.setPosition((windowPtr->getSize().x - slider.getSize().x) / 2, (windowPtr->getSize().y / 2) - 200);
+    slider.setPosition((windowPtr->getSize().x - slider.getSize().x) / 2, slider.getGlobalBounds().height + 105);
 
     sf::Vector2u spriteSize = volumeText.getTexture().getSize();
     float x = (windowPtr->getSize().x - spriteSize.x) / 2.0f;
     float y = slider.getPosition().y - 100;
-    volumeText.getSprite().setPosition(x, y);
+    volumeText.getSprite().setPosition(x, 30);
 
     x = (windowPtr->getSize().x - backBtn.getTexture().getSize().x) / 2.0f;
-    backBtn.getSprite().setPosition(x, 700);
+    backBtn.getSprite().setPosition(20, windowPtr->getSize().y - backBtn.getSprite().getGlobalBounds().height - 20);
 
     for (int i = 0; i < 10; ++i) {
         checkPoints[i].setSize(sf::Vector2f(15, 50));
         checkPoints[i].setFillColor(defCheckpointColor);
         checkPoints[i].setPosition(sf::Vector2f(slider.getPosition().x + i * (slider.getSize().x / 9), slider.getPosition().y - 21));
-        
-        volumeLevelText[i].getSprite().setPosition(checkPoints[i].getPosition().x - 10, checkPoints[i].getPosition().y + 60);
     } 
-    /* set the specif position of the 0 */
-    volumeLevelText[0].getSprite().setPosition(checkPoints[0].getPosition().x - 5, checkPoints[0].getPosition().y + 60);
 
     /* set the current level of music*/
     int volume = backgroundMusicPtr->getVolume();
@@ -105,13 +105,4 @@ void OptionsMainMenu::initSprites(std::shared_ptr<Music> backgroundMusicPtr) {
         checkPoints[volume / 10].setFillColor(selectedCheckpointColor);
         this->oldVolumeIndex = volume / 10;
     }
-}
-
-void OptionsMainMenu::setTextures() {
-    /* set the volume numbers */
-    for (int i = 0; i < 10; i++) {
-        this->volumeLevelText[i].setTexture(MainMenuTextureManager::volumeTextLevel[i]);
-    }
-    volumeText.setTexture(MainMenuTextureManager::optionsTextVolume);
-    backBtn.setTexture(MainMenuTextureManager::backText);
 }

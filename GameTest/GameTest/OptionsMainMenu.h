@@ -28,14 +28,13 @@ private:
 private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;
 
-	const sf::Color defCheckpointColor = sf::Color(255, 51, 51);
+	const sf::Color defCheckpointColor = sf::Color(163, 163, 163);
 	const sf::Color selectedCheckpointColor = sf::Color(58, 59, 60);
 
 	sf::RectangleShape slider;
 	sf::RectangleShape checkPoints[10];
 
 	Entity volumeText;
-	Entity volumeLevelText[10];
 	Entity backBtn;
 
 	int oldVolumeIndex;

@@ -32,6 +32,6 @@ private:
 	sf::RectangleShape line;
 
 	Entity text;
-	Entity doneBtn, backBtn;
+	Entity doneBtn, cancelBtn;
 };
 
