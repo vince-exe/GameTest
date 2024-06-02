@@ -33,7 +33,7 @@ bool MainMenu::init() {
     while (windowPtr->isOpen() && !exitRequested) {
         if (displayGameWindow) {
             this->windowPtr->setVisible(false);
-
+            
             MainGameWindow mainGameWindow;
             mainGameWindow.init(this->nickname, this->client);
 
@@ -57,6 +57,7 @@ bool MainMenu::init() {
 
 void MainMenu::setTextures() {
     matchText.setTexture(MainMenuTextureManager::matchText);
+    settings2Text.setTexture(MainMenuTextureManager::settings2Text);
     settingsText.setTexture(MainMenuTextureManager::settingsText);
     undoMatchText.setTexture(MainMenuTextureManager::undoMatchText);
     mainText.setTexture(MainMenuTextureManager::mainLobbyText);
@@ -74,6 +75,7 @@ void MainMenu::initSprites() {
     undoMatchText.getSprite().setPosition((windowXSize - undoMatchText.getTexture().getSize().x) / 2, 130.f);
 
     settingsText.getSprite().setPosition((windowXSize - settingsText.getTexture().getSize().x) / 2, 250.f);
+    settings2Text.getSprite().setPosition((windowXSize - settings2Text.getTexture().getSize().x) / 2, 250.f);
 
     quitText.getSprite().setPosition((windowXSize - quitText.getTexture().getSize().x) / 2, 370.f);
 
@@ -96,14 +98,15 @@ void MainMenu::setMusicSound() {
 void MainMenu::draw() {
     windowPtr->clear();
 
-    windowPtr->draw(settingsText);
     windowPtr->draw(mainText);
     windowPtr->draw(quitText);
 
     if (inMatchmaking.load()) {
+        windowPtr->draw(settings2Text);
         windowPtr->draw(undoMatchText);
     }
     else {
+        windowPtr->draw(settingsText);
         windowPtr->draw(matchText);
     }
 

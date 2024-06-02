@@ -10,7 +10,7 @@ public:
 
 public:
 	/* buttons */
-	static sf::Texture quitText, matchText, settingsText, doneText, connectText, cancelText, undoMatchText;
+	static sf::Texture quitText, matchText, settingsText, settings2Text, doneText, connectText, cancelText, undoMatchText;
 	/* text */
 	static sf::Texture mainLobbyText, optionsTextVolume, confirmationExitText, nicknameText, connectionText, invalidFormatText;
 	/* menu texts / errors */

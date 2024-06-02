@@ -6,7 +6,10 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     this->windowPtr = std::make_shared<sf::RenderWindow>();
     this->windowPtr->create(sf::VideoMode(900, 600), "SkyFall Showdown", sf::Style::Close);
     this->windowPtr->setFramerateLimit(60);
-   
+
+    this->closeSettingsWindowFlag.store(false);
+    this->inGameSettings = false;
+
     /* get the enemy nickname */
     if (!handleEnemyNickname()) {
         this->quitGame();
@@ -26,15 +29,18 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
 
     sf::Event event;
     displayWindow = true;
-    while (windowPtr->isOpen() && displayWindow) {
+    while (displayWindow) {
         while (windowPtr->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 this->quitGame();
                 return;
             }
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                GameSettingsMenu gameSettingsMenu;
-                gameSettingsMenu.init(this->windowPtr);
+            else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                this->inGameSettings = true;
+                if (gameSettingsMenu.init(windowPtr, &closeSettingsWindowFlag)) {
+                    return;
+                }
+                this->inGameSettings = false;
             }
             handlePlayerMovement(event);
         }
@@ -78,6 +84,7 @@ void MainGameWindow::handleMessages() {
 
             if (packet.getMsgType() == NetMessages::QUIT_GAME) {
                 std::cout << "\nMatch end becasue [ " << this->enemyNickname.getString().toAnsiString() << " ] quit.";
+               
                 this->quitGame();
                 return;
             }
@@ -109,18 +116,19 @@ void MainGameWindow::handlePlayerMovement(sf::Event& event) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
         velocity.x += speed;
     }
-
+    
     if (velocity.x != 0.f || velocity.y != 0.f) {
         float length = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
         velocity /= length;
         velocity *= speed;
     }
-
+    
     sf::Vector2f newPos = youPlayer->getPosition() + velocity;
     if (newPos.x < 0.f) newPos.x = 0.f;
-    if (newPos.x > 900.f - 70.f) newPos.x = 900.f - 70.f; 
+    else if (newPos.x > 900.f - 70.f) newPos.x = 900.f - 70.f; 
+
     if (newPos.y < 0.f) newPos.y = 0.f;
-    if (newPos.y > 540.f - 70.f) newPos.y = 540.f - 70.f;
+    else if (newPos.y > 540.f - 70.f) newPos.y = 540.f - 70.f;
 
     youPlayer->move(newPos - youPlayer->getPosition());
     float sendPosition[2] = {youPlayer->getPosition().x, youPlayer->getPosition().y};
@@ -131,6 +139,10 @@ void MainGameWindow::handlePlayerMovement(sf::Event& event) {
 void MainGameWindow::quitGame() {
     this->client->close();
     this->displayWindow = false;
+
+    if (this->inGameSettings) {
+        this->closeSettingsWindowFlag.store(true);
+    }
 }
 
 void MainGameWindow::draw() {

@@ -6,7 +6,6 @@
 
 class MainGameTextureManager {
 public:
-	static sf::Texture backGameOptions;
 	
 public:
 	static bool init();

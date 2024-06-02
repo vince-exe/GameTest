@@ -33,13 +33,16 @@ private:
 	bool initPlayerAndEnemyPosition();
 
 private:
-
 	std::shared_ptr<sf::RenderWindow> windowPtr;
 	std::shared_ptr<Client> client;
 
 	sf::Text myNickname, enemyNickname;
 
 	std::shared_ptr<Player> youPlayer, enemyPlayer;
-	bool displayWindow;
+
+	bool displayWindow, inGameSettings;
+	std::atomic<bool> closeSettingsWindowFlag;
+
+	GameSettingsMenu gameSettingsMenu;
 };
 

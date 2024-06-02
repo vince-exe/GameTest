@@ -1,7 +1,7 @@
 DA FARE
 
-- quando un giocatore sta aspettando il matchmaking non può andare nelle opzioni ( questo bloccherrebbe l'altro )
+- aggiustare che quando uno inserisce un nick già esistente e poi prova a riconnettersi non lo fa riconettere 
 
-- quando un giocatore sta nelle opzioni mentre è in gioco e l'altro abbandona crasha ( aggiustare )
+- IpPortMenu, MenuConfirmationExit, NicknameMenu, OptionsMainMenu non devono avere la windowPtr nella loro classe
 
 - continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )

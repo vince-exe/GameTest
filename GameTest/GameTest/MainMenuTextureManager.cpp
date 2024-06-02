@@ -2,6 +2,7 @@
 
 sf::Texture MainMenuTextureManager::matchText;
 sf::Texture MainMenuTextureManager::settingsText;
+sf::Texture MainMenuTextureManager::settings2Text;
 sf::Texture MainMenuTextureManager::doneText;
 sf::Texture MainMenuTextureManager::optionsTextVolume;
 sf::Texture MainMenuTextureManager::confirmationExitText;
@@ -28,7 +29,8 @@ bool MainMenuTextureManager::init() {
         pathNumber++;
     }
 
-    return mainLobbyText.loadFromFile("assets/MenuTexts/mainLobbyText.png") && quitText.loadFromFile("assets/Buttons/quitText.png")
+    return mainLobbyText.loadFromFile("assets/MenuTexts/mainLobbyText.png") && settings2Text.loadFromFile("assets/Buttons/settings2.png")
+        && quitText.loadFromFile("assets/Buttons/quitText.png")
         && matchText.loadFromFile("assets/Buttons/matchText.png") && settingsText.loadFromFile("assets/Buttons/settingsText.png")
         && doneText.loadFromFile("assets/Buttons/doneText.png") && optionsTextVolume.loadFromFile("assets/VolumeNumbers/music_text.png") && confirmationExitText.loadFromFile("assets/Messages-Texts/img.png")
         && nicknameText.loadFromFile("assets/Messages-Texts/nick_img.png") && connectText.loadFromFile("assets/Buttons/connectText.png")

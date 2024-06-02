@@ -6,29 +6,27 @@
 #include <SFML/Graphics.hpp>
 
 #include "Entity.h"
-#include "MainGameTextureManager.h"
+#include "MainMenuTextureManager.h"
 
 class GameSettingsMenu {
 private:
-	std::shared_ptr<sf::RenderWindow> windowPtr;
-
 	Entity backText;
-	sf::RectangleShape backTextUnderLine;
 
 	bool exitWindow;
+	std::atomic<bool>* closeFlag;
 
 private:
 	void setTextures();
+	
+	void setSprites(std::shared_ptr<sf::RenderWindow> windowPtr);
 
-	void setSprites();
+	void draw(std::shared_ptr<sf::RenderWindow> windowPtr);
 
-	void draw();
-
-	void handleMouseMovement(sf::Event& event);
-
-	void handleMouseButtonPressed(sf::Event& event);
+	void handleMouseButtonPressed(sf::Event& event, std::shared_ptr<sf::RenderWindow> windowPtr);
 
 public:
-	void init(std::shared_ptr<sf::RenderWindow> windowPtr);
+	GameSettingsMenu() = default;
+
+	bool init(std::shared_ptr<sf::RenderWindow> windowPtr, std::atomic<bool>* closeFlag);
 };
 
