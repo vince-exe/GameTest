@@ -10,6 +10,8 @@
 
 class GameSettingsMenu {
 private:
+	std::shared_ptr<sf::RenderWindow> windowPtr;
+
 	Entity backText;
 
 	bool exitWindow;
@@ -18,11 +20,11 @@ private:
 private:
 	void setTextures();
 	
-	void setSprites(std::shared_ptr<sf::RenderWindow> windowPtr);
+	void setSprites();
 
-	void draw(std::shared_ptr<sf::RenderWindow> windowPtr);
+	void draw();
 
-	void handleMouseButtonPressed(sf::Event& event, std::shared_ptr<sf::RenderWindow> windowPtr);
+	void handleMouseButtonPressed(sf::Event& event);
 
 public:
 	GameSettingsMenu() = default;

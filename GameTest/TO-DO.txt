@@ -1,7 +1,3 @@
 DA FARE
 
-- aggiustare che quando uno inserisce un nick già esistente e poi prova a riconnettersi non lo fa riconettere 
-
-- IpPortMenu, MenuConfirmationExit, NicknameMenu, OptionsMainMenu non devono avere la windowPtr nella loro classe
-
 - continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )
