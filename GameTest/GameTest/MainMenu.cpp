@@ -194,7 +194,6 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 /* display the "Server Full" message */
                 notificationSound->play();
                 displayTextThread(menuMsgs[2], 7);
-                return;
             }
             else {
                 /* send the nickname */
@@ -204,6 +203,8 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 if (NetUtils::read_(*this->client->getSocket()).getMsgType() == NetMessages::NICK_EXITS) {
                     /* Nick exists text */
                     notificationSound->play();
+                    this->client->getSocket()->close();
+
                     displayTextThread(menuMsgs[1], 7);
                 }
                 /* send the matchmaking request */
