@@ -6,7 +6,7 @@ GameSession::GameSession(std::unordered_map<std::string, std::shared_ptr<User>>*
 	this->user2 = user2;
 }
 
-void GameSession::handleClient(std::shared_ptr<User> client, std::shared_ptr<User> otherClient) {
+void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient) {
 	NetPacket packet;
 
 	while (true) {
@@ -36,8 +36,8 @@ void GameSession::startGame() {
 	/* start the game session */
 	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " started.\n";
 
-	std::thread thUser1(&GameSession::handleClient, this, this->user1, this->user2);
-	std::thread thUser2(&GameSession::handleClient, this, this->user2, this->user1);
+	std::thread thUser1(&GameSession::handleClientMessages, this, this->user1, this->user2);
+	std::thread thUser2(&GameSession::handleClientMessages, this, this->user2, this->user1);
 	
 	thUser1.join();
 	thUser2.join();

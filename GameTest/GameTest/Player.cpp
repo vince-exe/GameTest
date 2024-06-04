@@ -1,10 +1,6 @@
 #include "Player.h"
 
-void Player::updateIndicatorPos() {
-	this->indicator.setPosition(this->rectangle.getPosition().x + this->rectangle.getSize().x / 2, this->rectangle.getPosition().y - this->distanceAbove - this->indicatorHeight);
-}
-
-Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove) {
+Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float movementVelocity) {
 	this->rectangle.setSize(rectSize);
 	this->rectangle.setFillColor(rectColor);
 
@@ -12,9 +8,19 @@ Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorCo
 	this->indicator.setFillColor(indicatorColor);
 
 	this->distanceAbove = distanceAbove;
+	this->movementVelocity = movementVelocity;
+	
 	this->indicator.setPoint(0, sf::Vector2f(-this->indicatorBaseHalf, 0.f));
 	this->indicator.setPoint(1, sf::Vector2f(this->indicatorBaseHalf, 0.f));
 	this->indicator.setPoint(2, sf::Vector2f(0.f, this->indicatorHeight));
+}
+
+float Player::getVelocity() {
+	return this->movementVelocity;
+}
+
+void Player::updateIndicatorPos() {
+	this->indicator.setPosition(this->rectangle.getPosition().x + this->rectangle.getSize().x / 2, this->rectangle.getPosition().y - this->distanceAbove - this->indicatorHeight);
 }
 
 sf::RectangleShape& Player::getRect() {

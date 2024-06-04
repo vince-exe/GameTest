@@ -55,24 +55,31 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
     std::uniform_int_distribution<std::mt19937::result_type> xPositionGenerator(100, 800);
     std::uniform_int_distribution<std::mt19937::result_type> yPositionGenerator(100, 500);
 
-    float xPosition = xPositionGenerator(rng), yPosition = yPositionGenerator(rng);
-    /* set the player to a random position*/
-    youPlayer->setPosition(xPosition, yPosition);
+    float playerPosition[2];
+    NetPacket p;
+    /* check if they spawned at the same position */
+    do {
+        playerPosition[0] = xPositionGenerator(rng);
+        playerPosition[1] = yPositionGenerator(rng);
 
-    float playerPosition[2] = { xPosition, yPosition };
-    /* send the position*/
-    if (!NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(playerPosition), sizeof(playerPosition)))) {
-        std::cerr << "\nError in sending position to the server";
-    }   
-    
-    /* get the enemy position */
-    NetPacket p = NetUtils::read_(*this->client->getSocket());
-    if (p.getMsgType() == NetMessages::PLAYER_POSITION) {
-        this->enemyPlayer->setPosition(p.getFloatVec()[0], p.getFloatVec()[1]);
-        return true;
-    }
+        /* send the position*/
+        if (!NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(playerPosition), sizeof(playerPosition)))) {
+            std::cerr << "\nError in sending position to the server";
+            return false;
+        }
+        /* get the enemy position */
+        p = NetUtils::read_(*this->client->getSocket());
+        if (p.getMsgType() == NetMessages::PLAYER_POSITION) {
+            /* check if the position is the same */
+            this->youPlayer->setPosition(sf::Vector2f(playerPosition[0], playerPosition[1]));
+            this->enemyPlayer->setPosition(sf::Vector2f(p.getFloatVec()[0], p.getFloatVec()[1]));
+        }
+        else {
+            return false;
+        }
+    } while (this->youPlayer->interscect(this->enemyPlayer->getRect()));
 
-    return false;
+    return true;
 }
 
 void MainGameWindow::handleMessages() {
@@ -101,39 +108,41 @@ void MainGameWindow::handleMessages() {
 }
 
 void MainGameWindow::handlePlayerMovement(sf::Event& event) {
-    const float speed = 10.f;
-    sf::Vector2f velocity(0.f, 0.f);
+    sf::Vector2f coords(0.f, 0.f);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-        velocity.y -= speed;
+        coords.y -= this->youPlayer->getVelocity();
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-        velocity.x -= speed;
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        coords.x -= this->youPlayer->getVelocity();
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-        velocity.y += speed;
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+        coords.y += this->youPlayer->getVelocity();
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-        velocity.x += speed;
-    }
-    
-    if (velocity.x != 0.f || velocity.y != 0.f) {
-        float length = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-        velocity /= length;
-        velocity *= speed;
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        coords.x += this->youPlayer->getVelocity();
     }
     
-    sf::Vector2f newPos = youPlayer->getPosition() + velocity;
-    if (newPos.x < 0.f) newPos.x = 0.f;
-    else if (newPos.x > 900.f - 70.f) newPos.x = 900.f - 70.f; 
+    sf::Vector2f proposedNewPos = youPlayer->getPosition() + coords;
 
-    if (newPos.y < 0.f) newPos.y = 0.f;
-    else if (newPos.y > 540.f - 70.f) newPos.y = 540.f - 70.f;
+    // Check window's borders
+    if (proposedNewPos.x < 0.f) proposedNewPos.x = 0.f;
+    else if (proposedNewPos.x > 900.f - 70.f) proposedNewPos.x = 900.f - 70.f;
 
-    youPlayer->move(newPos - youPlayer->getPosition());
-    float sendPosition[2] = {youPlayer->getPosition().x, youPlayer->getPosition().y};
+    if (proposedNewPos.y < 0.f) proposedNewPos.y = 0.f;
+    else if (proposedNewPos.y > 540.f - 70.f) proposedNewPos.y = 540.f - 70.f;
 
-    NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(sendPosition), sizeof(sendPosition)));
+    // Create a rectangle of the proposed shape
+    sf::RectangleShape proposedShape = this->youPlayer->getRect();
+    proposedShape.setPosition(proposedNewPos);
+
+    // Verifica della collisione con l'altro giocatore
+    if (!proposedShape.getGlobalBounds().intersects(this->enemyPlayer->getRect().getGlobalBounds())) {
+        youPlayer->move(proposedNewPos - youPlayer->getPosition());
+        float sendPosition[2] = { proposedNewPos.x, proposedNewPos.y };
+
+        NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(sendPosition), sizeof(sendPosition)));
+    }
 }
 
 void MainGameWindow::quitGame() {
@@ -167,8 +176,8 @@ void MainGameWindow::initSprites() {
     enemyNickname.setPosition(((windowPtr->getSize().x - enemyNickname.getGlobalBounds().width) - 20), (windowPtr->getSize().y - 60));
     enemyNickname.setFillColor(sf::Color(110, 6, 2));
 
-    youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.f);
-    enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.f);
+    youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 12.f);
+    enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 12.f);
 }
 
 bool MainGameWindow::handleEnemyNickname() {

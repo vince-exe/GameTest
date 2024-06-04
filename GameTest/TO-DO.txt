@@ -1,3 +1,25 @@
+IDEA-GIOCO:
+	vengono creati dei rettangoli all'interno della mappa e si hanno x secondi ( che poi andranno a diminuire con il passare dei round ) per mettersi all'interno.
+	se non lo si fa entro il tempo stabilito dal round, il giocatore prende danno.
+
+PIANIFICAZIONE-GIOCO:
+	1) Creare i vertici che faranno parte del round e che dovranno spawnare + il tempo di durata del round (Server)
+	2) Controllare che tutti i vertici rispettino le posiziosni corrette
+	3) Mandare questi vertici ai due client + il tempo di durata del round (Server)
+	4) Ricevere i vertici e disegnarli (Client)
+	5) Far partire il countdown con il tempo ricevuto (Client)
+	6) Terminato il countdown controllare se si è dentro o fuori i vertici (Client)
+	7) Mandare il risultato (dentro o fuori)
+	8) Il server scala vita (momentaneamente di 3)
+	...ripetere tutto
+	9) Appena uno dei due raggiunge vita 0 comunicare la vittoria a chi ha vinto (Server)
+
+PIANIFICAZIONE-TECNICA-GIOCO:
+	- i vertici possono essere mandati in un vettore di vettori, dove ogni singolo vettore rappresenta il singolo quadrato.(Server)
+	- il tempo può essere mandato in disparte come un semplice int.(Server)
+
+	- Il client avvierà ad ogni round un thread che gestirà il disegnare i Vertici + gestire_tempo + risultato_finale_round.(client)
+	- Il controllo dei vertici avverrà tramite una classe Game che poi gestirà in futuro anche altre cose come la barra di vita etc.(client)
 DA FARE
 
 - continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )

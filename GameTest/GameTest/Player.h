@@ -12,12 +12,16 @@ private:
 	float indicatorHeight = 20.f;
 	float indicatorBaseHalf = 10.f;
 	float distanceAbove;
-
+	float movementVelocity;
+	sf::Sprite s;
+	
 private:
 	void updateIndicatorPos();
 
 public:
-	Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove = 10.f);
+	Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float movementVelocity);
+
+	float getVelocity();
 
 	sf::RectangleShape& getRect();
 
