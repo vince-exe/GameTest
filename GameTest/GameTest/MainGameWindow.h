@@ -18,6 +18,8 @@ public:
 	void init(const std::string nickname, std::shared_ptr<Client> client);
 
 private:
+	void update(sf::Time deltaTime);
+
 	void draw();
 
 	void initSprites();
@@ -26,9 +28,13 @@ private:
 
 	void handlePlayerMovement(sf::Event& event);
 
+	void handleMouseClick(sf::Event& event);
+
 	void quitGame();
 
 	void handleMessages();
+	
+	void checkPlayerWindowBorders();
 
 	bool initPlayerAndEnemyPosition();
 

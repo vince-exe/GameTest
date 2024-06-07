@@ -4,35 +4,48 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-class Player : public sf::Drawable  {
+class Player : public sf::Drawable {
 private:
-	sf::RectangleShape rectangle;
-	sf::ConvexShape indicator;
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-	float indicatorHeight = 20.f;
-	float indicatorBaseHalf = 10.f;
-	float distanceAbove;
-	float movementVelocity;
-	sf::Sprite s;
-	
-private:
-	void updateIndicatorPos();
+    sf::RectangleShape rectangle;
+    sf::Vector2f targetPosition;
+    sf::ConvexShape indicator;
+    float distanceAbove;
+    float speed;
+    bool targetReached;
+    bool moving;
+    float indicatorBaseHalf = 10.f;
+    float indicatorHeight = 15.f;
 
 public:
-	Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float movementVelocity);
+    Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed);
 
-	float getVelocity();
+    void update(sf::Time deltaTime);
 
-	sf::RectangleShape& getRect();
+    float getVelocity();
 
-	void setPosition(sf::Vector2f pos);
+    void updateIndicatorPos();
 
-	void setPosition(float x, float y);
+    void setTarget(const sf::Vector2f& target);
 
-	void move(const sf::Vector2f& offset);
+    bool isMoving() const;
 
-	sf::Vector2f getPosition();
+    void stopMove();
 
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    sf::RectangleShape& getRect();
+
+    void setPosition(sf::Vector2f pos);
+
+    void setPosition(float x, float y);
+
+    sf::Vector2f getPosition() const;
+
+    bool hasReachedTarget() const;
+
+    bool intersect(sf::RectangleShape& rect);
+
+    void move(const sf::Vector2f& offset);
+
+    sf::FloatRect getGlobalBounds() const;
 };
-

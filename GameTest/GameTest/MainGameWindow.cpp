@@ -4,7 +4,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     this->client = client;
 
     this->windowPtr = std::make_shared<sf::RenderWindow>();
-    this->windowPtr->create(sf::VideoMode(900, 600), "SkyFall Showdown", sf::Style::Close);
+    this->windowPtr->create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
     this->windowPtr->setFramerateLimit(60);
 
     this->closeSettingsWindowFlag.store(false);
@@ -29,6 +29,9 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
 
     sf::Event event;
     displayWindow = true;
+
+    sf::Clock clock;
+
     while (displayWindow) {
         while (windowPtr->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -42,8 +45,9 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
                 }
                 this->inGameSettings = false;
             }
-            handlePlayerMovement(event);
+            handleMouseClick(event);
         }
+        update(clock.restart());
         draw();
     }
 }
@@ -77,7 +81,7 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
         else {
             return false;
         }
-    } while (this->youPlayer->interscect(this->enemyPlayer->getRect()));
+    } while (this->youPlayer->intersect(this->enemyPlayer->getRect()));
 
     return true;
 }
@@ -107,41 +111,40 @@ void MainGameWindow::handleMessages() {
     }
 }
 
+void MainGameWindow::checkPlayerWindowBorders() {
+    sf::FloatRect playerBounds = this->youPlayer->getGlobalBounds();
+    sf::Vector2f position = this->youPlayer->getPosition();
+
+    if (playerBounds.left < 0.f) {
+        this->youPlayer->setPosition(playerBounds.width / 2, position.y);
+        this->youPlayer->stopMove();
+    }
+    else if ((playerBounds.left + playerBounds.width) > 1200.f) {
+        this->youPlayer->setPosition(1200.f - playerBounds.width, position.y);
+        this->youPlayer->stopMove();
+    }
+    if (playerBounds.top < 0.f) {
+        this->youPlayer->setPosition(position.x, playerBounds.height / 2);
+        this->youPlayer->stopMove();
+    }
+    else if ((playerBounds.top + playerBounds.height) > 800.f) {
+        this->youPlayer->setPosition(position.x, 800.f - playerBounds.height);
+        this->youPlayer->stopMove();
+    }
+}
+
 void MainGameWindow::handlePlayerMovement(sf::Event& event) {
-    sf::Vector2f coords(0.f, 0.f);
+    const sf::Vector2i mousePosition{ sf::Mouse::getPosition(*this->windowPtr) };
+    const sf::Vector2f mouseCoord{ this->windowPtr->mapPixelToCoords(mousePosition) };
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-        coords.y -= this->youPlayer->getVelocity();
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-        coords.x -= this->youPlayer->getVelocity();
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-        coords.y += this->youPlayer->getVelocity();
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-        coords.x += this->youPlayer->getVelocity();
-    }
-    
-    sf::Vector2f proposedNewPos = youPlayer->getPosition() + coords;
+    this->youPlayer->setTarget(mouseCoord);
+}
 
-    // Check window's borders
-    if (proposedNewPos.x < 0.f) proposedNewPos.x = 0.f;
-    else if (proposedNewPos.x > 900.f - 70.f) proposedNewPos.x = 900.f - 70.f;
-
-    if (proposedNewPos.y < 0.f) proposedNewPos.y = 0.f;
-    else if (proposedNewPos.y > 540.f - 70.f) proposedNewPos.y = 540.f - 70.f;
-
-    // Create a rectangle of the proposed shape
-    sf::RectangleShape proposedShape = this->youPlayer->getRect();
-    proposedShape.setPosition(proposedNewPos);
-
-    // Verifica della collisione con l'altro giocatore
-    if (!proposedShape.getGlobalBounds().intersects(this->enemyPlayer->getRect().getGlobalBounds())) {
-        youPlayer->move(proposedNewPos - youPlayer->getPosition());
-        float sendPosition[2] = { proposedNewPos.x, proposedNewPos.y };
-
-        NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(sendPosition), sizeof(sendPosition)));
+void MainGameWindow::handleMouseClick(sf::Event& event) {
+    if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            handlePlayerMovement(event);
+        }
     }
 }
 
@@ -151,6 +154,14 @@ void MainGameWindow::quitGame() {
 
     if (this->inGameSettings) {
         this->closeSettingsWindowFlag.store(true);
+    }
+}
+
+void MainGameWindow::update(sf::Time deltaTime) {
+    this->youPlayer->update(deltaTime);
+
+    if (this->youPlayer->isMoving()) {
+        checkPlayerWindowBorders();
     }
 }
 
@@ -176,8 +187,8 @@ void MainGameWindow::initSprites() {
     enemyNickname.setPosition(((windowPtr->getSize().x - enemyNickname.getGlobalBounds().width) - 20), (windowPtr->getSize().y - 60));
     enemyNickname.setFillColor(sf::Color(110, 6, 2));
 
-    youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 12.f);
-    enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 12.f);
+    youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f);
+    enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f);
 }
 
 bool MainGameWindow::handleEnemyNickname() {
