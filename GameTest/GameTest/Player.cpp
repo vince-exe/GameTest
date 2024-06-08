@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed) {
+Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout) {
     this->rectangle.setSize(rectSize);
 
     this->rectangle.setFillColor(rectColor);
@@ -15,6 +15,9 @@ Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorCo
     this->indicator.setPoint(1, sf::Vector2f(this->indicatorBaseHalf, 0.f));
     this->indicator.setPoint(2, sf::Vector2f(0.f, this->indicatorHeight));
 
+    this->sprintTimeout = sprintTimeout;
+    this->sprintPower = sprintPower;
+    this->m_isSprinting = false;
     this->targetReached = true;
     this->moving = false;
 }
@@ -30,8 +33,7 @@ void Player::update(sf::Time deltaTime) {
 
             if (length < speed * deltaTime.asSeconds()) {
                 setPosition(targetPosition);
-                moving = false;
-                targetReached = true;
+                stopMove();
             }
             else {
                 if (hasReachedTarget()) {
@@ -43,6 +45,28 @@ void Player::update(sf::Time deltaTime) {
             }
         }
     }
+}
+
+void Player::startSprint() {
+    this->sprintClock.restart();
+    this->m_isSprinting = true;
+    this->speed += this->sprintPower;
+    std::cout << "\nHo iniziato a sprintare";
+}
+
+void Player::stopSprint() {
+    this->sprintClock.restart();
+    this->m_isSprinting = false;
+    this->speed -= this->sprintPower;
+    std::cout << "\nHo smesso di sprintare";
+}
+
+bool Player::canSprint() {
+    return (this->sprintClock.getElapsedTime().asSeconds() >= this->sprintTimeout);
+}
+
+bool Player::isSprinting() {
+    return this->m_isSprinting;
 }
 
 float Player::getVelocity() {
@@ -66,6 +90,10 @@ bool Player::isMoving() const {
 void Player::stopMove() {
     this->targetReached = true;
     this->moving = false;
+    
+    if (this->m_isSprinting) {
+        this->stopSprint();
+    }
 }
 
 sf::RectangleShape& Player::getRect() {

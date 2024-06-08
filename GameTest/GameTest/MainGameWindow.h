@@ -23,7 +23,9 @@ private:
 	void draw();
 
 	void initSprites();
-
+	
+	void handleKeyBoards(sf::Event event);
+	
 	bool handleEnemyNickname();
 
 	void handlePlayerMovement(sf::Event& event);

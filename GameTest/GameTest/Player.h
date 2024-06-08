@@ -5,23 +5,37 @@
 #include <iostream>
 
 class Player : public sf::Drawable {
-private:
+protected:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+private:
     sf::RectangleShape rectangle;
     sf::Vector2f targetPosition;
     sf::ConvexShape indicator;
+    sf::Clock sprintClock;
+
+    float sprintTimeout;
     float distanceAbove;
     float speed;
     bool targetReached;
     bool moving;
     float indicatorBaseHalf = 10.f;
     float indicatorHeight = 15.f;
-
+    float sprintPower;
+    bool m_isSprinting;
+    
 public:
-    Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed);
+    Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout);
 
     void update(sf::Time deltaTime);
+
+    bool canSprint();
+
+    void startSprint();
+
+    void stopSprint();
+
+    bool isSprinting();
 
     float getVelocity();
 

@@ -28,11 +28,14 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     t.detach();
 
     sf::Event event;
-    displayWindow = true;
+    this->displayWindow = true;
 
     sf::Clock clock;
+    
+    // DEBUG
+    std::cout << "\nPlayer: " << myNickname.getString().toAnsiString();
 
-    while (displayWindow) {
+    while (this->displayWindow) {
         while (windowPtr->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 this->quitGame();
@@ -46,6 +49,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
                 this->inGameSettings = false;
             }
             handleMouseClick(event);
+            handleKeyBoards(event);
         }
         update(clock.restart());
         draw();
@@ -118,12 +122,12 @@ void MainGameWindow::checkPlayerWindowBorders() {
     if (playerBounds.left < 0.f) {
         this->youPlayer->setPosition(playerBounds.width / 2, position.y);
         this->youPlayer->stopMove();
-    }
+    } 
     else if ((playerBounds.left + playerBounds.width) > 1200.f) {
         this->youPlayer->setPosition(1200.f - playerBounds.width, position.y);
         this->youPlayer->stopMove();
     }
-    if (playerBounds.top < 0.f) {
+    else if (playerBounds.top < 0.f) {
         this->youPlayer->setPosition(position.x, playerBounds.height / 2);
         this->youPlayer->stopMove();
     }
@@ -142,8 +146,24 @@ void MainGameWindow::handlePlayerMovement(sf::Event& event) {
 
 void MainGameWindow::handleMouseClick(sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
-            handlePlayerMovement(event);
+        if (!this->youPlayer->isSprinting()) {
+            if (event.mouseButton.button == sf::Mouse::Left) {
+                handlePlayerMovement(event);
+            }
+            else if (event.mouseButton.button == sf::Mouse::Right) {
+                if (this->youPlayer->canSprint()) {
+                    this->youPlayer->startSprint();
+                    handlePlayerMovement(event);
+                }
+            }
+        }
+    }
+}
+
+void MainGameWindow::handleKeyBoards(sf::Event event) {
+    if (event.type == sf::Event::KeyPressed) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+            this->youPlayer->stopMove();
         }
     }
 }
@@ -187,8 +207,8 @@ void MainGameWindow::initSprites() {
     enemyNickname.setPosition(((windowPtr->getSize().x - enemyNickname.getGlobalBounds().width) - 20), (windowPtr->getSize().y - 60));
     enemyNickname.setFillColor(sf::Color(110, 6, 2));
 
-    youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f);
-    enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f);
+    youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f, 1000.f, 4.f);
+    enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f, 1000.f, 4.f);
 }
 
 bool MainGameWindow::handleEnemyNickname() {
