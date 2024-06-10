@@ -46,11 +46,14 @@ private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;
 	std::shared_ptr<Client> client;
 
-	sf::Text myNickname, enemyNickname;
+	sf::Text myNickname, enemyNickname, vsText;
 
 	float rechargeBarProgress;
 	sf::RectangleShape rechargeBarBorder;
 	sf::RectangleShape rechargeBar;
+
+	sf::RectangleShape youHealth[3];
+	sf::RectangleShape enemyHealth[3];
 
 	std::shared_ptr<Player> youPlayer, enemyPlayer;
 

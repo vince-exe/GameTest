@@ -131,22 +131,18 @@ void MainGameWindow::checkPlayerWindowBorders() {
     if (playerBounds.left < 0.f) {
         this->youPlayer->setPosition(playerBounds.width / 2, position.y);
         this->youPlayer->stopMove();
-        this->youPlayer->resetSprint();
-    } 
+    }
     else if ((playerBounds.left + playerBounds.width) > 1200.f) {
         this->youPlayer->setPosition(1200.f - playerBounds.width, position.y);
         this->youPlayer->stopMove();
-        this->youPlayer->resetSprint();
     }
-    else if (playerBounds.top < 0.f) {
-        this->youPlayer->setPosition(position.x, playerBounds.height / 2);
+    else if (playerBounds.top < 110.f) {
+        this->youPlayer->setPosition(position.x, 110);
         this->youPlayer->stopMove();
-        this->youPlayer->resetSprint();
     }
     else if ((playerBounds.top + playerBounds.height) > 800.f) {
         this->youPlayer->setPosition(position.x, 800.f - playerBounds.height);
         this->youPlayer->stopMove();
-        this->youPlayer->resetSprint();
     }
 }
 
@@ -212,24 +208,17 @@ void MainGameWindow::draw() {
     this->windowPtr->draw(*enemyPlayer);
     this->windowPtr->draw(rechargeBarBorder);
     this->windowPtr->draw(rechargeBar);
+    this->windowPtr->draw(vsText);
+
+    for (int i = 0; i < 3; i++) {
+        this->windowPtr->draw(youHealth[i]);
+        this->windowPtr->draw(enemyHealth[i]);
+    }
 
     this->windowPtr->display();
 }
 
 void MainGameWindow::initSprites() {
-    myNickname.setFont(FontManager::fredokaOne);
-    myNickname.setCharacterSize(35);
-    myNickname.setPosition(20, (windowPtr->getSize().y - 60));
-    myNickname.setFillColor(sf::Color(31, 110, 2));
-   
-    enemyNickname.setFont(FontManager::fredokaOne);
-    enemyNickname.setCharacterSize(35);
-    enemyNickname.setPosition(((windowPtr->getSize().x - enemyNickname.getGlobalBounds().width) - 20), (windowPtr->getSize().y - 60));
-    enemyNickname.setFillColor(sf::Color(110, 6, 2));
-
-    youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f, 1000.f, 4.f);
-    enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f, 1000.f, 4.f);
-
     rechargeBarBorder.setSize(sf::Vector2f(170.f, 30.f));
     rechargeBarBorder.setPosition(1000.f, 30.f);
     rechargeBarBorder.setFillColor(sf::Color::Transparent);
@@ -239,6 +228,42 @@ void MainGameWindow::initSprites() {
     rechargeBar.setSize(sf::Vector2f(0.f, 30.f));
     rechargeBar.setPosition(1000.f, 30.f);
     rechargeBar.setFillColor(sf::Color(196, 154, 39));
+
+    myNickname.setFont(FontManager::fredokaOne);
+    myNickname.setCharacterSize(35);
+    myNickname.setPosition(20.f, 22.f);
+    myNickname.setFillColor(sf::Color(31, 110, 2));
+   
+    vsText.setFont(FontManager::fredokaOne);
+    vsText.setCharacterSize(30);
+    vsText.setPosition(myNickname.getGlobalBounds().left + myNickname.getGlobalBounds().width + vsText.getGlobalBounds().width + 20.f, 24.f);
+    vsText.setFillColor(sf::Color(219, 219, 219));
+    vsText.setString("vs");
+
+    enemyNickname.setFont(FontManager::fredokaOne);
+    enemyNickname.setCharacterSize(35);
+    enemyNickname.setPosition(vsText.getGlobalBounds().left + vsText.getGlobalBounds().width + 20.f, 22.f);
+    enemyNickname.setFillColor(sf::Color(110, 6, 2));
+
+    youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f, 1000.f, 4.f);
+    enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f, 1000.f, 4.f);
+
+
+    float youHealthPosX = 850.f;
+    float enemyHealthPosX = 720.f;
+
+    for (int i = 0; i < 3; i++) {
+        youHealth[i].setSize(sf::Vector2f(18.f, 18.f));
+        youHealth[i].setFillColor(sf::Color(31, 110, 2));
+        youHealth[i].setPosition(youHealthPosX, youHealth[i].getGlobalBounds().height + rechargeBarBorder.getGlobalBounds().height / 2);
+
+        enemyHealth[i].setSize(sf::Vector2f(18.f, 18.f));
+        enemyHealth[i].setPosition(enemyHealthPosX, enemyHealth[i].getGlobalBounds().height + rechargeBarBorder.getGlobalBounds().height / 2);
+        enemyHealth[i].setFillColor(sf::Color(110, 6, 2));
+        
+        youHealthPosX += 30.f;
+        enemyHealthPosX += 30.f;
+    }
 }
 
 bool MainGameWindow::handleEnemyNickname() {
