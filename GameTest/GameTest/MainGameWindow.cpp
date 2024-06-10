@@ -2,7 +2,7 @@
 
 void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client) {
     this->client = client;
-
+    
     this->windowPtr = std::make_shared<sf::RenderWindow>();
     this->windowPtr->create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
     this->windowPtr->setFramerateLimit(60);
@@ -30,7 +30,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     sf::Event event;
     this->displayWindow = true;
 
-    sf::Clock clock;
+    sf::Clock sprintClock;
     
     // DEBUG
     std::cout << "\nPlayer: " << myNickname.getString().toAnsiString();
@@ -51,7 +51,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
             handleMouseClick(event);
             handleKeyBoards(event);
         }
-        update(clock.restart());
+        update(sprintClock.restart());
         draw();
     }
 }
@@ -105,7 +105,7 @@ void MainGameWindow::handleMessages() {
             }
             if (packet.getMsgType() == NetMessages::PLAYER_POSITION) {
                 sf::Vector2f newPos(packet.getFloatVec()[0], packet.getFloatVec()[1]);
-                this->enemyPlayer->move(newPos - this->enemyPlayer->getPosition());
+                this->enemyPlayer->setPosition(newPos);
             }
         }
         catch (const boost::system::system_error& ex) {
@@ -115,6 +115,15 @@ void MainGameWindow::handleMessages() {
     }
 }
 
+void MainGameWindow::updateRechargeBar() {
+    this->rechargeBarProgress = this->youPlayer->getClock().getElapsedTime().asSeconds() / this->youPlayer->getSprintTimeout();
+
+    if (this->rechargeBarProgress > 1.0f) {
+        this->rechargeBarProgress = 1.0f;
+    }
+    this->rechargeBar.setSize(sf::Vector2f(static_cast<float>(170 * this->rechargeBarProgress), 30.f));
+}
+
 void MainGameWindow::checkPlayerWindowBorders() {
     sf::FloatRect playerBounds = this->youPlayer->getGlobalBounds();
     sf::Vector2f position = this->youPlayer->getPosition();
@@ -122,18 +131,22 @@ void MainGameWindow::checkPlayerWindowBorders() {
     if (playerBounds.left < 0.f) {
         this->youPlayer->setPosition(playerBounds.width / 2, position.y);
         this->youPlayer->stopMove();
+        this->youPlayer->resetSprint();
     } 
     else if ((playerBounds.left + playerBounds.width) > 1200.f) {
         this->youPlayer->setPosition(1200.f - playerBounds.width, position.y);
         this->youPlayer->stopMove();
+        this->youPlayer->resetSprint();
     }
     else if (playerBounds.top < 0.f) {
         this->youPlayer->setPosition(position.x, playerBounds.height / 2);
         this->youPlayer->stopMove();
+        this->youPlayer->resetSprint();
     }
     else if ((playerBounds.top + playerBounds.height) > 800.f) {
         this->youPlayer->setPosition(position.x, 800.f - playerBounds.height);
         this->youPlayer->stopMove();
+        this->youPlayer->resetSprint();
     }
 }
 
@@ -178,10 +191,15 @@ void MainGameWindow::quitGame() {
 }
 
 void MainGameWindow::update(sf::Time deltaTime) {
-    this->youPlayer->update(deltaTime);
+    this->youPlayer->update(deltaTime, this->enemyPlayer->getRect());
+    
+    updateRechargeBar();
 
     if (this->youPlayer->isMoving()) {
         checkPlayerWindowBorders();
+
+        float p[2] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
+        NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
     }
 }
 
@@ -192,6 +210,8 @@ void MainGameWindow::draw() {
     this->windowPtr->draw(enemyNickname);
     this->windowPtr->draw(*youPlayer);
     this->windowPtr->draw(*enemyPlayer);
+    this->windowPtr->draw(rechargeBarBorder);
+    this->windowPtr->draw(rechargeBar);
 
     this->windowPtr->display();
 }
@@ -209,6 +229,16 @@ void MainGameWindow::initSprites() {
 
     youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f, 1000.f, 4.f);
     enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f, 1000.f, 4.f);
+
+    rechargeBarBorder.setSize(sf::Vector2f(170.f, 30.f));
+    rechargeBarBorder.setPosition(1000.f, 30.f);
+    rechargeBarBorder.setFillColor(sf::Color::Transparent);
+    rechargeBarBorder.setOutlineThickness(3);
+    rechargeBarBorder.setOutlineColor(sf::Color(128, 103, 36));
+
+    rechargeBar.setSize(sf::Vector2f(0.f, 30.f));
+    rechargeBar.setPosition(1000.f, 30.f);
+    rechargeBar.setFillColor(sf::Color(196, 154, 39));
 }
 
 bool MainGameWindow::handleEnemyNickname() {

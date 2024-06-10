@@ -22,7 +22,7 @@ Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorCo
     this->moving = false;
 }
 
-void Player::update(sf::Time deltaTime) {
+void Player::update(sf::Time deltaTime, const sf::RectangleShape& other) {
     if (!targetReached) {
         sf::Vector2f direction = targetPosition - getPosition();
         float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
@@ -40,7 +40,7 @@ void Player::update(sf::Time deltaTime) {
                     stopMove();
                 }
                 else {
-                    move(movement);
+                    move(movement, other);
                 }
             }
         }
@@ -51,14 +51,11 @@ void Player::startSprint() {
     this->sprintClock.restart();
     this->m_isSprinting = true;
     this->speed += this->sprintPower;
-    std::cout << "\nHo iniziato a sprintare";
 }
 
 void Player::stopSprint() {
-    this->sprintClock.restart();
     this->m_isSprinting = false;
     this->speed -= this->sprintPower;
-    std::cout << "\nHo smesso di sprintare";
 }
 
 bool Player::canSprint() {
@@ -120,13 +117,26 @@ bool Player::hasReachedTarget() const {
     return (std::abs(position.x - targetPosition.x) < epsilon && std::abs(position.y - targetPosition.y) < epsilon);
 }
 
-bool Player::intersect(sf::RectangleShape& rect) {
+bool Player::intersect(const  sf::RectangleShape& rect) {
     return this->rectangle.getGlobalBounds().intersects(rect.getGlobalBounds());
 }
 
-void Player::move(const sf::Vector2f& offset) {
-    this->rectangle.move(offset);
-    this->updateIndicatorPos();
+void Player::move(const sf::Vector2f& offset, const sf::RectangleShape& other) {
+    sf::Vector2f newPosition = this->rectangle.getPosition() + offset;
+    this->rectangle.setPosition(newPosition);
+
+    // check collision
+    if (this->intersect(other)) {
+        this->rectangle.setPosition(this->rectangle.getPosition() - offset);
+    }
+    else {
+        this->updateIndicatorPos();
+    }
+    this->moving;
+}
+
+void Player::resetSprint() {
+    this->sprintClock.restart();
 }
 
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -136,4 +146,12 @@ void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 
 sf::FloatRect Player::getGlobalBounds() const {
     return this->rectangle.getGlobalBounds();
+}
+
+sf::Clock Player::getClock() {
+    return this->sprintClock;
+}
+
+float Player::getSprintTimeout() {
+    return this->sprintTimeout;
 }

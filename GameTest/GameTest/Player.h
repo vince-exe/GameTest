@@ -23,11 +23,14 @@ private:
     float indicatorHeight = 15.f;
     float sprintPower;
     bool m_isSprinting;
-    
+
+private:
+    void move(const sf::Vector2f& offset, const sf::RectangleShape& other);
+
 public:
     Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout);
 
-    void update(sf::Time deltaTime);
+    void update(sf::Time deltaTime, const sf::RectangleShape& other);
 
     bool canSprint();
 
@@ -57,9 +60,13 @@ public:
 
     bool hasReachedTarget() const;
 
-    bool intersect(sf::RectangleShape& rect);
+    bool intersect(const sf::RectangleShape& rect);
 
-    void move(const sf::Vector2f& offset);
+    void resetSprint();
 
     sf::FloatRect getGlobalBounds() const;
+
+    sf::Clock getClock();
+
+    float getSprintTimeout();
 };

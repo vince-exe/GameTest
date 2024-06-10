@@ -36,6 +36,8 @@ private:
 
 	void handleMessages();
 	
+	void updateRechargeBar();
+
 	void checkPlayerWindowBorders();
 
 	bool initPlayerAndEnemyPosition();
@@ -45,6 +47,10 @@ private:
 	std::shared_ptr<Client> client;
 
 	sf::Text myNickname, enemyNickname;
+
+	float rechargeBarProgress;
+	sf::RectangleShape rechargeBarBorder;
+	sf::RectangleShape rechargeBar;
 
 	std::shared_ptr<Player> youPlayer, enemyPlayer;
 
