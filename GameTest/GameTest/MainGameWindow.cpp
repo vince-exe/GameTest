@@ -197,6 +197,10 @@ void MainGameWindow::update(sf::Time deltaTime) {
         float p[2] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
         NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
     }
+    if (this->youPlayer->isSprinting() && this->youPlayer->isEnemyHit()) {
+        this->youPlayer->resetEnemyHit();
+        std::cout << "\nColpito Nemico";
+    }
 }
 
 void MainGameWindow::draw() {

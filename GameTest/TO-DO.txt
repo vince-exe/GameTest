@@ -2,14 +2,16 @@ IDEA-GIOCO:
 delle "aree di danno" vengono generate nella mappa e l'intendo del player è quello di buttare il nemico in quelle aree
 per fargli prendere danno
 
-DA FARE:
--Client ( introdurre lo sprint che verrà attivato (in direzione del mouse) quando verrà premuto il tasto sinistro
-	( ha una ricarica che verrà mostrata in una barra di 3 secondi )
-
--Client ( introdurre le collisioni tra client )
+DA FARE PRINCIPALE:
 -Client ( introdurre i rimbalzi ( quando un client va addosso ad un'altro con un sprint il nemico deve rimbalzare )
+- vedere come gestire i round del gioco
 
-... barra vita, barra sprint etc..
+DA FARE SECONDARIE:
+-Poter limitare il volume dei sound effects
+-Cambiare musica per la game lobby
+-Introdurre musica per la game window
+-Introdurre effetti sonori per lo sprint, ricarica sprint, 
+-Introdurre effetti sonori per quando si viene colpiti con lo sprint
 
 ALTRO-PROGETTO:
 

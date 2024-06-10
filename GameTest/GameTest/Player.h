@@ -23,6 +23,7 @@ private:
     float indicatorHeight = 15.f;
     float sprintPower;
     bool m_isSprinting;
+    bool enemyHit;
 
 private:
     void move(const sf::Vector2f& offset, const sf::RectangleShape& other);
@@ -69,4 +70,9 @@ public:
     sf::Clock getClock();
 
     float getSprintTimeout();
+    
+    bool isEnemyHit();
+    
+    void resetEnemyHit();
+
 };

@@ -29,6 +29,7 @@ void Player::update(sf::Time deltaTime, const sf::RectangleShape& other) {
 
         if (length > 0) {
             direction /= length;
+
             sf::Vector2f movement = direction * speed * deltaTime.asSeconds();
 
             if (length < speed * deltaTime.asSeconds()) {
@@ -45,6 +46,21 @@ void Player::update(sf::Time deltaTime, const sf::RectangleShape& other) {
             }
         }
     }
+}
+
+void Player::move(const sf::Vector2f& offset, const sf::RectangleShape& other) {
+    sf::Vector2f newPosition = this->rectangle.getPosition() + offset;
+    this->rectangle.setPosition(newPosition);
+
+    // check collision
+    if (this->intersect(other)) {
+        this->rectangle.setPosition(this->rectangle.getPosition() - offset);
+        this->enemyHit = true;
+    }
+    else {
+        this->updateIndicatorPos();
+    }
+    this->moving = true;
 }
 
 void Player::startSprint() {
@@ -121,20 +137,6 @@ bool Player::intersect(const  sf::RectangleShape& rect) {
     return this->rectangle.getGlobalBounds().intersects(rect.getGlobalBounds());
 }
 
-void Player::move(const sf::Vector2f& offset, const sf::RectangleShape& other) {
-    sf::Vector2f newPosition = this->rectangle.getPosition() + offset;
-    this->rectangle.setPosition(newPosition);
-
-    // check collision
-    if (this->intersect(other)) {
-        this->rectangle.setPosition(this->rectangle.getPosition() - offset);
-    }
-    else {
-        this->updateIndicatorPos();
-    }
-    this->moving;
-}
-
 void Player::resetSprint() {
     this->sprintClock.restart();
 }
@@ -154,4 +156,12 @@ sf::Clock Player::getClock() {
 
 float Player::getSprintTimeout() {
     return this->sprintTimeout;
+}
+
+bool Player::isEnemyHit() {
+    return this->enemyHit;
+}
+
+void Player::resetEnemyHit() {
+    this->enemyHit = false;
 }
