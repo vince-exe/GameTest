@@ -1,3 +1,7 @@
+*prossimo refactoring urgente*
+fare che la classe NetPacket non fa più le conversioni comode. Creare un'altro namespace di utility che contiene
+le funzioni di conversione comode, così che in base al NetMessage si sceglie l'apposita conversione.
+
 IDEA-GIOCO:
 delle "aree di danno" vengono generate nella mappa e l'intendo del player è quello di buttare il nemico in quelle aree
 per fargli prendere danno
@@ -7,12 +11,19 @@ DA FARE PRINCIPALE:
 - vedere come gestire i round del gioco
 
 DA FARE SECONDARIE:
+-introdurre più funzionalità nella finestra delle opzioni.
+
 -Poter limitare il volume dei sound effects
 -Cambiare musica per la game lobby
 -Introdurre musica per la game window
 -Introdurre effetti sonori per lo sprint, ricarica sprint, 
 -Introdurre effetti sonori per quando si viene colpiti con lo sprint
 
+FARE UN REFACTORING GENERALE:
+-utilizzare due tipologie di pacchetti differenti ( in base ai messaggi del server o ai messaggi di gioco )
+-in generale un refactoring totale del progetto, delle classi, della gestione delle finestre...
+
 ALTRO-PROGETTO:
 
 - continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )
+-introdurre la chat completa nel gioco.

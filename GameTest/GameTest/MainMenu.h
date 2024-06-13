@@ -42,7 +42,7 @@ private:
 
 	void displayTextThread(Entity& entity, int seconds);
 
-	void handleMatchmakingClient(const NetMessages& msg, std::string nickname);
+	void handleMatchmakingClient(const NetPacket::NetMessages& msg, std::string nickname);
 
 	void listenForMatchmaking(std::string nickname);
 

@@ -5,6 +5,15 @@
 #include <iostream>
 
 class Player : public sf::Drawable {
+public:
+    enum class CollisionSide {
+        None,
+        Top,
+        Bottom,
+        Left,
+        Right
+    };
+
 protected:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -24,12 +33,17 @@ private:
     float sprintPower;
     bool m_isSprinting;
     bool enemyHit;
+    CollisionSide collidedSide;
 
 private:
     void move(const sf::Vector2f& offset, const sf::RectangleShape& other);
 
 public:
     Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout);
+
+    CollisionSide& getCollidedSide();
+
+    void checkCollidedSide(const sf::RectangleShape& other);
 
     void update(sf::Time deltaTime, const sf::RectangleShape& other);
 

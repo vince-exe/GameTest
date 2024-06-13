@@ -12,7 +12,7 @@
 #include "network_utilities.h"
 #include "User.h"
 #include "NetPacket.h"
-#include "UndoMatchThreadClass.h"
+#include "TemporaryThread.h"
 
 using boost::asio::ip::tcp;
 
@@ -54,7 +54,7 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<User>> usersMap;
 
 	std::queue<std::shared_ptr<User>> matchmakingQueue;
-	std::list<UndoMatchThreadClass> undoMatchThreadList;
+	std::list<TemporaryThread> tempThreadsList;
 
 	std::mutex mtx;
 	std::shared_ptr<std::thread> clearThread;

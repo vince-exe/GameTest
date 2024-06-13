@@ -33,7 +33,7 @@
     <ClCompile Include="GameSession.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="UndoMatchThreadClass.cpp">
+    <ClCompile Include="TemporaryThread.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,7 +53,7 @@
     <ClInclude Include="GameSession.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="UndoMatchThreadClass.h">
+    <ClInclude Include="TemporaryThread.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>

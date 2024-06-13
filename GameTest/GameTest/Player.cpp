@@ -22,6 +22,47 @@ Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorCo
     this->moving = false;
 }
 
+Player::CollisionSide& Player::getCollidedSide() {
+    return this->collidedSide;
+}
+
+void Player::checkCollidedSide(const sf::RectangleShape& other) {
+    sf::FloatRect intersection;
+    if (this->rectangle.getGlobalBounds().intersects(other.getGlobalBounds(), intersection)) {
+        // Calculate overlap in both directions
+        float overlapLeft = this->rectangle.getPosition().x + this->rectangle.getSize().x - other.getPosition().x;
+        float overlapRight = other.getPosition().x + other.getSize().x - this->rectangle.getPosition().x;
+        float overlapTop = this->rectangle.getPosition().y + this->rectangle.getSize().y - other.getPosition().y;
+        float overlapBottom = other.getPosition().y + other.getSize().y - this->rectangle.getPosition().y;
+
+        // Determine the minimum overlap direction
+        float minOverlapX = std::min(overlapLeft, overlapRight);
+        float minOverlapY = std::min(overlapTop, overlapBottom);
+
+        if (minOverlapX < minOverlapY) {
+            // Collision along the x-axis
+            if (overlapLeft > overlapRight) {
+                this->collidedSide = CollisionSide::Right;
+            }
+            else {
+                this->collidedSide = CollisionSide::Left;
+            }
+        }
+        else {
+            // Collision along the y-axis
+            if (overlapTop > overlapBottom) {
+                this->collidedSide = CollisionSide::Bottom;
+            }
+            else {
+                this->collidedSide = CollisionSide::Top;
+            }
+        }
+    }
+    else {
+        this->collidedSide = CollisionSide::None;
+    }
+}
+
 void Player::update(sf::Time deltaTime, const sf::RectangleShape& other) {
     if (!targetReached) {
         sf::Vector2f direction = targetPosition - getPosition();
@@ -54,6 +95,8 @@ void Player::move(const sf::Vector2f& offset, const sf::RectangleShape& other) {
 
     // check collision
     if (this->intersect(other)) {
+        this->checkCollidedSide(other);
+         
         this->rectangle.setPosition(this->rectangle.getPosition() - offset);
         this->enemyHit = true;
     }

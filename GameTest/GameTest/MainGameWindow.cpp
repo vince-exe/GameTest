@@ -32,7 +32,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
 
     sf::Clock sprintClock;
     
-    // DEBUG
+    // Debug ( Temporary )
     std::cout << "\nPlayer: " << myNickname.getString().toAnsiString();
 
     while (this->displayWindow) {
@@ -60,8 +60,8 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
     std::random_device dev;
     std::mt19937 rng(dev());
     /* generate the X and Y*/
-    std::uniform_int_distribution<std::mt19937::result_type> xPositionGenerator(100, 800);
-    std::uniform_int_distribution<std::mt19937::result_type> yPositionGenerator(100, 500);
+    std::uniform_int_distribution<std::mt19937::result_type> xPositionGenerator(100, 1000);
+    std::uniform_int_distribution<std::mt19937::result_type> yPositionGenerator(200, 700);
 
     float playerPosition[2];
     NetPacket p;
@@ -71,13 +71,13 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
         playerPosition[1] = yPositionGenerator(rng);
 
         /* send the position*/
-        if (!NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(playerPosition), sizeof(playerPosition)))) {
+        if (!NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(playerPosition), sizeof(playerPosition)))) {
             std::cerr << "\nError in sending position to the server";
             return false;
         }
         /* get the enemy position */
         p = NetUtils::read_(*this->client->getSocket());
-        if (p.getMsgType() == NetMessages::PLAYER_POSITION) {
+        if (p.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
             /* check if the position is the same */
             this->youPlayer->setPosition(sf::Vector2f(playerPosition[0], playerPosition[1]));
             this->enemyPlayer->setPosition(sf::Vector2f(p.getFloatVec()[0], p.getFloatVec()[1]));
@@ -92,20 +92,39 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
 
 void MainGameWindow::handleMessages() {
     NetPacket packet;
+    Player::CollisionSide cL;
 
     while (true) {
         try {
             packet = NetUtils::read_(*this->client->getSocket());
 
-            if (packet.getMsgType() == NetMessages::QUIT_GAME) {
+            switch (packet.getMsgType()) {
+            case NetPacket::NetMessages::QUIT_GAME:
                 std::cout << "\nMatch end becasue [ " << this->enemyNickname.getString().toAnsiString() << " ] quit.";
-               
+
                 this->quitGame();
                 return;
-            }
-            if (packet.getMsgType() == NetMessages::PLAYER_POSITION) {
-                sf::Vector2f newPos(packet.getFloatVec()[0], packet.getFloatVec()[1]);
-                this->enemyPlayer->setPosition(newPos);
+
+            case NetPacket::NetMessages::PLAYER_POSITION:
+                this->enemyPlayer->setPosition(packet.getFloatVec()[0], packet.getFloatVec()[1]);
+                break;
+
+            case NetPacket::NetMessages::ENEMY_COLLISION:
+                /* DEBUG ( TEMPORARY ) */
+                cL = (Player::CollisionSide)packet.getData()[0];
+                if (cL == Player::CollisionSide::Top) {
+                    std::cout << "\nSono stato colpito dall'alto";
+                }
+                else if (cL == Player::CollisionSide::Bottom) {
+                    std::cout << "\nSono stato colpito dal basso";
+                }
+                else if (cL == Player::CollisionSide::Left) {
+                    std::cout << "\nSono stato colpito da sinistra";
+                }
+                else {
+                    std::cout << "\nSono stato colpito da destra";
+                }
+                break;
             }
         }
         catch (const boost::system::system_error& ex) {
@@ -113,6 +132,7 @@ void MainGameWindow::handleMessages() {
             return;
         }
     }
+    std::cout << "\n sono uscito";
 }
 
 void MainGameWindow::updateRechargeBar() {
@@ -195,11 +215,13 @@ void MainGameWindow::update(sf::Time deltaTime) {
         checkPlayerWindowBorders();
 
         float p[2] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
-        NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
+        NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
     }
     if (this->youPlayer->isSprinting() && this->youPlayer->isEnemyHit()) {
+        Player::CollisionSide cL = this->youPlayer->getCollidedSide();
+
+        NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION, (uint8_t*)&cL, sizeof(cL)));
         this->youPlayer->resetEnemyHit();
-        std::cout << "\nColpito Nemico";
     }
 }
 

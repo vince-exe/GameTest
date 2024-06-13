@@ -188,19 +188,19 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
             displayTextThread(menuMsgs[0], 7);
         }
         else {
-            NetMessages msg = NetUtils::read_(*this->client->getSocket()).getMsgType();
+            NetPacket::NetMessages msg = NetUtils::read_(*this->client->getSocket()).getMsgType();
 
-            if (msg == NetMessages::SERVER_FULL) {
+            if (msg == NetPacket::NetMessages::SERVER_FULL) {
                 /* display the "Server Full" message */
                 notificationSound->play();
                 displayTextThread(menuMsgs[2], 7);
             }
             else {
                 /* send the nickname */
-                NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
+                NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
 
                 /* check the nickname */
-                if (NetUtils::read_(*this->client->getSocket()).getMsgType() == NetMessages::NICK_EXITS) {
+                if (NetUtils::read_(*this->client->getSocket()).getMsgType() == NetPacket::NetMessages::NICK_EXITS) {
                     /* Nick exists text */
                     notificationSound->play();
                     this->client->getSocket()->close();
@@ -209,7 +209,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 }
                 /* send the matchmaking request */
                 else {
-                    NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
+                    NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
                     handleMatchmakingClient(NetUtils::read_(*this->client->getSocket()).getMsgType(), nick);
                 }
             }
@@ -223,8 +223,8 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
     }
 }
 
-void MainMenu::handleMatchmakingClient(const NetMessages& msg, std::string nickname) {
-    if (msg == NetMessages::WAIT_FOR_MATCH) {
+void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, std::string nickname) {
+    if (msg == NetPacket::NetMessages::WAIT_FOR_MATCH) {
         /* in queue for a match text */
         notificationSound->play();
         displayTextFunc(menuMsgs[3]);
@@ -234,7 +234,7 @@ void MainMenu::handleMatchmakingClient(const NetMessages& msg, std::string nickn
         t.detach();
     }
     /* start the game window */
-    else if (msg == NetMessages::MATCH_FOUND) {
+    else if (msg == NetPacket::NetMessages::MATCH_FOUND) {
         this->matchFound(nickname);
     }
 }
@@ -252,9 +252,9 @@ void MainMenu::listenForMatchmaking(std::string nickname) {
             std::this_thread::sleep_for(500ms);            
             p = NetUtils::read_(*this->client->getSocket());
 
-            if (p.getMsgType() == NetMessages::MATCH_FOUND) {
+            if (p.getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
                 std::cout << "\nStop listening match found\n";
-                NetUtils::write_(*client->getSocket(), NetPacket(NetMessages::MATCH_FOUND, nullptr, 0));
+                NetUtils::write_(*client->getSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 
                 this->client->getSocket()->non_blocking(false);
                 this->matchFound(nickname);
@@ -277,7 +277,7 @@ void MainMenu::undoMatchmaking() {
     std::cout << "\nundo matchmaking.\n";
     try {
         inMatchmaking.store(false);
-        NetUtils::write_(*this->client->getSocket(), NetPacket(NetMessages::UNDO_MATCHMAKING, nullptr, 0));
+        NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::UNDO_MATCHMAKING, nullptr, 0));
     }
     catch (const boost::system::system_error& e) {
         std::cerr << "\nError in undo matchmaking " << e.what() << std::endl;

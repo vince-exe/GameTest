@@ -18,7 +18,7 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 			std::cerr << "\nCatch in handle client [ " << client->getNick() << " ] GameSession.cpp | " << ex.what();
 
 			if (otherClient->getSocket()->is_open()) {
-				NetUtils::write_(*otherClient->getSocket(), NetPacket(NetMessages::QUIT_GAME, nullptr, 0));
+				NetUtils::write_(*otherClient->getSocket(), NetPacket(NetPacket::NetMessages::QUIT_GAME, nullptr, 0));
 			}
 			
 			client->getSocket()->close();
@@ -30,8 +30,8 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 
 void GameSession::startGame() {
 	/* send the nicknames */
-	NetUtils::write_(*user1->getSocket(), NetPacket(NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user2->getNick().c_str()), user2->getNick().size()));
-	NetUtils::write_(*user2->getSocket(), NetPacket(NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user1->getNick().c_str()), user1->getNick().size()));
+	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user2->getNick().c_str()), user2->getNick().size()));
+	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user1->getNick().c_str()), user1->getNick().size()));
 	
 	/* start the game session */
 	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " started.\n";
