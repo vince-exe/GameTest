@@ -102,6 +102,9 @@
     <ClCompile Include="GameSettingsMenu.cpp">
       <Filter>File di origine\GameMenus</Filter>
     </ClCompile>
+    <ClCompile Include="network_game_utilities.cpp">
+      <Filter>File di origine\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -160,6 +163,9 @@
     </ClInclude>
     <ClInclude Include="GameSettingsMenu.h">
       <Filter>File di intestazione\GameMenus</Filter>
+    </ClInclude>
+    <ClInclude Include="network_game_utilities.h">
+      <Filter>File di intestazione\Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

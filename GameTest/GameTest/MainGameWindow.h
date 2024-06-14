@@ -12,6 +12,7 @@
 #include "../GameServer/network_utilities.h"
 #include "MainGameTextureManager.h"
 #include "GameSettingsMenu.h"
+#include "network_game_utilities.h"
 
 class MainGameWindow {
 public:

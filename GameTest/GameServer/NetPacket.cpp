@@ -39,16 +39,3 @@ const std::vector<uint8_t>& NetPacket::getData() const {
 size_t NetPacket::getDataSize() {
     return this->dataSize;
 }
-
-std::string NetPacket::getStr() {
-    return std::string(reinterpret_cast<const char*>(&this->data[0]), this->getDataSize());
-}
-
-std::vector<float> NetPacket::getFloatVec() {
-    std::vector<float> floatVec(2);
-
-    std::memcpy(&floatVec[0], &this->data[0], sizeof(float));
-    std::memcpy(&floatVec[1], &this->data[sizeof(float)], sizeof(float));
-
-    return floatVec;
-}

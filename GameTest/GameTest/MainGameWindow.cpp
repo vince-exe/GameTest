@@ -80,7 +80,7 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
         if (p.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
             /* check if the position is the same */
             this->youPlayer->setPosition(sf::Vector2f(playerPosition[0], playerPosition[1]));
-            this->enemyPlayer->setPosition(sf::Vector2f(p.getFloatVec()[0], p.getFloatVec()[1]));
+            this->enemyPlayer->setPosition(NetGameUtils::getSfvector2f(p));
         }
         else {
             return false;
@@ -106,24 +106,11 @@ void MainGameWindow::handleMessages() {
                 return;
 
             case NetPacket::NetMessages::PLAYER_POSITION:
-                this->enemyPlayer->setPosition(packet.getFloatVec()[0], packet.getFloatVec()[1]);
+                this->enemyPlayer->setPosition(NetGameUtils::getSfvector2f(packet));
                 break;
 
             case NetPacket::NetMessages::ENEMY_COLLISION:
-                /* DEBUG ( TEMPORARY ) */
-                cL = (Player::CollisionSide)packet.getData()[0];
-                if (cL == Player::CollisionSide::Top) {
-                    std::cout << "\nSono stato colpito dall'alto";
-                }
-                else if (cL == Player::CollisionSide::Bottom) {
-                    std::cout << "\nSono stato colpito dal basso";
-                }
-                else if (cL == Player::CollisionSide::Left) {
-                    std::cout << "\nSono stato colpito da sinistra";
-                }
-                else {
-                    std::cout << "\nSono stato colpito da destra";
-                }
+                this->youPlayer->handleEnemyCollision((Player::CollisionSide)packet.getData()[0]);
                 break;
             }
         }
@@ -132,7 +119,6 @@ void MainGameWindow::handleMessages() {
             return;
         }
     }
-    std::cout << "\n sono uscito";
 }
 
 void MainGameWindow::updateRechargeBar() {
@@ -181,7 +167,7 @@ void MainGameWindow::handleMouseClick(sf::Event& event) {
             }
             else if (event.mouseButton.button == sf::Mouse::Right) {
                 if (this->youPlayer->canSprint()) {
-                    this->youPlayer->startSprint();
+                    this->youPlayer->startSprint(true);
                     handlePlayerMovement(event);
                 }
             }
@@ -221,6 +207,7 @@ void MainGameWindow::update(sf::Time deltaTime) {
         Player::CollisionSide cL = this->youPlayer->getCollidedSide();
 
         NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION, (uint8_t*)&cL, sizeof(cL)));
+        this->youPlayer->stopMove();
         this->youPlayer->resetEnemyHit();
     }
 }
@@ -295,7 +282,7 @@ void MainGameWindow::initSprites() {
 bool MainGameWindow::handleEnemyNickname() {
     try {
         NetPacket p = NetUtils::read_(*this->client->getSocket());
-        this->enemyNickname.setString(p.getStr());
+        this->enemyNickname.setString(NetGameUtils::getString(p));
         return true;
     }
     catch (const boost::system::system_error& e) {

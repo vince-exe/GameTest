@@ -1,14 +1,9 @@
-*prossimo refactoring urgente*
-fare che la classe NetPacket non fa più le conversioni comode. Creare un'altro namespace di utility che contiene
-le funzioni di conversione comode, così che in base al NetMessage si sceglie l'apposita conversione.
-
 IDEA-GIOCO:
-delle "aree di danno" vengono generate nella mappa e l'intendo del player è quello di buttare il nemico in quelle aree
+delle "aree di danno" vengono generate nella mappa e l'intento del player è quello di buttare il nemico in quelle aree
 per fargli prendere danno
 
 DA FARE PRINCIPALE:
--Client ( introdurre i rimbalzi ( quando un client va addosso ad un'altro con un sprint il nemico deve rimbalzare )
-- vedere come gestire i round del gioco
+- Vedere come gestire il gioco (round, spawn delle areee di danno etc.)
 
 DA FARE SECONDARIE:
 -introdurre più funzionalità nella finestra delle opzioni.

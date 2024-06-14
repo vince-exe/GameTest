@@ -35,10 +35,6 @@ public:
 	
 	size_t getDataSize();
 
-	std::string getStr();
-
-	std::vector<float> getFloatVec();
-
 	std::vector<uint8_t> serialize() const;
 
 private:

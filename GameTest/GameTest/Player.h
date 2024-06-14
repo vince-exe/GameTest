@@ -38,18 +38,20 @@ private:
 private:
     void move(const sf::Vector2f& offset, const sf::RectangleShape& other);
 
+    void setCollidedSide(const sf::RectangleShape& other);
+
 public:
     Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout);
 
     CollisionSide& getCollidedSide();
 
-    void checkCollidedSide(const sf::RectangleShape& other);
+    void handleEnemyCollision(const CollisionSide collidionSide);
 
     void update(sf::Time deltaTime, const sf::RectangleShape& other);
 
     bool canSprint();
 
-    void startSprint();
+    void startSprint(float flag);
 
     void stopSprint();
 

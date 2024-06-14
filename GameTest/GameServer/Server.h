@@ -31,7 +31,7 @@ private:
 	
 	bool nicknameAlreadyExist(const std::string& nick);
 
-	bool handleUserNickname(std::shared_ptr<tcp::socket> socket, std::string& nick);
+	bool handleUserNickname(std::shared_ptr<tcp::socket> socket, const std::string& nick);
 
 	/* return true if a match has been found */
 	bool handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick);

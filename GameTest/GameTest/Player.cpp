@@ -26,7 +26,7 @@ Player::CollisionSide& Player::getCollidedSide() {
     return this->collidedSide;
 }
 
-void Player::checkCollidedSide(const sf::RectangleShape& other) {
+void Player::setCollidedSide(const sf::RectangleShape& other) {
     sf::FloatRect intersection;
     if (this->rectangle.getGlobalBounds().intersects(other.getGlobalBounds(), intersection)) {
         // Calculate overlap in both directions
@@ -95,7 +95,7 @@ void Player::move(const sf::Vector2f& offset, const sf::RectangleShape& other) {
 
     // check collision
     if (this->intersect(other)) {
-        this->checkCollidedSide(other);
+        this->setCollidedSide(other);
          
         this->rectangle.setPosition(this->rectangle.getPosition() - offset);
         this->enemyHit = true;
@@ -106,8 +106,11 @@ void Player::move(const sf::Vector2f& offset, const sf::RectangleShape& other) {
     this->moving = true;
 }
 
-void Player::startSprint() {
-    this->sprintClock.restart();
+void Player::startSprint(float flag) {
+    if (flag) {
+        this->sprintClock.restart();
+    }
+    
     this->m_isSprinting = true;
     this->speed += this->sprintPower;
 }
@@ -119,6 +122,30 @@ void Player::stopSprint() {
 
 bool Player::canSprint() {
     return (this->sprintClock.getElapsedTime().asSeconds() >= this->sprintTimeout);
+}
+
+void Player::handleEnemyCollision(const Player::CollisionSide collisionSide ) {
+    switch (collisionSide) {
+    case Player::CollisionSide::Top:
+        this->setTarget(sf::Vector2f(this->rectangle.getPosition().x, this->rectangle.getPosition().y + 2000));
+        this->startSprint(false);
+        break;
+
+    case Player::CollisionSide::Bottom:
+        this->setTarget(sf::Vector2f(this->rectangle.getPosition().x, this->rectangle.getPosition().y - 2000));
+        this->startSprint(false);
+        break;
+
+    case Player::CollisionSide::Left:
+        this->setTarget(sf::Vector2f(this->rectangle.getPosition().x + 2000, this->rectangle.getPosition().y));
+        this->startSprint(false);
+        break;
+
+    case Player::CollisionSide::Right:
+        this->setTarget(sf::Vector2f(this->rectangle.getPosition().x - 2000, this->rectangle.getPosition().y));
+        this->startSprint(false);
+        break;
+    }
 }
 
 bool Player::isSprinting() {

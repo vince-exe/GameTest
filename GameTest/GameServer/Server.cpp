@@ -30,8 +30,11 @@ void Server::accept() {
 }
 
 void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
-	std::string nick;
+	/* read the nickname */
+	NetPacket packet = NetUtils::read_(*socket);
+	std::string nick(reinterpret_cast<const char*>(&packet.getData()[0]), packet.getDataSize());
 	
+	/* check if there is another user with the same nickname and in case handle it. Otherwise create the user */
 	if (!handleUserNickname(socket, nick)) {
 		socket->close();
 		return;
@@ -136,11 +139,8 @@ void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const st
 	}
 }
 
-bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, std::string& nick) {
+bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, const std::string& nick) {
 	try {
-		/* read the nickname */
-		nick = NetUtils::read_(*socket).getStr();
-
 		// if the nickname already exist 
 		if (this->nicknameAlreadyExist(nick)) {
 			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << " [ NICK ]: " << nick << " | refused ( nick already exist )";
