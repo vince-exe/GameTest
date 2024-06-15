@@ -12,16 +12,25 @@
 using boost::asio::ip::tcp;
 
 class GameSession {
-public:
-	GameSession(std::unordered_map<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2);
-
-	void handleClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient);
-
-	void startGame();
-
 private:
 	std::unordered_map<std::string, std::shared_ptr<User>>* usersMap;
 	std::shared_ptr<User> user1;
 	std::shared_ptr<User> user2;
+
+private:
+	void handleClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient);
+	
+	void sendNicknames();
+
+	void sendDefaultPositions();
+
+public:
+	GameSession(std::unordered_map<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2);
+
+	
+
+	void startGame();
+
+
 };
 

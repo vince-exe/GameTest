@@ -19,10 +19,12 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
 
     initSprites();
     
-    if(!initPlayerAndEnemyPosition()) {
+    /* try to get the default position of the player and enemy player*/
+    if (!initPlayerAndEnemyPosition()) {
         this->quitGame();
         return;
     }
+
     /* start the thread to listen for game messages */
     std::thread t(&MainGameWindow::handleMessages, this);
     t.detach();
@@ -57,37 +59,18 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
 }
 
 bool MainGameWindow::initPlayerAndEnemyPosition() {
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    /* generate the X and Y*/
-    std::uniform_int_distribution<std::mt19937::result_type> xPositionGenerator(100, 1000);
-    std::uniform_int_distribution<std::mt19937::result_type> yPositionGenerator(200, 700);
+    NetPacket packet = NetUtils::read_(*this->client->getSocket());
+    if (packet.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
+        this->youPlayer->setPosition(NetGameUtils::getSfvector2f(packet));
+    }
 
-    float playerPosition[2];
-    NetPacket p;
-    /* check if they spawned at the same position */
-    do {
-        playerPosition[0] = xPositionGenerator(rng);
-        playerPosition[1] = yPositionGenerator(rng);
+    packet = NetUtils::read_(*this->client->getSocket());
+    if (packet.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
+        this->enemyPlayer->setPosition(NetGameUtils::getSfvector2f(packet));
 
-        /* send the position*/
-        if (!NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(playerPosition), sizeof(playerPosition)))) {
-            std::cerr << "\nError in sending position to the server";
-            return false;
-        }
-        /* get the enemy position */
-        p = NetUtils::read_(*this->client->getSocket());
-        if (p.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
-            /* check if the position is the same */
-            this->youPlayer->setPosition(sf::Vector2f(playerPosition[0], playerPosition[1]));
-            this->enemyPlayer->setPosition(NetGameUtils::getSfvector2f(p));
-        }
-        else {
-            return false;
-        }
-    } while (this->youPlayer->intersect(this->enemyPlayer->getRect()));
-
-    return true;
+        return true;
+    }
+    return false;
 }
 
 void MainGameWindow::handleMessages() {

@@ -6,6 +6,22 @@ GameSession::GameSession(std::unordered_map<std::string, std::shared_ptr<User>>*
 	this->user2 = user2;
 }
 
+void GameSession::sendNicknames() {
+	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user2->getNick().c_str()), user2->getNick().size()));
+	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user1->getNick().c_str()), user1->getNick().size()));
+}
+
+void GameSession::sendDefaultPositions() {
+	float player1Position[] = { 530.f, 470.f };
+	float player2Position[] = { 670.f, 470.f };
+
+	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
+	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
+
+	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
+	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
+}
+
 void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient) {
 	NetPacket packet;
 
@@ -20,7 +36,7 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 			if (otherClient->getSocket()->is_open()) {
 				NetUtils::write_(*otherClient->getSocket(), NetPacket(NetPacket::NetMessages::QUIT_GAME, nullptr, 0));
 			}
-			
+
 			client->getSocket()->close();
 			usersMap->erase(usersMap->find(client->getNick()));
 			return;
@@ -30,9 +46,10 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 
 void GameSession::startGame() {
 	/* send the nicknames */
-	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user2->getNick().c_str()), user2->getNick().size()));
-	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user1->getNick().c_str()), user1->getNick().size()));
-	
+	sendNicknames();
+	/* send the positions */
+	sendDefaultPositions();
+
 	/* start the game session */
 	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " started.\n";
 
