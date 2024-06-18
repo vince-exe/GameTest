@@ -14,9 +14,6 @@
 #include "network_game_utilities.h"
 
 class MainGameWindow {
-public:
-	void init(const std::string nickname, std::shared_ptr<Client> client);
-
 private:
 	void update(sf::Time deltaTime);
 
@@ -61,5 +58,8 @@ private:
 	std::atomic<bool> closeSettingsWindowFlag;
 
 	GameSettingsMenu gameSettingsMenu;
+
+public:
+	void init(const std::string nickname, std::shared_ptr<Client> client);
 };
 

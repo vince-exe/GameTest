@@ -22,6 +22,32 @@ void GameSession::sendDefaultPositions() {
 	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
 }
 
+void GameSession::setDamageAreasCoordinates() {
+	float startX = 38, startY = 117, endX = 1143, endY = 720;
+	float randX, randY;
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+
+	std::vector<std::pair<float, float>> vec;
+	for (int i = 0; i < 3; i++) {
+		vec.clear();
+		for (int j = 0; j < 4; j++) {
+			std::uniform_real_distribution<float> distrX(startX, endX);
+			std::uniform_real_distribution<float> distrY(startY, endY);
+			randX = distrX(gen);
+			randY = distrY(gen);
+
+			if ((randX >= 473 && randX <= 725) || (randY >= 406 && randY <= 592)) {
+				j--;
+				continue;
+			}
+			vec.push_back(std::pair<float, float>(distrX(gen), distrY(gen)));
+		}
+		damageAreasCoordinates.push_back(vec);
+	}
+}
+
 void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient) {
 	NetPacket packet;
 
@@ -56,6 +82,9 @@ void GameSession::startGame() {
 	std::thread thUser1(&GameSession::handleClientMessages, this, this->user1, this->user2);
 	std::thread thUser2(&GameSession::handleClientMessages, this, this->user2, this->user1);
 	
+	/* calculate the damage area's coordinates */
+	setDamageAreasCoordinates();
+
 	thUser1.join();
 	thUser2.join();
 
