@@ -145,6 +145,7 @@
     <ClCompile Include="MainGameTextureManager.cpp" />
     <ClCompile Include="MainGameWindow.cpp" />
     <ClCompile Include="MainMenuTextureManager.cpp" />
+    <ClCompile Include="network_game_utilities.cpp" />
     <ClCompile Include="NicknameMenu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="MainGameTextureManager.h" />
     <ClInclude Include="MainGameWindow.h" />
     <ClInclude Include="MainMenuTextureManager.h" />
+    <ClInclude Include="network_game_utilities.h" />
     <ClInclude Include="NicknameMenu.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MenuConfirmationExit.h" />
