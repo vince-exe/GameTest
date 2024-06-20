@@ -58,6 +58,8 @@ private:
 	std::atomic<bool> closeSettingsWindowFlag;
 
 	GameSettingsMenu gameSettingsMenu;
+	// DEBUG ( to remove after the final implementation )
+	std::vector<std::vector<std::pair<float, float>>> deserializedData;
 
 public:
 	void init(const std::string nickname, std::shared_ptr<Client> client);

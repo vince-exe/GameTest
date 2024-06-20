@@ -48,6 +48,24 @@ void GameSession::setDamageAreasCoordinates() {
 	}
 }
 
+void GameSession::sendDamageAreasConrdinates() {
+	size_t dataSize;
+	std::vector<uint8_t> byteArray = GameSessionUtils::convertCoordinatesToBytes(this->damageAreasCoordinates);
+	NetPacket packet(NetPacket::NetMessages::DAMAGE_AREAS_POSITION, byteArray.data(), byteArray.size());
+
+	// DEBUG ( to remove after the final implementation )
+	std::cout << "\nECCO LE COORDINATE DELLE AREE DI DANNO\n";
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 4; j++) {
+			std::cout << "X: " << this->damageAreasCoordinates[i][j].first << "  Y: " << this->damageAreasCoordinates[i][j].second << std::endl;
+		}
+		std::cout << "\n";
+	}
+
+	NetUtils::write_(*this->user1->getSocket(), packet);
+	NetUtils::write_(*this->user2->getSocket(), packet);
+}
+
 void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient) {
 	NetPacket packet;
 
@@ -84,6 +102,7 @@ void GameSession::startGame() {
 	
 	/* calculate the damage area's coordinates */
 	setDamageAreasCoordinates();
+	sendDamageAreasConrdinates();
 
 	thUser1.join();
 	thUser2.join();

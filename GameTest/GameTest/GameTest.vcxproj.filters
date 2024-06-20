@@ -105,6 +105,9 @@
     <ClCompile Include="network_game_utilities.cpp">
       <Filter>File di origine\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>File di origine\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -166,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="network_game_utilities.h">
       <Filter>File di intestazione\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>File di intestazione\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

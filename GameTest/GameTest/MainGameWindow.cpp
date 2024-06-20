@@ -75,8 +75,6 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
 
 void MainGameWindow::handleMessages() {
     NetPacket packet;
-    Player::CollisionSide cL;
-
     while (true) {
         try {
             packet = NetUtils::read_(*this->client->getSocket());
@@ -95,6 +93,17 @@ void MainGameWindow::handleMessages() {
             case NetPacket::NetMessages::ENEMY_COLLISION:
                 this->youPlayer->handleEnemyCollision((Player::CollisionSide)packet.getData()[0]);
                 break;
+
+            case NetPacket::NetMessages::DAMAGE_AREAS_POSITION:
+                this->deserializedData = NetGameUtils::getDamageAreasCoordinates(packet);
+                // DEBUG ( to remove after the final implementation )
+                std::cout << "\nECCO LE COORDINATE DELLE AREE DI DANNO\n";
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 4; j++) {
+                        std::cout << "X: " << this->deserializedData[i][j].first << "  Y: " << this->deserializedData[i][j].second << std::endl;
+                    }
+                    std::cout << "\n";
+                }
             }
         }
         catch (const boost::system::system_error& ex) {
