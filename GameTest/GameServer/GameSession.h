@@ -35,6 +35,6 @@ private:
 public:
 	GameSession(std::unordered_map<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2);
 
-	void startGame();
+	void start();
 };
 

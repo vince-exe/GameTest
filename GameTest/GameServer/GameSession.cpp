@@ -6,6 +6,29 @@ GameSession::GameSession(std::unordered_map<std::string, std::shared_ptr<User>>*
 	this->user2 = user2;
 }
 
+void GameSession::start() {
+	/* send the nicknames */
+	sendNicknames();
+	/* send the positions */
+	sendDefaultPositions();
+
+	/* start the game session */
+	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " started.\n";
+
+	std::thread thUser1(&GameSession::handleClientMessages, this, this->user1, this->user2);
+	std::thread thUser2(&GameSession::handleClientMessages, this, this->user2, this->user1);
+
+	/* calculate the damage area's coordinates and send it to the clients */
+	setDamageAreasCoordinates();
+	/* send the damage areas coordinates and start the game */
+	sendDamageAreasConrdinates();
+
+	thUser1.join();
+	thUser2.join();
+
+	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " end.\n";
+}
+
 void GameSession::sendNicknames() {
 	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user2->getNick().c_str()), user2->getNick().size()));
 	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user1->getNick().c_str()), user1->getNick().size()));
@@ -38,7 +61,7 @@ void GameSession::setDamageAreasCoordinates() {
 			randX = distrX(gen);
 			randY = distrY(gen);
 
-			if ((randX >= 473 && randX <= 725) || (randY >= 406 && randY <= 592)) {
+			if ((randX >= 400 && randX <= 800) || (randY >= 350 && randY <= 650)) {
 				j--;
 				continue;
 			}
@@ -51,16 +74,7 @@ void GameSession::setDamageAreasCoordinates() {
 void GameSession::sendDamageAreasConrdinates() {
 	size_t dataSize;
 	std::vector<uint8_t> byteArray = GameSessionUtils::convertCoordinatesToBytes(this->damageAreasCoordinates);
-	NetPacket packet(NetPacket::NetMessages::DAMAGE_AREAS_POSITION, byteArray.data(), byteArray.size());
-
-	// DEBUG ( to remove after the final implementation )
-	std::cout << "\nECCO LE COORDINATE DELLE AREE DI DANNO\n";
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 4; j++) {
-			std::cout << "X: " << this->damageAreasCoordinates[i][j].first << "  Y: " << this->damageAreasCoordinates[i][j].second << std::endl;
-		}
-		std::cout << "\n";
-	}
+	NetPacket packet(NetPacket::NetMessages::GAME_STARTED, byteArray.data(), byteArray.size());
 
 	NetUtils::write_(*this->user1->getSocket(), packet);
 	NetUtils::write_(*this->user2->getSocket(), packet);
@@ -87,26 +101,3 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 		}
 	}
 }
-
-void GameSession::startGame() {
-	/* send the nicknames */
-	sendNicknames();
-	/* send the positions */
-	sendDefaultPositions();
-
-	/* start the game session */
-	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " started.\n";
-
-	std::thread thUser1(&GameSession::handleClientMessages, this, this->user1, this->user2);
-	std::thread thUser2(&GameSession::handleClientMessages, this, this->user2, this->user1);
-	
-	/* calculate the damage area's coordinates */
-	setDamageAreasCoordinates();
-	sendDamageAreasConrdinates();
-
-	thUser1.join();
-	thUser2.join();
-
-	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " end.\n";
-}
-

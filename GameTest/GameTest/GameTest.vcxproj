@@ -140,6 +140,7 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FontManager.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameSettingsMenu.cpp" />
     <ClCompile Include="IpPortMenu.cpp" />
     <ClCompile Include="MainGameTextureManager.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="FontManager.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GameSettingsMenu.h" />
     <ClInclude Include="IpPortMenu.h" />
     <ClInclude Include="MainGameTextureManager.h" />

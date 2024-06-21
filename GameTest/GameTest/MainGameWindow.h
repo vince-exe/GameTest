@@ -12,6 +12,7 @@
 #include "MainGameTextureManager.h"
 #include "GameSettingsMenu.h"
 #include "network_game_utilities.h"
+#include "Game.h"
 
 class MainGameWindow {
 private:
@@ -42,6 +43,7 @@ private:
 private:
 	std::shared_ptr<sf::RenderWindow> windowPtr;
 	std::shared_ptr<Client> client;
+	Game m_Game;
 
 	sf::Text myNickname, enemyNickname, vsText;
 
@@ -58,8 +60,6 @@ private:
 	std::atomic<bool> closeSettingsWindowFlag;
 
 	GameSettingsMenu gameSettingsMenu;
-	// DEBUG ( to remove after the final implementation )
-	std::vector<std::vector<std::pair<float, float>>> deserializedData;
 
 public:
 	void init(const std::string nickname, std::shared_ptr<Client> client);

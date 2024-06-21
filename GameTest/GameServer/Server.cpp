@@ -97,7 +97,7 @@ void Server::gameSessionThread(const std::string nick) {
 
 	Sleep(1000);
 	GameSession gameSession(&this->usersMap, player1, player2);
-	gameSession.startGame();
+	gameSession.start();
 }
 
 void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick) {

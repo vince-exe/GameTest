@@ -3,9 +3,8 @@ delle "aree di danno" vengono generate nella mappa e l'intento del player è que
 per fargli prendere danno
 
 DA FARE PRINCIPALE:
-- il server si prepara le aree di gioco per ognuno di questi 3 round. (fatto)
-- quando ha preparato le aree di gioco manda un messaggio al client GAME_READY
-- quando i client ricevono il messaggio, hanno un countdown di 3 secondi ( nel quale non possono fare nulla ) e poi iniziano
+-migliorare l'algoritmo che spawna i cerchi
+- quando i client ricevono il messaggio, hanno un countdown di 3 secondi ( nel quale non possono fare nulla, mi raccomando utilizzare la formula con il delta ) e poi iniziano
 - il client mostrerà i cerchi 
 
 - Vedere come gestire il gioco (round, spawn delle areee di danno etc.)
@@ -22,15 +21,12 @@ DA FARE SECONDARIE:
 FARE UN REFACTORING GENERALE:
 -utilizzare due tipologie di pacchetti differenti ( in base ai messaggi del server o ai messaggi di gioco )
 -in generale un refactoring totale del progetto, delle classi, della gestione delle finestre...
+-trasformare tutti i membri di una classe con la m_ iniziale senza usare il this
 
 ALTRO-PROGETTO:
 
 - continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )
 -introdurre la chat completa nel gioco.
 
-*CARATTERISTICHE CERCHIO*
-    circle.setRadius(60.f);
-    circle.setOutlineThickness(8.f);
-    circle.setFillColor(sf::Color(120, 36, 14));
-    circle.setOutlineColor(sf::Color(82, 20, 5));
-    circle.setPosition(60.f, 300.f);
+AGGIUNTA-FINALE:
+il gioco è completamente customizzabile tramite un file json ( numero round, vite, e tutte le caratteristiche possibili )

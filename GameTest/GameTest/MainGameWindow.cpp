@@ -4,6 +4,8 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     this->client = client;
     
     this->windowPtr = std::make_shared<sf::RenderWindow>();
+    m_Game.setGameWindow(this->windowPtr);
+
     this->windowPtr->create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
     this->windowPtr->setFramerateLimit(60);
 
@@ -94,16 +96,10 @@ void MainGameWindow::handleMessages() {
                 this->youPlayer->handleEnemyCollision((Player::CollisionSide)packet.getData()[0]);
                 break;
 
-            case NetPacket::NetMessages::DAMAGE_AREAS_POSITION:
-                this->deserializedData = NetGameUtils::getDamageAreasCoordinates(packet);
-                // DEBUG ( to remove after the final implementation )
-                std::cout << "\nECCO LE COORDINATE DELLE AREE DI DANNO\n";
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 4; j++) {
-                        std::cout << "X: " << this->deserializedData[i][j].first << "  Y: " << this->deserializedData[i][j].second << std::endl;
-                    }
-                    std::cout << "\n";
-                }
+            case NetPacket::NetMessages::GAME_STARTED:
+                m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet));
+                m_Game.startGame();
+                break;
             }
         }
         catch (const boost::system::system_error& ex) {
@@ -218,6 +214,9 @@ void MainGameWindow::draw() {
     for (int i = 0; i < 3; i++) {
         this->windowPtr->draw(youHealth[i]);
         this->windowPtr->draw(enemyHealth[i]);
+    }
+    if (m_Game.isGameStarted()) {
+        m_Game.drawDamageAreas();
     }
 
     this->windowPtr->display();

@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="File di intestazione\Menu">
-      <UniqueIdentifier>{d64ac55b-16c3-472e-858c-f98877810bf2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="File di origine\Menu">
       <UniqueIdentifier>{4d82fda0-6776-4f18-b95b-4fc6f4e6bc2b}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,9 @@
     </Filter>
     <Filter Include="File di intestazione\GameMenus">
       <UniqueIdentifier>{f9e3020b-74bf-4cf7-94fd-d23736ca3368}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di intestazione\Game\Menu">
+      <UniqueIdentifier>{d64ac55b-16c3-472e-858c-f98877810bf2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -111,16 +111,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
-      <Filter>File di intestazione\Menu</Filter>
+      <Filter>File di intestazione\Game\Menu</Filter>
     </ClInclude>
     <ClInclude Include="MenuConfirmationExit.h">
-      <Filter>File di intestazione\Menu</Filter>
+      <Filter>File di intestazione\Game\Menu</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>File di intestazione\Game</Filter>
     </ClInclude>
     <ClInclude Include="OptionsMainMenu.h">
-      <Filter>File di intestazione\Menu</Filter>
+      <Filter>File di intestazione\Game\Menu</Filter>
     </ClInclude>
     <ClInclude Include="ui_utils.h">
       <Filter>File di intestazione\Utils</Filter>
@@ -129,7 +129,7 @@
       <Filter>File di intestazione\Game</Filter>
     </ClInclude>
     <ClInclude Include="NicknameMenu.h">
-      <Filter>File di intestazione\Menu</Filter>
+      <Filter>File di intestazione\Game\Menu</Filter>
     </ClInclude>
     <ClInclude Include="MainMenuTextureManager.h">
       <Filter>File di intestazione\Utils</Filter>
@@ -150,7 +150,7 @@
       <Filter>File di intestazione\Game</Filter>
     </ClInclude>
     <ClInclude Include="IpPortMenu.h">
-      <Filter>File di intestazione\Menu</Filter>
+      <Filter>File di intestazione\Game\Menu</Filter>
     </ClInclude>
     <ClInclude Include="SettingsManager.h">
       <Filter>File di intestazione\Utils</Filter>
