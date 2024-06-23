@@ -46,29 +46,63 @@ void GameSession::sendDefaultPositions() {
 }
 
 void GameSession::setDamageAreasCoordinates() {
-	float startX = 38, startY = 117, endX = 1143, endY = 720;
-	float randX, randY;
-
 	std::random_device rd;
 	std::mt19937 gen(rd());
 
-	std::vector<std::pair<float, float>> vec;
+	std::vector<std::pair<float, float>> tempCordsVec;
+	std::vector<std::pair<float, float>> areas = {{30.f, 400.f}, {400.f, 800.f}, {800.f, 1130.f}};
+	float tmpX, tmpY, k;
+	
 	for (int i = 0; i < 3; i++) {
-		vec.clear();
-		for (int j = 0; j < 4; j++) {
-			std::uniform_real_distribution<float> distrX(startX, endX);
-			std::uniform_real_distribution<float> distrY(startY, endY);
-			randX = distrX(gen);
-			randY = distrY(gen);
+		tempCordsVec.clear();
+		k = 0;
+		/* LEFT PART */
+		for (int j = 0; j < 2; j++) {
+			std::uniform_real_distribution<float> distrX(areas.at(k).first, areas.at(k).second);
+			std::uniform_real_distribution<float> distrY(110, 730);
 
-			if ((randX >= 400 && randX <= 800) || (randY >= 350 && randY <= 650)) {
+			tmpX = distrX(gen);
+			tmpY = distrY(gen);
+
+			tempCordsVec.push_back(std::pair<float, float>(tmpX, tmpY));
+		}
+		k++;
+		/* CENTRAL PART */
+		for (int j = 0; j < 2; j++) {
+			std::uniform_real_distribution<float> distrX(areas.at(k).first, areas.at(k).second);
+			std::uniform_real_distribution<float> distrY(110, 730);
+
+			tmpX = distrX(gen);
+			tmpY = distrY(gen);
+			
+			if (tmpY >= 335 && tmpY <= 660) {
 				j--;
 				continue;
 			}
-			vec.push_back(std::pair<float, float>(distrX(gen), distrY(gen)));
+			tempCordsVec.push_back(std::pair<float, float>(tmpX, tmpY));
 		}
-		damageAreasCoordinates.push_back(vec);
+		k++;
+		/* RIGTH PART*/
+		for (int j = 0; j < 2; j++) {
+			std::uniform_real_distribution<float> distrX(areas.at(k).first, areas.at(k).second);
+			std::uniform_real_distribution<float> distrY(110, 730);
+
+			tmpX = distrX(gen);
+			tmpY = distrY(gen);
+
+			tempCordsVec.push_back(std::pair<float, float>(tmpX, tmpY));
+		}
+		damageAreasCoordinates.push_back(tempCordsVec);
 	}
+	
+	for (int i = 0; i < 3; i++) {
+		std::cout << "\ncoordinate " << i + 1 << " round\n";
+		for (int j = 0; j < 6; j++) {
+			std::cout << "X: " << damageAreasCoordinates.at(i).at(j).first << "  Y: " << damageAreasCoordinates.at(i).at(j).second << std::endl;
+		}
+		std::cout<<std::endl;
+ 	}
+	std::cout << "\nCICLo infinito";
 }
 
 void GameSession::sendDamageAreasConrdinates() {

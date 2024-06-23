@@ -96,7 +96,6 @@ void Player::move(const sf::Vector2f& offset, const sf::RectangleShape& other) {
     // check collision
     if (this->intersect(other)) {
         this->setCollidedSide(other);
-         
         this->rectangle.setPosition(this->rectangle.getPosition() - offset);
         this->enemyHit = true;
     }
@@ -124,7 +123,7 @@ bool Player::canSprint() {
     return (this->sprintClock.getElapsedTime().asSeconds() >= this->sprintTimeout);
 }
 
-void Player::handleEnemyCollision(const Player::CollisionSide collisionSide ) {
+void Player::handleEnemyCollision(const Player::CollisionSide collisionSide) {
     switch (collisionSide) {
     case Player::CollisionSide::Top:
         this->setTarget(sf::Vector2f(this->rectangle.getPosition().x, this->rectangle.getPosition().y + 2000));

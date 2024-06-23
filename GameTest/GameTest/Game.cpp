@@ -25,7 +25,7 @@ void Game::setDamageAreasCords(std::vector<std::vector<std::pair<float, float>>>
 void Game::startGame() {
 	float posX, posY;
 	
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 6; i++) {
 		m_damageAreasVector.push_back(sf::CircleShape());
 
 		m_damageAreasVector.at(i).setRadius(60.f);
