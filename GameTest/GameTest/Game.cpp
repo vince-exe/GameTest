@@ -4,18 +4,38 @@ Game::Game() {
 	m_blockActions = false;
 	m_gameStarted = false;
 	m_currentRound = 0;
+	m_playerLife = 3;
+	m_enemyLife = 3;
+}
+
+void Game::drawDamageAreasShapes(sf::RenderWindow& window) {
+	for (sf::CircleShape& shape : m_damageAreasVector) {
+		window.draw(shape);
+	}
+}
+
+sf::Vector2f Game::getStartPlayerPosition() {
+	return m_startPlayerPosition;
+}
+
+void Game::setPlayerStartPosition(sf::Vector2f vec) {
+	m_startPlayerPosition = vec;
 }
 
 bool Game::isGameStarted() {
 	return m_gameStarted;
 }
 
-void Game::setGameWindow(std::shared_ptr<sf::RenderWindow> window) {
-	m_gameWindow = window;
-}
-
 void Game::blockActions(bool flag) {
 	m_blockActions = flag;
+}
+
+unsigned int Game::getPlayerLife() {
+	return m_playerLife;
+}
+
+unsigned int Game::getEnemyLife() {
+	return m_enemyLife;
 }
 
 void Game::setDamageAreasCords(std::vector<std::vector<std::pair<float, float>>> coords) {
@@ -41,8 +61,19 @@ void Game::startGame() {
 	m_gameStarted = true;
 }
 
-void Game::drawDamageAreas() {
+void Game::reducePlayerLife() {
+	m_playerLife--;
+}
+
+void Game::reduceEnemyLife() {
+	m_enemyLife--;
+}
+
+bool Game::checkCollision(Player& player) {
 	for (sf::CircleShape& shape : m_damageAreasVector) {
-		m_gameWindow->draw(shape);
+		if (shape.getGlobalBounds().intersects(player.getGlobalBounds())) {
+			return true;
+		}
 	}
+	return false;
 }

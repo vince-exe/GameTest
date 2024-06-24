@@ -3,11 +3,8 @@ delle "aree di danno" vengono generate nella mappa e l'intento del player è que
 per fargli prendere danno
 
 DA FARE PRINCIPALE:
--migliorare l'algoritmo che spawna i cerchi
-- quando i client ricevono il messaggio, hanno un countdown di 3 secondi ( nel quale non possono fare nulla, mi raccomando utilizzare la formula con il delta ) e poi iniziano
-- il client mostrerà i cerchi 
-
-- Vedere come gestire il gioco (round, spawn delle areee di danno etc.)
+- Ad ogni inizio round i client per muoversi devo prima rispettare un countdown di 3 secondi ( sincronizzare bene per entrambi il tempo )
+- Gestione dei round ( per ora i player si scalano le vite a vicenda e si teletrasportano nella loro posizione iniziale )
 
 DA FARE SECONDARIE:
 -introdurre più funzionalità nella finestra delle opzioni.

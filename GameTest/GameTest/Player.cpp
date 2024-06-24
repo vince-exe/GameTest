@@ -109,7 +109,7 @@ void Player::startSprint(float flag) {
     if (flag) {
         this->sprintClock.restart();
     }
-    
+    this->moving = true;
     this->m_isSprinting = true;
     this->speed += this->sprintPower;
 }

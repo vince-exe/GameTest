@@ -6,22 +6,37 @@
 #include <vector>
 #include <utility>
 
+#include "Player.h"
+
 class Game {
 private:
 	std::vector<std::vector<std::pair<float, float>>> m_damageAreasCoordinates;
 	std::vector<sf::CircleShape> m_damageAreasVector;
-	std::shared_ptr<sf::RenderWindow> m_gameWindow;
 
 	bool m_blockActions;
 	bool m_gameStarted;
 	unsigned int m_currentRound;
+	unsigned int m_playerLife, m_enemyLife;
+	sf::Vector2f m_startPlayerPosition;
 
 public:
 	Game();
 
-	bool isGameStarted();
+	void drawDamageAreasShapes(sf::RenderWindow& window);
 
-	void setGameWindow(std::shared_ptr<sf::RenderWindow> window);
+	void setPlayerStartPosition(sf::Vector2f vec);
+	
+	sf::Vector2f getStartPlayerPosition();
+
+	unsigned int  getPlayerLife();
+
+	unsigned int getEnemyLife();
+
+	void reducePlayerLife();
+
+	void reduceEnemyLife();
+
+	bool isGameStarted();
 
 	void blockActions(bool flag);
 
@@ -29,5 +44,5 @@ public:
 
 	void startGame();
 
-	void drawDamageAreas();
+	bool checkCollision(Player& player);
 };

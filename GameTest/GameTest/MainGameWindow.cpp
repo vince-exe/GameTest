@@ -4,7 +4,6 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     this->client = client;
     
     this->windowPtr = std::make_shared<sf::RenderWindow>();
-    m_Game.setGameWindow(this->windowPtr);
 
     this->windowPtr->create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
     this->windowPtr->setFramerateLimit(60);
@@ -63,7 +62,10 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
 bool MainGameWindow::initPlayerAndEnemyPosition() {
     NetPacket packet = NetUtils::read_(*this->client->getSocket());
     if (packet.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
-        this->youPlayer->setPosition(NetGameUtils::getSfvector2f(packet));
+        sf::Vector2f pos = NetGameUtils::getSfvector2f(packet);
+
+        m_Game.setPlayerStartPosition(pos);
+        this->youPlayer->setPosition(pos);
     }
 
     packet = NetUtils::read_(*this->client->getSocket());
@@ -99,6 +101,15 @@ void MainGameWindow::handleMessages() {
             case NetPacket::NetMessages::GAME_STARTED:
                 m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet));
                 m_Game.startGame();
+                break;
+            
+            case NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA:
+                m_Game.reduceEnemyLife();
+                this->youPlayer->setPosition(m_Game.getStartPlayerPosition());
+                this->youPlayer->stopMove();
+
+                float p[] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
+                NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
                 break;
             }
         }
@@ -182,21 +193,34 @@ void MainGameWindow::quitGame() {
 
 void MainGameWindow::update(sf::Time deltaTime) {
     this->youPlayer->update(deltaTime, this->enemyPlayer->getRect());
-    
+   
     updateRechargeBar();
 
     if (this->youPlayer->isMoving()) {
         checkPlayerWindowBorders();
-
+        /* send the position */
         float p[2] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
         NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
-    }
-    if (this->youPlayer->isSprinting() && this->youPlayer->isEnemyHit()) {
-        Player::CollisionSide cL = this->youPlayer->getCollidedSide();
 
-        NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION, (uint8_t*)&cL, sizeof(cL)));
-        this->youPlayer->stopMove();
-        this->youPlayer->resetEnemyHit();
+        /* check if the player collided with a damage area */
+        if (m_Game.checkCollision(*this->youPlayer)) {
+            NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA, nullptr, 0));
+            m_Game.reducePlayerLife();
+            this->youPlayer->stopMove();
+
+            this->youPlayer->setPosition(m_Game.getStartPlayerPosition());
+            float p[] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
+
+            NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));            
+            return;
+        }
+        if (this->youPlayer->isSprinting() && this->youPlayer->isEnemyHit()) {
+            Player::CollisionSide cL = this->youPlayer->getCollidedSide();
+
+            NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION, (uint8_t*)&cL, sizeof(cL)));
+            this->youPlayer->stopMove();
+            this->youPlayer->resetEnemyHit();
+        }
     }
 }
 
@@ -210,13 +234,16 @@ void MainGameWindow::draw() {
     this->windowPtr->draw(rechargeBarBorder);
     this->windowPtr->draw(rechargeBar);
     this->windowPtr->draw(vsText);
-
-    for (int i = 0; i < 3; i++) {
+    
+    for (int i = 0; i < m_Game.getPlayerLife(); i++) {
         this->windowPtr->draw(youHealth[i]);
+    }
+    for (int i = 0; i < m_Game.getEnemyLife(); i++) {
         this->windowPtr->draw(enemyHealth[i]);
     }
+    
     if (m_Game.isGameStarted()) {
-        m_Game.drawDamageAreas();
+        m_Game.drawDamageAreasShapes(*this->windowPtr);
     }
 
     this->windowPtr->display();
