@@ -10,6 +10,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
 
     this->closeSettingsWindowFlag.store(false);
     this->inGameSettings = false;
+    m_Game.setBlockActions(true);
 
     /* get the enemy nickname */
     if (!handleEnemyNickname()) {
@@ -18,6 +19,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     }
     this->myNickname.setString(nickname);
 
+    m_Game.initSprites(*this->windowPtr);
     initSprites();
     
     /* try to get the default position of the player and enemy player*/
@@ -99,11 +101,13 @@ void MainGameWindow::handleMessages() {
                 break;
 
             case NetPacket::NetMessages::GAME_STARTED:
+                m_Game.waitRound();
                 m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet));
                 m_Game.startGame();
                 break;
             
             case NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA:
+                m_Game.waitRound();
                 m_Game.reduceEnemyLife();
                 this->youPlayer->setPosition(m_Game.getStartPlayerPosition());
                 this->youPlayer->stopMove();
@@ -151,25 +155,14 @@ void MainGameWindow::checkPlayerWindowBorders() {
     }
 }
 
-void MainGameWindow::handlePlayerMovement(sf::Event& event) {
-    const sf::Vector2i mousePosition{ sf::Mouse::getPosition(*this->windowPtr) };
-    const sf::Vector2f mouseCoord{ this->windowPtr->mapPixelToCoords(mousePosition) };
-
-    this->youPlayer->setTarget(mouseCoord);
-}
-
 void MainGameWindow::handleMouseClick(sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed) {
-        if (!this->youPlayer->isSprinting()) {
-            if (event.mouseButton.button == sf::Mouse::Left) {
-                handlePlayerMovement(event);
-            }
-            else if (event.mouseButton.button == sf::Mouse::Right) {
-                if (this->youPlayer->canSprint()) {
-                    this->youPlayer->startSprint(true);
-                    handlePlayerMovement(event);
-                }
-            }
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            /* REFACTORING: THE GAME CLASS SHOULD HAVE THE PROPERTY OF THE PLAYER OBJECT */
+            m_Game.handlePlayerMovement(event, *this->youPlayer, *this->windowPtr, false);
+        }
+        else if (event.mouseButton.button == sf::Mouse::Right) {
+            m_Game.handlePlayerMovement(event, *this->youPlayer, *this->windowPtr, true);
         }
     }
 }
@@ -204,10 +197,12 @@ void MainGameWindow::update(sf::Time deltaTime) {
 
         /* check if the player collided with a damage area */
         if (m_Game.checkCollision(*this->youPlayer)) {
+            this->youPlayer->stopMove();
+            m_Game.waitRound();
+            
             NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA, nullptr, 0));
             m_Game.reducePlayerLife();
-            this->youPlayer->stopMove();
-
+            
             this->youPlayer->setPosition(m_Game.getStartPlayerPosition());
             float p[] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
 
@@ -226,6 +221,10 @@ void MainGameWindow::update(sf::Time deltaTime) {
 
 void MainGameWindow::draw() {
     this->windowPtr->clear();
+
+    if (m_Game.areActionsBlocked()) {
+        m_Game.drawWaitRoundText(*this->windowPtr);
+    }
 
     this->windowPtr->draw(myNickname);
     this->windowPtr->draw(enemyNickname);

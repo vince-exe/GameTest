@@ -23,21 +23,22 @@ private:
 	void initSprites();
 	
 	void handleKeyBoards(sf::Event event);
-	
-	bool handleEnemyNickname();
-
-	void handlePlayerMovement(sf::Event& event);
 
 	void handleMouseClick(sf::Event& event);
-
+	
 	void quitGame();
 
-	void handleMessages();
-	
 	void updateRechargeBar();
 
 	void checkPlayerWindowBorders();
 
+	/* REFACTORING: SHOULD BE HANDLED BY THE GAME CLASS */
+	bool handleEnemyNickname();
+
+	/* REFACTORING: SHOULD BE HANDLED BY THE GAME CLASS */
+	void handleMessages();
+	
+	/* REFACTORING: SHOULD BE HANDLED BY THE GAME CLASS */
 	bool initPlayerAndEnemyPosition();
 
 private:

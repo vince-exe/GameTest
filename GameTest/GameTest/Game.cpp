@@ -1,17 +1,30 @@
 #include "Game.h"
 
 Game::Game() {
-	m_blockActions = false;
+	m_blockActions.store(false);
 	m_gameStarted = false;
 	m_currentRound = 0;
 	m_playerLife = 3;
 	m_enemyLife = 3;
+	m_waitTimeRound = 3;
+}
+
+void Game::initSprites(sf::RenderWindow& window) {
+	m_waitRoundText.setFont(FontManager::fredokaOne);
+	m_waitRoundText.setCharacterSize(80);
+	m_waitRoundText.setFillColor(sf::Color(255, 255, 255));
+
+	m_waitRoundText.setPosition((window.getSize().x / 2.f) - m_waitRoundText.getGlobalBounds().width, (window.getSize().y / 2.f) - m_waitRoundText.getGlobalBounds().height - 100.f);
 }
 
 void Game::drawDamageAreasShapes(sf::RenderWindow& window) {
 	for (sf::CircleShape& shape : m_damageAreasVector) {
 		window.draw(shape);
 	}
+}
+
+void Game::drawWaitRoundText(sf::RenderWindow& window) {
+	window.draw(m_waitRoundText);
 }
 
 sf::Vector2f Game::getStartPlayerPosition() {
@@ -26,8 +39,8 @@ bool Game::isGameStarted() {
 	return m_gameStarted;
 }
 
-void Game::blockActions(bool flag) {
-	m_blockActions = flag;
+void Game::setBlockActions(bool flag) {
+	m_blockActions.store(flag);
 }
 
 unsigned int Game::getPlayerLife() {
@@ -40,6 +53,27 @@ unsigned int Game::getEnemyLife() {
 
 void Game::setDamageAreasCords(std::vector<std::vector<std::pair<float, float>>> coords) {
 	m_damageAreasCoordinates = coords;
+}
+
+bool Game::areActionsBlocked() {
+	return m_blockActions.load();
+}
+
+void Game::waitRound() {
+	setBlockActions(true);
+	std::thread t([this] {
+		int i = 0;
+		using namespace std::chrono_literals;
+
+		while (i < m_waitTimeRound) {
+			m_waitRoundText.setString(std::to_string(m_waitTimeRound - i));
+			std::this_thread::sleep_for(1s);
+			i++;
+		}
+
+		setBlockActions(false);
+	});
+	t.detach();
 }
 
 void Game::startGame() {
@@ -76,4 +110,21 @@ bool Game::checkCollision(Player& player) {
 		}
 	}
 	return false;
+}
+
+void Game::handlePlayerMovement(sf::Event& event, Player& player, sf::RenderWindow& window, bool wantSprint) {
+	if (!m_blockActions.load()) {
+		const sf::Vector2i mousePosition{ sf::Mouse::getPosition(window) };
+		const sf::Vector2f mouseCoord{ window.mapPixelToCoords(mousePosition) };
+
+		if (wantSprint) {
+			if (player.canSprint()) {
+				player.startSprint(true);
+				player.setTarget(mouseCoord);
+			}
+		}
+		else {
+			player.setTarget(mouseCoord);
+		}
+	}
 }
