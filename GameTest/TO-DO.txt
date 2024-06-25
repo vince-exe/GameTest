@@ -1,28 +1,33 @@
 IDEA-GIOCO:
 delle "aree di danno" vengono generate nella mappa e l'intento del player è quello di buttare il nemico in quelle aree
-per fargli prendere danno
+per fargli prendere danno e vincere la partita.
 
 DA FARE PRINCIPALE:
-- Ad ogni inizio round i client per muoversi devo prima rispettare un countdown di 3 secondi ( sincronizzare bene per entrambi il tempo )
-- Gestione dei round ( per ora i player si scalano le vite a vicenda e si teletrasportano nella loro posizione iniziale )
+-Gestione dei round ( le aree di danno dovranno cambiare ad ogni nuovo round ).
+-Quando un player finisce le sue vite ( far entrare i players in una schermata di vittoria / sconfitta ).
+-La partita avrà una durata massima di 6 minuti ( fare un timer che scala il tempo da 6mi a 0 ) quando questi finiscono la partita finisce in pareggio.
 
 DA FARE SECONDARIE:
 -introdurre più funzionalità nella finestra delle opzioni.
 
+FARE UN REFACTORING GENERALE:
+-utilizzare due tipologie di pacchetti differenti ( in base ai messaggi del server o ai messaggi di gioco )
+-in generale un refactoring totale del progetto, delle classi, della gestione delle finestre...
+-trasformare tutti i membri di una classe con la m_ iniziale senza usare il this
+-cerare di utilizzare più memoria statica che dinamica ( eliminare gli shared_ptr etc.. )
+
+ALTRE-COSE:
 -Poter limitare il volume dei sound effects
 -Cambiare musica per la game lobby
 -Introdurre musica per la game window
 -Introdurre effetti sonori per lo sprint, ricarica sprint, 
 -Introdurre effetti sonori per quando si viene colpiti con lo sprint
 
-FARE UN REFACTORING GENERALE:
--utilizzare due tipologie di pacchetti differenti ( in base ai messaggi del server o ai messaggi di gioco )
--in generale un refactoring totale del progetto, delle classi, della gestione delle finestre...
--trasformare tutti i membri di una classe con la m_ iniziale senza usare il this
+-Introdurre una chat con un sistema di amiciza / di scambio messaggi etc..
 
-ALTRO-PROGETTO:
 
-- continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )
+ALTRO-PROGETTO ( MOLTO-FIGO ):
+-continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )
 -introdurre la chat completa nel gioco.
 
 AGGIUNTA-FINALE:
