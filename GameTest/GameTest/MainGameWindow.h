@@ -10,9 +10,11 @@
 #include "Player.h"
 #include "../GameServer/network_utilities.h"
 #include "MainGameTextureManager.h"
-#include "GameSettingsMenu.h"
 #include "network_game_utilities.h"
 #include "Game.h"
+
+#include "GameSettingsMenu.h"
+#include "EndGameWindow.h"
 
 class MainGameWindow {
 private:
@@ -32,13 +34,10 @@ private:
 
 	void checkPlayerWindowBorders();
 
-	/* REFACTORING: SHOULD BE HANDLED BY THE GAME CLASS */
 	bool handleEnemyNickname();
 
-	/* REFACTORING: SHOULD BE HANDLED BY THE GAME CLASS */
 	void handleMessages();
 	
-	/* REFACTORING: SHOULD BE HANDLED BY THE GAME CLASS */
 	bool initPlayerAndEnemyPosition();
 
 private:
@@ -46,7 +45,7 @@ private:
 	std::shared_ptr<Client> client;
 	Game m_Game;
 
-	sf::Text myNickname, enemyNickname, vsText;
+	sf::Text myNickname, enemyNickname, vsText, m_waitRoundText;;
 
 	float rechargeBarProgress;
 	sf::RectangleShape rechargeBarBorder;
@@ -61,6 +60,9 @@ private:
 	std::atomic<bool> closeSettingsWindowFlag;
 
 	GameSettingsMenu gameSettingsMenu;
+	EndGameWindow endGameWindow;
+
+	std::vector<std::vector<sf::CircleShape>> m_damageAreasVector;
 
 public:
 	void init(const std::string nickname, std::shared_ptr<Client> client);

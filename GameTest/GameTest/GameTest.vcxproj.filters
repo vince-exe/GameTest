@@ -108,6 +108,9 @@
     <ClCompile Include="Game.cpp">
       <Filter>File di origine\Game</Filter>
     </ClCompile>
+    <ClCompile Include="EndGameWindow.cpp">
+      <Filter>File di origine\GameMenus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -172,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="EndGameWindow.h">
+      <Filter>File di intestazione\GameMenus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -19,7 +19,6 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     }
     this->myNickname.setString(nickname);
 
-    m_Game.initSprites(*this->windowPtr);
     initSprites();
     
     /* try to get the default position of the player and enemy player*/
@@ -56,7 +55,18 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
             handleMouseClick(event);
             handleKeyBoards(event);
         }
-        update(sprintClock.restart());
+        if (m_Game.getGameState() == Game::GameStates::RUNNING) {
+            update(sprintClock.restart());
+        }
+        else if (m_Game.getGameState() == Game::GameStates::END) {
+            NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
+            this->client->close();
+            this->closeSettingsWindowFlag.store(true);
+
+            endGameWindow.init(*this->windowPtr, m_Game);
+            this->windowPtr->close();
+            return;
+        }
         draw();
     }
 }
@@ -101,17 +111,19 @@ void MainGameWindow::handleMessages() {
                 break;
 
             case NetPacket::NetMessages::GAME_STARTED:
-                m_Game.waitRound();
+                m_Game.waitRound(m_waitRoundText);
                 m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet));
-                m_Game.startGame();
+                /* set the vector of damages areas */
+                m_Game.startGame(m_damageAreasVector);
                 break;
             
             case NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA:
-                m_Game.waitRound();
-                m_Game.reduceEnemyLife();
-                this->youPlayer->setPosition(m_Game.getStartPlayerPosition());
                 this->youPlayer->stopMove();
+                m_Game.waitRound(m_waitRoundText);
+                m_Game.handleNewRound(Game::GameEntities::ENEMY);
 
+                /* set the player to the start position and send the position to the enemy */
+                this->youPlayer->setPosition(m_Game.getStartPlayerPosition());
                 float p[] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
                 NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
                 break;
@@ -195,20 +207,6 @@ void MainGameWindow::update(sf::Time deltaTime) {
         float p[2] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
         NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
 
-        /* check if the player collided with a damage area */
-        if (m_Game.checkCollision(*this->youPlayer)) {
-            this->youPlayer->stopMove();
-            m_Game.waitRound();
-            
-            NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA, nullptr, 0));
-            m_Game.reducePlayerLife();
-            
-            this->youPlayer->setPosition(m_Game.getStartPlayerPosition());
-            float p[] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
-
-            NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));            
-            return;
-        }
         if (this->youPlayer->isSprinting() && this->youPlayer->isEnemyHit()) {
             Player::CollisionSide cL = this->youPlayer->getCollidedSide();
 
@@ -216,15 +214,25 @@ void MainGameWindow::update(sf::Time deltaTime) {
             this->youPlayer->stopMove();
             this->youPlayer->resetEnemyHit();
         }
+
+        /* check if the player collided with a damage area */
+        if (m_Game.checkCollision(this->m_damageAreasVector.at(m_Game.getCurrentRound()), *this->youPlayer)) {
+            this->youPlayer->stopMove();
+            m_Game.waitRound(m_waitRoundText);
+            m_Game.handleNewRound(Game::GameEntities::PLAYER);
+
+            NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA, nullptr, 0));
+
+            this->youPlayer->setPosition(m_Game.getStartPlayerPosition());
+            float p[] = { this->youPlayer->getPosition().x, this->youPlayer->getPosition().y };
+
+            NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
+        }
     }
 }
 
 void MainGameWindow::draw() {
     this->windowPtr->clear();
-
-    if (m_Game.areActionsBlocked()) {
-        m_Game.drawWaitRoundText(*this->windowPtr);
-    }
 
     this->windowPtr->draw(myNickname);
     this->windowPtr->draw(enemyNickname);
@@ -240,11 +248,15 @@ void MainGameWindow::draw() {
     for (int i = 0; i < m_Game.getEnemyLife(); i++) {
         this->windowPtr->draw(enemyHealth[i]);
     }
-    
-    if (m_Game.isGameStarted()) {
-        m_Game.drawDamageAreasShapes(*this->windowPtr);
+    if (m_Game.getGameState() == Game::GameStates::RUNNING) {
+        for (sf::CircleShape& shape : this->m_damageAreasVector.at(m_Game.getCurrentRound())) {
+            this->windowPtr->draw(shape);
+        }
     }
-
+    /* draw the 3..2..1 text */
+    if (m_Game.areActionsBlocked()) {
+        this->windowPtr->draw(m_waitRoundText);
+    }
     this->windowPtr->display();
 }
 
@@ -275,6 +287,12 @@ void MainGameWindow::initSprites() {
     enemyNickname.setPosition(vsText.getGlobalBounds().left + vsText.getGlobalBounds().width + 20.f, 22.f);
     enemyNickname.setFillColor(sf::Color(110, 6, 2));
 
+    m_waitRoundText.setFont(FontManager::fredokaOne);
+    m_waitRoundText.setCharacterSize(80);
+    m_waitRoundText.setFillColor(sf::Color(255, 255, 255));
+
+    m_waitRoundText.setPosition((windowPtr->getSize().x / 2.f) - (m_waitRoundText.getGlobalBounds().width / 2.f), (windowPtr->getSize().y / 2.f) - (m_waitRoundText.getGlobalBounds().height / 2.f));
+
     youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f, 1000.f, 4.f);
     enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f, 1000.f, 4.f);
 
@@ -292,6 +310,19 @@ void MainGameWindow::initSprites() {
         
         youHealthPosX += 30.f;
         enemyHealthPosX += 30.f;
+    }
+
+    for (int i = 0; i < 3; i++) {
+        std::vector<sf::CircleShape> vec;
+        for (int j = 0; j < 6; j++) {
+            vec.push_back(sf::CircleShape());
+
+            vec.at(j).setRadius(60.f);
+            vec.at(j).setOutlineThickness(8.f);
+            vec.at(j).setFillColor(sf::Color(120, 36, 14));
+            vec.at(j).setOutlineColor(sf::Color(82, 20, 5));
+        }
+        m_damageAreasVector.push_back(vec);
     }
 }
 

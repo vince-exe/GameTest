@@ -94,15 +94,6 @@ void GameSession::setDamageAreasCoordinates() {
 		}
 		damageAreasCoordinates.push_back(tempCordsVec);
 	}
-	
-	for (int i = 0; i < 3; i++) {
-		std::cout << "\ncoordinate " << i + 1 << " round\n";
-		for (int j = 0; j < 6; j++) {
-			std::cout << "X: " << damageAreasCoordinates.at(i).at(j).first << "  Y: " << damageAreasCoordinates.at(i).at(j).second << std::endl;
-		}
-		std::cout<<std::endl;
- 	}
-	std::cout << "\nCICLo infinito";
 }
 
 void GameSession::sendDamageAreasConrdinates() {
@@ -120,6 +111,13 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 	while (true) {
 		try {
 			packet = NetUtils::read_(*client->getSocket());
+
+			if (packet.getMsgType() == NetPacket::NetMessages::GAME_END) {
+				client->getSocket()->close();
+				usersMap->erase(usersMap->find(client->getNick()));
+				return;
+			}
+
 			NetUtils::write_(*otherClient->getSocket(), packet);
 		}
 		catch (const boost::system::system_error& ex) {

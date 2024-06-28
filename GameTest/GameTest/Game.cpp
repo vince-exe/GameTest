@@ -2,29 +2,11 @@
 
 Game::Game() {
 	m_blockActions.store(false);
-	m_gameStarted = false;
+	m_gameState = GameStates::NOT_RUNNING;
 	m_currentRound = 0;
 	m_playerLife = 3;
 	m_enemyLife = 3;
 	m_waitTimeRound = 3;
-}
-
-void Game::initSprites(sf::RenderWindow& window) {
-	m_waitRoundText.setFont(FontManager::fredokaOne);
-	m_waitRoundText.setCharacterSize(80);
-	m_waitRoundText.setFillColor(sf::Color(255, 255, 255));
-
-	m_waitRoundText.setPosition((window.getSize().x / 2.f) - m_waitRoundText.getGlobalBounds().width, (window.getSize().y / 2.f) - m_waitRoundText.getGlobalBounds().height - 100.f);
-}
-
-void Game::drawDamageAreasShapes(sf::RenderWindow& window) {
-	for (sf::CircleShape& shape : m_damageAreasVector) {
-		window.draw(shape);
-	}
-}
-
-void Game::drawWaitRoundText(sf::RenderWindow& window) {
-	window.draw(m_waitRoundText);
 }
 
 sf::Vector2f Game::getStartPlayerPosition() {
@@ -33,10 +15,6 @@ sf::Vector2f Game::getStartPlayerPosition() {
 
 void Game::setPlayerStartPosition(sf::Vector2f vec) {
 	m_startPlayerPosition = vec;
-}
-
-bool Game::isGameStarted() {
-	return m_gameStarted;
 }
 
 void Game::setBlockActions(bool flag) {
@@ -59,14 +37,14 @@ bool Game::areActionsBlocked() {
 	return m_blockActions.load();
 }
 
-void Game::waitRound() {
+void Game::waitRound(sf::Text& text) {
 	setBlockActions(true);
-	std::thread t([this] {
+	std::thread t([this, &text] {
 		int i = 0;
 		using namespace std::chrono_literals;
 
 		while (i < m_waitTimeRound) {
-			m_waitRoundText.setString(std::to_string(m_waitTimeRound - i));
+			text.setString(std::to_string(m_waitTimeRound - i));
 			std::this_thread::sleep_for(1s);
 			i++;
 		}
@@ -76,35 +54,33 @@ void Game::waitRound() {
 	t.detach();
 }
 
-void Game::startGame() {
-	float posX, posY;
-	
-	for (int i = 0; i < 6; i++) {
-		m_damageAreasVector.push_back(sf::CircleShape());
+void Game::handleNewRound(GameEntities entity) {
+	switch (entity) {
+	case GameEntities::PLAYER:
+		m_playerLife--;
+		break;
 
-		m_damageAreasVector.at(i).setRadius(60.f);
-		m_damageAreasVector.at(i).setOutlineThickness(8.f);
-		m_damageAreasVector.at(i).setFillColor(sf::Color(120, 36, 14));
-		m_damageAreasVector.at(i).setOutlineColor(sf::Color(82, 20, 5));
-
-		posX = m_damageAreasCoordinates.at(m_currentRound).at(i).first;
-		posY = m_damageAreasCoordinates.at(m_currentRound).at(i).second;
-		
-		m_damageAreasVector.at(i).setPosition(posX, posY);
+	case GameEntities::ENEMY:
+		m_enemyLife--;
+		break;
 	}
-	m_gameStarted = true;
+	m_currentRound++;
+	if (m_currentRound >= 3) {
+		m_gameState = GameStates::END;
+	}
 }
 
-void Game::reducePlayerLife() {
-	m_playerLife--;
+void Game::startGame(std::vector<std::vector<sf::CircleShape>>& finalVector) {	
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 6; j++) {
+			finalVector.at(i).at(j).setPosition(m_damageAreasCoordinates.at(i).at(j).first, m_damageAreasCoordinates.at(i).at(j).second);
+		}
+	}
+	m_gameState = GameStates::RUNNING;
 }
 
-void Game::reduceEnemyLife() {
-	m_enemyLife--;
-}
-
-bool Game::checkCollision(Player& player) {
-	for (sf::CircleShape& shape : m_damageAreasVector) {
+bool Game::checkCollision(std::vector<sf::CircleShape> vec, Player& player) {
+	for (sf::CircleShape& shape : vec) {
 		if (shape.getGlobalBounds().intersects(player.getGlobalBounds())) {
 			return true;
 		}
@@ -127,4 +103,16 @@ void Game::handlePlayerMovement(sf::Event& event, Player& player, sf::RenderWind
 			player.setTarget(mouseCoord);
 		}
 	}
+}
+
+Game::GameResults Game::getGameResults() {
+	return (m_playerLife > m_enemyLife) ? GameResults::WON : GameResults::LOST;
+}
+
+Game::GameStates Game::getGameState() {
+	return m_gameState;
+}
+
+unsigned int Game::getCurrentRound() {
+	return m_currentRound;
 }
