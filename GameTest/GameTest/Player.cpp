@@ -89,6 +89,12 @@ void Player::update(sf::Time deltaTime, const sf::RectangleShape& other) {
     }
 }
 
+bool Player::hasReachedTarget() const {
+    float epsilon = 1.f;
+    sf::Vector2f position = getPosition();
+    return (std::abs(position.x - targetPosition.x) < epsilon && std::abs(position.y - targetPosition.y) < epsilon);
+}
+
 void Player::move(const sf::Vector2f& offset, const sf::RectangleShape& other) {
     sf::Vector2f newPosition = this->rectangle.getPosition() + offset;
     this->rectangle.setPosition(newPosition);
@@ -194,12 +200,6 @@ void Player::setPosition(float x, float y) {
 
 sf::Vector2f Player::getPosition() const {
     return this->rectangle.getPosition();
-}
-
-bool Player::hasReachedTarget() const {
-    float epsilon = 1.0f;
-    sf::Vector2f position = getPosition();
-    return (std::abs(position.x - targetPosition.x) < epsilon && std::abs(position.y - targetPosition.y) < epsilon);
 }
 
 bool Player::intersect(const  sf::RectangleShape& rect) {

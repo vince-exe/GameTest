@@ -1,25 +1,19 @@
-BUG:
--risolvere il bug dello speed.
-
 IDEA-GIOCO:
 delle "aree di danno" vengono generate nella mappa e l'intento del player è quello di buttare il nemico in quelle aree
 per fargli prendere danno e vincere la partita.
 
-DA FARE PRINCIPALE:
--Quando un player finisce le sue vite ( far entrare i players in una schermata di vittoria / sconfitta ).
--La partita avrà una durata massima di 6 minuti ( fare un timer che scala il tempo da 6mi a 0 ) quando questi finiscono la partita finisce in pareggio.
-
-DA FARE SECONDARIE:
--introdurre più funzionalità nella finestra delle opzioni.
-
-FARE UN REFACTORING GENERALE:
+REFACTORING PRINCIPALE:
 -utilizzare due tipologie di pacchetti differenti ( in base ai messaggi del server o ai messaggi di gioco )
 -in generale un refactoring totale del progetto, delle classi, della gestione delle finestre...
 -trasformare tutti i membri di una classe con la m_ iniziale senza usare il this
 -mostrare prima tutti i membri privati di una classe e poi quelli pubblici.
 -cerare di utilizzare più memoria statica che dinamica ( eliminare gli shared_ptr etc.. )
 
-ALTRE-COSE:
+PRINCIPALE:
+il gioco è completamente customizzabile tramite un file json ( numero round, vite, e tutte le caratteristiche possibili )
+
+DA FARE SECONDARIE:
+-introdurre più funzionalità nella finestra di settings
 -Poter limitare il volume dei sound effects
 -Cambiare musica per la game lobby
 -Introdurre musica per la game window
@@ -34,4 +28,3 @@ ALTRO-PROGETTO ( MOLTO-FIGO ):
 -introdurre la chat completa nel gioco.
 
 AGGIUNTA-FINALE:
-il gioco è completamente customizzabile tramite un file json ( numero round, vite, e tutte le caratteristiche possibili )

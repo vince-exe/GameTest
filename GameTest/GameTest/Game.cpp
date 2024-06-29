@@ -7,7 +7,7 @@ Game::Game() {
 	m_playerLife = 3;
 	m_enemyLife = 3;
 	m_waitTimeRound = 3;
-	m_gameMaxTime = 0;
+	m_gameMaxTime = 10;
 	m_enemyQuit = false;
 }
 
@@ -100,8 +100,8 @@ void Game::handlePlayerMovement(sf::Event& event, Player& player, sf::RenderWind
 
 		if (wantSprint) {
 			if (player.canSprint()) {
-				player.startSprint(true);
 				player.setTarget(mouseCoord);
+				player.startSprint(true);
 			}
 		}
 		else {

@@ -32,6 +32,8 @@ private:
 
 	void updateRechargeBar();
 
+	void resolvePlayerSprint();
+
 	void checkPlayerWindowBorders();
 
 	bool handleEnemyNickname();

@@ -33,11 +33,9 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
 
     sf::Event event;
     this->displayWindow = true;
-
     sf::Clock sprintClock;
     
-    // Debug ( Temporary )
-    std::cout << "\nPlayer: " << myNickname.getString().toAnsiString();
+    resolvePlayerSprint();
 
     while (this->displayWindow) {
         while (windowPtr->pollEvent(event)) {
@@ -150,6 +148,17 @@ void MainGameWindow::updateRechargeBar() {
     this->rechargeBar.setSize(sf::Vector2f(static_cast<float>(170 * this->rechargeBarProgress), 30.f));
 }
 
+void MainGameWindow::resolvePlayerSprint() {
+    /* 
+       this piece of code ensure that when the player will sprint for the first time, it will all works fine 
+       without this the first sprint of the player won't work as aspected ( i can't figure out why. )
+    */
+    sf::Vector2f pos = this->youPlayer->getPosition();
+    this->youPlayer->setTarget(sf::Vector2f(1000, 1000));
+    this->youPlayer->startSprint(false);
+    this->youPlayer->setPosition(pos);
+}
+
 void MainGameWindow::checkPlayerWindowBorders() {
     sf::FloatRect playerBounds = this->youPlayer->getGlobalBounds();
     sf::Vector2f position = this->youPlayer->getPosition();
@@ -175,7 +184,6 @@ void MainGameWindow::checkPlayerWindowBorders() {
 void MainGameWindow::handleMouseClick(sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) {
-            /* REFACTORING: THE GAME CLASS SHOULD HAVE THE PROPERTY OF THE PLAYER OBJECT */
             m_Game.handlePlayerMovement(event, *this->youPlayer, *this->windowPtr, false);
         }
         else if (event.mouseButton.button == sf::Mouse::Right) {
@@ -303,7 +311,7 @@ void MainGameWindow::initSprites() {
     m_waitRoundText.setCharacterSize(80);
     m_waitRoundText.setFillColor(sf::Color(255, 255, 255));
     m_waitRoundText.setPosition((windowPtr->getSize().x / 2.f) - (m_waitRoundText.getGlobalBounds().width / 2.f), (windowPtr->getSize().y / 3.f) - (m_waitRoundText.getGlobalBounds().height / 2.f));
-
+    
     youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f, 1000.f, 4.f);
     enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f, 1000.f, 4.f);
 
