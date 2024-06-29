@@ -7,6 +7,8 @@ Game::Game() {
 	m_playerLife = 3;
 	m_enemyLife = 3;
 	m_waitTimeRound = 3;
+	m_gameMaxTime = 0;
+	m_enemyQuit = false;
 }
 
 sf::Vector2f Game::getStartPlayerPosition() {
@@ -66,6 +68,9 @@ void Game::handleNewRound(GameEntities entity) {
 	}
 	m_currentRound++;
 	if (m_currentRound >= 3) {
+		m_currentRound = 0;
+	}
+	if (m_playerLife <= 0 || m_enemyLife <= 0) {
 		m_gameState = GameStates::END;
 	}
 }
@@ -105,8 +110,53 @@ void Game::handlePlayerMovement(sf::Event& event, Player& player, sf::RenderWind
 	}
 }
 
+void Game::startTimer(sf::Text& text) {
+	using namespace std::chrono_literals;
+
+	std::thread t([this, &text] {
+		unsigned int seconds = 59;
+		sf::Color warningColor(186, 141, 19);
+
+		while (m_gameState == GameStates::RUNNING) {
+			text.setString(std::to_string(m_gameMaxTime) + " : " + std::to_string(seconds));
+			if (m_gameMaxTime == 0) {
+				text.setFillColor(warningColor);
+			}
+			if (seconds == 0 && m_gameMaxTime == 0) {
+				m_gameState = GameStates::END;
+				return;
+			}
+			else if (seconds == 0) {
+				m_gameMaxTime--;
+				seconds = 59;
+			}
+			else {
+				seconds--;
+			}
+			std::this_thread::sleep_for(1s);
+		}
+	});
+	t.detach();
+}
+
+void Game::handleEnemyQuit() {
+	m_playerLife = 1000;
+	m_enemyQuit = true;
+	m_gameState = GameStates::END;
+}
+
+bool Game::hasEnemyQuit() {
+	return m_enemyQuit;
+}
+
 Game::GameResults Game::getGameResults() {
-	return (m_playerLife > m_enemyLife) ? GameResults::WON : GameResults::LOST;
+	if (m_playerLife > m_enemyLife) {
+		return GameResults::WON;
+	}
+	else if (m_playerLife < m_enemyLife) {
+		return GameResults::LOST;
+	}
+	return GameResults::DRAW;
 }
 
 Game::GameStates Game::getGameState() {

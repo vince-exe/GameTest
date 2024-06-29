@@ -4,6 +4,7 @@ GameSession::GameSession(std::unordered_map<std::string, std::shared_ptr<User>>*
 	this->usersMap = usersMap;
 	this->user1 = user1;
 	this->user2 = user2;
+	m_gameEnd = false;
 }
 
 void GameSession::start() {
@@ -26,6 +27,9 @@ void GameSession::start() {
 	thUser1.join();
 	thUser2.join();
 
+	if (m_gameEnd) {
+		handleGameEnd();
+	}
 	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " end.\n";
 }
 
@@ -105,6 +109,16 @@ void GameSession::sendDamageAreasConrdinates() {
 	NetUtils::write_(*this->user2->getSocket(), packet);
 }
 
+void GameSession::handleGameEnd() {
+	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
+	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
+
+	user1->getSocket()->close();
+	user2->getSocket()->close();
+	this->usersMap->erase(this->usersMap->find(user1->getNick()));
+	this->usersMap->erase(this->usersMap->find(user2->getNick()));
+}
+
 void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient) {
 	NetPacket packet;
 
@@ -113,8 +127,7 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 			packet = NetUtils::read_(*client->getSocket());
 
 			if (packet.getMsgType() == NetPacket::NetMessages::GAME_END) {
-				client->getSocket()->close();
-				usersMap->erase(usersMap->find(client->getNick()));
+				m_gameEnd = true;;
 				return;
 			}
 

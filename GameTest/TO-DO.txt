@@ -1,3 +1,6 @@
+BUG:
+-risolvere il bug dello speed.
+
 IDEA-GIOCO:
 delle "aree di danno" vengono generate nella mappa e l'intento del player è quello di buttare il nemico in quelle aree
 per fargli prendere danno e vincere la partita.
@@ -7,8 +10,6 @@ DA FARE PRINCIPALE:
 -La partita avrà una durata massima di 6 minuti ( fare un timer che scala il tempo da 6mi a 0 ) quando questi finiscono la partita finisce in pareggio.
 
 DA FARE SECONDARIE:
--se un client quitta all'altro gli viene detto nella EndGame.
--modificare la schermata EndGame, renderla più carina.
 -introdurre più funzionalità nella finestra delle opzioni.
 
 FARE UN REFACTORING GENERALE:

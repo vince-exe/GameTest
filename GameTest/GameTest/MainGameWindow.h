@@ -45,7 +45,7 @@ private:
 	std::shared_ptr<Client> client;
 	Game m_Game;
 
-	sf::Text myNickname, enemyNickname, vsText, m_waitRoundText;;
+	sf::Text myNickname, enemyNickname, vsText, m_waitRoundText, m_gameTimer;
 
 	float rechargeBarProgress;
 	sf::RectangleShape rechargeBarBorder;

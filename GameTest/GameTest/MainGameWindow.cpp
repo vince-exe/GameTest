@@ -59,11 +59,12 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
             update(sprintClock.restart());
         }
         else if (m_Game.getGameState() == Game::GameStates::END) {
-            NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
-            this->client->close();
+            if (!m_Game.hasEnemyQuit()) {
+                NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
+            }
             this->closeSettingsWindowFlag.store(true);
 
-            endGameWindow.init(*this->windowPtr, m_Game);
+            endGameWindow.init(*this->windowPtr, m_Game, this->myNickname, this->vsText, this->enemyNickname);
             this->windowPtr->close();
             return;
         }
@@ -96,10 +97,13 @@ void MainGameWindow::handleMessages() {
             packet = NetUtils::read_(*this->client->getSocket());
 
             switch (packet.getMsgType()) {
+            case NetPacket::NetMessages::GAME_END:
+                this->client->close();
+                return;
+            /* if the enemy quit */
             case NetPacket::NetMessages::QUIT_GAME:
-                std::cout << "\nMatch end becasue [ " << this->enemyNickname.getString().toAnsiString() << " ] quit.";
-
-                this->quitGame();
+                this->client->close();
+                m_Game.handleEnemyQuit();
                 return;
 
             case NetPacket::NetMessages::PLAYER_POSITION:
@@ -115,6 +119,7 @@ void MainGameWindow::handleMessages() {
                 m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet));
                 /* set the vector of damages areas */
                 m_Game.startGame(m_damageAreasVector);
+                m_Game.startTimer(m_gameTimer);
                 break;
             
             case NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA:
@@ -249,6 +254,8 @@ void MainGameWindow::draw() {
         this->windowPtr->draw(enemyHealth[i]);
     }
     if (m_Game.getGameState() == Game::GameStates::RUNNING) {
+        this->windowPtr->draw(m_gameTimer);
+
         for (sf::CircleShape& shape : this->m_damageAreasVector.at(m_Game.getCurrentRound())) {
             this->windowPtr->draw(shape);
         }
@@ -287,11 +294,15 @@ void MainGameWindow::initSprites() {
     enemyNickname.setPosition(vsText.getGlobalBounds().left + vsText.getGlobalBounds().width + 20.f, 22.f);
     enemyNickname.setFillColor(sf::Color(110, 6, 2));
 
+    m_gameTimer.setFont(FontManager::fredokaOne);
+    m_gameTimer.setCharacterSize(30);
+    m_gameTimer.setPosition(600.f, m_gameTimer.getGlobalBounds().height + (rechargeBarBorder.getGlobalBounds().height / 2) + 4.f);
+    m_gameTimer.setFillColor(sf::Color(219, 219, 219));
+
     m_waitRoundText.setFont(FontManager::fredokaOne);
     m_waitRoundText.setCharacterSize(80);
     m_waitRoundText.setFillColor(sf::Color(255, 255, 255));
-
-    m_waitRoundText.setPosition((windowPtr->getSize().x / 2.f) - (m_waitRoundText.getGlobalBounds().width / 2.f), (windowPtr->getSize().y / 2.f) - (m_waitRoundText.getGlobalBounds().height / 2.f));
+    m_waitRoundText.setPosition((windowPtr->getSize().x / 2.f) - (m_waitRoundText.getGlobalBounds().width / 2.f), (windowPtr->getSize().y / 3.f) - (m_waitRoundText.getGlobalBounds().height / 2.f));
 
     youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f, 1000.f, 4.f);
     enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f, 1000.f, 4.f);

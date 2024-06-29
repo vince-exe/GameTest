@@ -23,7 +23,7 @@ int main() {
         std::cout << "\n[ ERROR ]: Failed to load game's fonts";
         return 1;
     }
-
+    
     MainMenu mainMenu;
     mainMenu.init();
    

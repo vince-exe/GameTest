@@ -25,11 +25,12 @@ private:
 
 	GameStates m_gameState;
 
-	unsigned int m_currentRound, m_waitTimeRound;
-	unsigned int m_playerLife, m_enemyLife;
+	unsigned int m_currentRound, m_waitTimeRound, m_gameMaxTime, m_playerLife, m_enemyLife;
 
 	sf::Vector2f m_startPlayerPosition;
 	
+	bool m_enemyQuit;
+
 public:
 	enum class GameEntities {
 		PLAYER,
@@ -38,7 +39,8 @@ public:
 
 	enum class GameResults {
 		WON,
-		LOST
+		LOST,
+		DRAW
 	};
 
 public:
@@ -69,6 +71,12 @@ public:
 	bool checkCollision(std::vector<sf::CircleShape> vec, Player& player);
 
 	void handlePlayerMovement(sf::Event& event, Player& player, sf::RenderWindow& window, bool wantSprint);
+
+	void startTimer(sf::Text& text);
+
+	void handleEnemyQuit();
+
+	bool hasEnemyQuit();
 
 	/* starts an internal thread that waits for 3 secs ( all the player operations are meanwhile blocked )*/
 	void waitRound(sf::Text& text);

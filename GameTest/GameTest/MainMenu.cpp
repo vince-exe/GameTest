@@ -253,7 +253,6 @@ void MainMenu::listenForMatchmaking(std::string nickname) {
             p = NetUtils::read_(*this->client->getSocket());
 
             if (p.getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
-                std::cout << "\nStop listening match found\n";
                 NetUtils::write_(*client->getSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 
                 this->client->getSocket()->non_blocking(false);
