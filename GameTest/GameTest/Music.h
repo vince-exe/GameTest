@@ -4,6 +4,10 @@
 #include <iostream>
 
 class Music {
+private:
+	sf::Music m_Music;
+	int m_currentVolume;
+
 public:
 	Music() = default;
 
@@ -18,9 +22,5 @@ public:
 	void play();
 
 	void loop(bool loop);
-
-private:
-	sf::Music music;
-	int currentVolume;
 };
 

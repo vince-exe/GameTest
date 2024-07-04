@@ -1,13 +1,13 @@
 #include "MainMenu.h"
 
 MainMenu::MainMenu() {
-    this->windowPtr = std::make_shared<sf::RenderWindow>();
+    m_Window = std::make_shared<sf::RenderWindow>();
 
-    this->backgroundMusicPtr = std::make_shared<Music>();
-    this->notificationSound = std::make_shared<Sound>();
+    m_backgroundMusicPtr = std::make_shared<Music>();
+    m_notificationSound = std::make_shared<Sound>();
 
-	this->windowPtr->create(sf::VideoMode(650, 600), "SkyFall Showdown", sf::Style::Close);
-    this->windowPtr->setFramerateLimit(60);
+	m_Window->create(sf::VideoMode(650, 600), "SkyFall Showdown", sf::Style::Close);
+    m_Window->setFramerateLimit(60);
 }
 
 bool MainMenu::init() {
@@ -18,32 +18,32 @@ bool MainMenu::init() {
     setMusicSound();
     
     /* Menu Variables */
-    displayText = false;
-    exitRequested = false;
-    displayGameWindow = false;
+    m_displayText = false;
+    m_exitRequested = false;
+    m_displayGameWindow = false;
     /* for matchmaking */
-    inMatchmaking.store(false);
+    m_inMatchmaking.store(false);
 
-    this->client = std::make_shared<Client>();
+    m_Client = std::make_shared<Client>();
 
     setTextures();
     initSprites();
     sf::Event event;
 
-    while (windowPtr->isOpen() && !exitRequested) {
-        if (displayGameWindow) {
-            this->windowPtr->setVisible(false);
+    while (m_Window->isOpen() && !m_exitRequested) {
+        if (m_displayGameWindow) {
+            m_Window->setVisible(false);
             
             MainGameWindow mainGameWindow;
-            mainGameWindow.init(this->nickname, this->client);
+            mainGameWindow.init(m_Nickname, m_Client);
 
-            displayGameWindow = false;
-            displayText = false;
-            this->windowPtr->setVisible(true);
+            m_displayGameWindow = false;
+            m_displayText = false;
+            m_Window->setVisible(true);
         }
-        while (windowPtr->pollEvent(event)) {
+        while (m_Window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
-                windowPtr->close();
+                m_Window->close();
             }
             handleKeyBoard(event);
             handleButtonClicks(event);
@@ -51,108 +51,108 @@ bool MainMenu::init() {
         draw();
     }
 
-    backgroundMusicPtr->getMusic().stop();
-    return (exitRequested == false);
+    m_backgroundMusicPtr->getMusic().stop();
+    return (m_exitRequested == false);
 }
 
 void MainMenu::setTextures() {
-    matchText.setTexture(MainMenuTextureManager::matchText);
-    settings2Text.setTexture(MainMenuTextureManager::settings2Text);
-    settingsText.setTexture(MainMenuTextureManager::settingsText);
-    undoMatchText.setTexture(MainMenuTextureManager::undoMatchText);
-    mainText.setTexture(MainMenuTextureManager::mainLobbyText);
-    quitText.setTexture(MainMenuTextureManager::quitText);
+    m_matchText.setTexture(MainMenuTextureManager::matchText);
+    m_settings2Text.setTexture(MainMenuTextureManager::settings2Text);
+    m_settingsText.setTexture(MainMenuTextureManager::settingsText);
+    m_undoMatchText.setTexture(MainMenuTextureManager::undoMatchText);
+    m_mainText.setTexture(MainMenuTextureManager::mainLobbyText);
+    m_quitText.setTexture(MainMenuTextureManager::quitText);
 
     for (int i = 0; i < 4; i++) {
-        menuMsgs[i].setTexture(MainMenuTextureManager::menuMsg[i]);
+        m_menuMsgs[i].setTexture(MainMenuTextureManager::menuMsg[i]);
     }
 }
 
 void MainMenu::initSprites() {
-    float windowXSize = windowPtr->getSize().x;
+    float windowXSize = m_Window->getSize().x;
 
-    matchText.getSprite().setPosition((windowXSize - matchText.getTexture().getSize().x) / 2, 130.f);
-    undoMatchText.getSprite().setPosition((windowXSize - undoMatchText.getTexture().getSize().x) / 2, 130.f);
+    m_matchText.getSprite().setPosition((windowXSize - m_matchText.getTexture().getSize().x) / 2, 130.f);
+    m_undoMatchText.getSprite().setPosition((windowXSize - m_undoMatchText.getTexture().getSize().x) / 2, 130.f);
 
-    settingsText.getSprite().setPosition((windowXSize - settingsText.getTexture().getSize().x) / 2, 250.f);
-    settings2Text.getSprite().setPosition((windowXSize - settings2Text.getTexture().getSize().x) / 2, 250.f);
+    m_settingsText.getSprite().setPosition((windowXSize - m_settingsText.getTexture().getSize().x) / 2, 250.f);
+    m_settings2Text.getSprite().setPosition((windowXSize - m_settings2Text.getTexture().getSize().x) / 2, 250.f);
 
-    quitText.getSprite().setPosition((windowXSize - quitText.getTexture().getSize().x) / 2, 370.f);
+    m_quitText.getSprite().setPosition((windowXSize - m_quitText.getTexture().getSize().x) / 2, 370.f);
 
-    mainText.getSprite().setPosition(20.f, windowPtr->getSize().y - mainText.getSprite().getGlobalBounds().height - 10);
+    m_mainText.getSprite().setPosition(20.f, m_Window->getSize().y - m_mainText.getSprite().getGlobalBounds().height - 10);
 }
 
 bool MainMenu::loadMusicSound() {
-    return backgroundMusicPtr->openFromFile("assets/Music-Sound/Background_Menu_Music.ogg") &&
-           notificationSound->openFromFile("assets/Music-Sound/notification.ogg");
+    return m_backgroundMusicPtr->openFromFile("assets/Music-Sound/Background_Menu_Music.ogg") &&
+           m_notificationSound->openFromFile("assets/Music-Sound/notification.ogg");
 }
 
 void MainMenu::setMusicSound() {
-    backgroundMusicPtr->setVolume(SettingsManager::getValue("VolumeMenu").GetInt());
-    backgroundMusicPtr->play();
-    backgroundMusicPtr->loop(true);
+    m_backgroundMusicPtr->setVolume(SettingsManager::getValue("VolumeMenu").GetInt());
+    m_backgroundMusicPtr->play();
+    m_backgroundMusicPtr->loop(true);
 
-    notificationSound->setVolume(70.f);
+    m_notificationSound->setVolume(70.f);
 }
 
 void MainMenu::draw() {
-    windowPtr->clear();
+    m_Window->clear();
 
-    windowPtr->draw(mainText);
-    windowPtr->draw(quitText);
+    m_Window->draw(m_mainText);
+    m_Window->draw(m_quitText);
 
-    if (inMatchmaking.load()) {
-        windowPtr->draw(settings2Text);
-        windowPtr->draw(undoMatchText);
+    if (m_inMatchmaking.load()) {
+        m_Window->draw(m_settings2Text);
+        m_Window->draw(m_undoMatchText);
     }
     else {
-        windowPtr->draw(settingsText);
-        windowPtr->draw(matchText);
+        m_Window->draw(m_settingsText);
+        m_Window->draw(m_matchText);
     }
 
     /* display the notification message from the server */
-    if (displayText) {
-        windowPtr->draw(*msgToDisplay);
+    if (m_displayText) {
+        m_Window->draw(*m_msgToDisplay);
     }
     
-    windowPtr->display();
+    m_Window->display();
 }
 
 void MainMenu::handleKeyBoard(sf::Event& event) {
     /* OPEN THE EXIT MENU */
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
         MenuConfirmationExit menuConfirmationExit;
-        PopupReturnValues checker{};
+        UiUtils::WindowsReturnValues checker{};
 
-        menuConfirmationExit.init(windowPtr, checker);
-        if (checker == PopupReturnValues::EXIT) {
-            this->exitRequested = true;
+        menuConfirmationExit.init(m_Window, checker);
+        if (checker == UiUtils::WindowsReturnValues::EXIT) {
+            m_exitRequested = true;
         }
     }
 }
 
 void MainMenu::handleButtonClicks(sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-        sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
+        sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
         /* UNDO MATCHMAKING */
-        if (inMatchmaking.load() && undoMatchText.isInside(position)) {
+        if (m_inMatchmaking.load() && m_undoMatchText.isInside(position)) {
             undoMatchmaking();
             return;
         }
         /* OPEN THE NICKNAME MENU */
-        if (matchText.isInside(position) && !inMatchmaking.load()) {
-             displayText = false;
-             NicknameMenu nicknameMenu;
-             PopupReturnValues checker{};
+        if (m_matchText.isInside(position) && !m_inMatchmaking.load()) {
+             m_displayText = false;
+             NicknameMenu m_NicknameMenu;
+             UiUtils::WindowsReturnValues checker{};
 
-             std::string nick = nicknameMenu.init(windowPtr, checker);
-             if (checker == PopupReturnValues::DONE) {
+             std::string nick = m_NicknameMenu.init(m_Window, checker);
+             if (checker == UiUtils::WindowsReturnValues::DONE) {
                 /* OPEN THE CONNECT MENU */
                 IpPortMenu ipPortMenu;
-                std::pair<std::string, int> ipPort = ipPortMenu.init(windowPtr, notificationSound, checker);
+                std::pair<std::string, int> ipPort = ipPortMenu.init(m_Window, m_notificationSound, checker);
 
-                if (checker == PopupReturnValues::DONE) {
+                if (checker == UiUtils::WindowsReturnValues::DONE) {
                     /* start the connection thread */
                     std::thread t(&MainMenu::handleClientConnection, this, nick, ipPort.first, ipPort.second);
                     t.detach();
@@ -160,21 +160,21 @@ void MainMenu::handleButtonClicks(sf::Event& event) {
              }
         }
         /* SETTINGS MENU */
-        else if (settingsText.isInside(position) && !inMatchmaking.load()) {
+        else if (m_settingsText.isInside(position) && !m_inMatchmaking.load()) {
             OptionsMainMenu optionsMainMenu;
-            PopupReturnValues checker{};
+            UiUtils::WindowsReturnValues checker{};
 
-            optionsMainMenu.init(windowPtr, backgroundMusicPtr, checker);
+            optionsMainMenu.init(m_Window, m_backgroundMusicPtr, checker);
         }
         /* EXIT MENU */
-        else if (quitText.isInside(position)) {
+        else if (m_quitText.isInside(position)) {
             MenuConfirmationExit menuConfirmationExit;
-            PopupReturnValues checker{};
+            UiUtils::WindowsReturnValues checker{};
 
-            menuConfirmationExit.init(windowPtr, checker);
-            if (checker == PopupReturnValues::EXIT) {
+            menuConfirmationExit.init(m_Window, checker);
+            if (checker == UiUtils::WindowsReturnValues::EXIT) {
                 undoMatchmaking();
-                this->exitRequested = true;
+                m_exitRequested = true;
             }
         }
     }
@@ -182,81 +182,81 @@ void MainMenu::handleButtonClicks(sf::Event& event) {
 
 void MainMenu::handleClientConnection(std::string nick, std::string ip, int port) {
     try {
-        if (!this->client->connect(ip, port)) {
+        if (!m_Client->connect(ip, port)) {
             /* "Server Down" message */
-            notificationSound->play();
-            displayTextThread(menuMsgs[0], 7);
+            m_notificationSound->play();
+            displayTextThread(m_menuMsgs[0], 7);
         }
         else {
-            NetPacket::NetMessages msg = NetUtils::read_(*this->client->getSocket()).getMsgType();
+            NetPacket::NetMessages msg = NetUtils::read_(*m_Client->getSocket()).getMsgType();
 
             if (msg == NetPacket::NetMessages::SERVER_FULL) {
                 /* display the "Server Full" message */
-                notificationSound->play();
-                displayTextThread(menuMsgs[2], 7);
+                m_notificationSound->play();
+                displayTextThread(m_menuMsgs[2], 7);
             }
             else {
-                /* send the nickname */
-                NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
+                /* send the m_Nickname */
+                NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
 
-                /* check the nickname */
-                if (NetUtils::read_(*this->client->getSocket()).getMsgType() == NetPacket::NetMessages::NICK_EXITS) {
+                /* check the m_Nickname */
+                if (NetUtils::read_(*m_Client->getSocket()).getMsgType() == NetPacket::NetMessages::NICK_EXITS) {
                     /* Nick exists text */
-                    notificationSound->play();
-                    this->client->getSocket()->close();
+                    m_notificationSound->play();
+                    m_Client->getSocket()->close();
 
-                    displayTextThread(menuMsgs[1], 7);
+                    displayTextThread(m_menuMsgs[1], 7);
                 }
                 /* send the matchmaking request */
                 else {
-                    NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
-                    handleMatchmakingClient(NetUtils::read_(*this->client->getSocket()).getMsgType(), nick);
+                    NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
+                    handleMatchmakingClient(NetUtils::read_(*m_Client->getSocket()).getMsgType(), nick);
                 }
             }
         }
     }
     catch (const boost::system::system_error& e) {
-        std::cerr << "\nError in handle client connection: " << e.what() << std::endl;
+        std::cerr << "\nError in handle m_Client connection: " << e.what() << std::endl;
         /* "Server Down" message */
-        notificationSound->play();
-        displayTextThread(menuMsgs[0], 7);
+        m_notificationSound->play();
+        displayTextThread(m_menuMsgs[0], 7);
     }
 }
 
-void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, std::string nickname) {
+void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, std::string m_Nickname) {
     if (msg == NetPacket::NetMessages::WAIT_FOR_MATCH) {
         /* in queue for a match text */
-        notificationSound->play();
-        displayTextFunc(menuMsgs[3]);
+        m_notificationSound->play();
+        displayTextFunc(m_menuMsgs[3]);
 
         /* start a thread to listen if the matchmaking is requested */
-        std::thread t(&MainMenu::listenForMatchmaking, this, nickname);
+        std::thread t(&MainMenu::listenForMatchmaking, this, m_Nickname);
         t.detach();
     }
     /* start the game window */
     else if (msg == NetPacket::NetMessages::MATCH_FOUND) {
-        this->matchFound(nickname);
+        matchFound(m_Nickname);
     }
 }
 
-void MainMenu::listenForMatchmaking(std::string nickname) {
+void MainMenu::listenForMatchmaking(std::string m_Nickname) {
     using namespace std::chrono_literals;
 
     NetPacket p;
-    inMatchmaking.store(true);
+    m_inMatchmaking.store(true);
    
-    this->client->getSocket()->non_blocking(true);
+    m_Client->getSocket()->non_blocking(true);
 
-    while (inMatchmaking.load()) {
+    while (m_inMatchmaking.load()) {
         try {
             std::this_thread::sleep_for(500ms);            
-            p = NetUtils::read_(*this->client->getSocket());
+            p = NetUtils::read_(*m_Client->getSocket());
 
             if (p.getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
-                NetUtils::write_(*client->getSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
+                NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 
-                this->client->getSocket()->non_blocking(false);
-                this->matchFound(nickname);
+                m_Client->getSocket()->non_blocking(false);
+                matchFound(m_Nickname);
                 return;
             }
         }
@@ -264,9 +264,9 @@ void MainMenu::listenForMatchmaking(std::string nickname) {
             if (e.code() != boost::asio::error::would_block) {
                 std::cerr << "\nCatch in listen for matchmaking: " << e.what() << std::endl;
 
-                this->client->getSocket()->close();
-                inMatchmaking.store(false);
-                this->displayText = false;
+                m_Client->getSocket()->close();
+                m_inMatchmaking.store(false);
+                m_displayText = false;
             }
         }
     }   
@@ -275,54 +275,54 @@ void MainMenu::listenForMatchmaking(std::string nickname) {
 void MainMenu::undoMatchmaking() {
     std::cout << "\nundo matchmaking.\n";
     try {
-        inMatchmaking.store(false);
-        NetUtils::write_(*this->client->getSocket(), NetPacket(NetPacket::NetMessages::UNDO_MATCHMAKING, nullptr, 0));
+        m_inMatchmaking.store(false);
+        NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::UNDO_MATCHMAKING, nullptr, 0));
     }
     catch (const boost::system::system_error& e) {
         std::cerr << "\nError in undo matchmaking " << e.what() << std::endl;
         
     }
-    this->client->close();
+    m_Client->close();
 }
 
 void MainMenu::exitMenu() {
     MenuConfirmationExit menuConfirmationExit;
-    PopupReturnValues checker{};
+    UiUtils::WindowsReturnValues checker{};
 
-    menuConfirmationExit.init(windowPtr, checker);
-    if (checker == PopupReturnValues::EXIT) {
+    menuConfirmationExit.init(m_Window, checker);
+    if (checker == UiUtils::WindowsReturnValues::EXIT) {
         /* if is in matchmaking */
-        if (inMatchmaking.load()) {
+        if (m_inMatchmaking.load()) {
             undoMatchmaking();
         }
-        this->exitRequested = true;
+        m_exitRequested = true;
     }
 }
 
-void MainMenu::matchFound(std::string nickname) {
-    this->inMatchmaking.store(false);
-    this->displayGameWindow = true;
-    this->nickname = nickname;
+void MainMenu::matchFound(std::string nick) {
+    m_inMatchmaking.store(false);
+    m_displayGameWindow = true;
+    m_Nickname = nick;
 }
 
 void MainMenu::displayTextFunc(Entity& entity) {
-    msgToDisplay = &entity;
-    msgToDisplay->getSprite().setPosition((windowPtr->getSize().x - entity.getTexture().getSize().x) / 2, 50.f);
-    displayText = true;
+    m_msgToDisplay = &entity;
+    m_msgToDisplay->getSprite().setPosition((m_Window->getSize().x - entity.getTexture().getSize().x) / 2, 50.f);
+    m_displayText = true;
 }
 
 void MainMenu::displayTextThread(Entity& entity, int seconds) {
     std::thread t([this, &entity, seconds]() {
         using namespace std::chrono_literals;
         
-        this->msgToDisplay = &entity;
-        this->msgToDisplay->getSprite().setPosition((windowPtr->getSize().x - entity.getTexture().getSize().x) / 2, 50);
-        this->displayText = true;
+        m_msgToDisplay = &entity;
+        m_msgToDisplay->getSprite().setPosition((m_Window->getSize().x - entity.getTexture().getSize().x) / 2, 50);
+        m_displayText = true;
 
         for (int i = 0; i < seconds; i++) {
             std::this_thread::sleep_for(1s);
         }
-        displayText = false;
+        m_displayText = false;
     });
     t.detach();
 }

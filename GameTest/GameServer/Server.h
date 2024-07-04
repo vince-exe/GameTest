@@ -45,17 +45,17 @@ private:
 	void clearUselessThreads();
 
 private:
-	boost::asio::io_service ioServicePtr;
-	std::unique_ptr<tcp::acceptor> acceptorPtr;
+	boost::asio::io_service m_ioServicePtr;
+	std::unique_ptr<tcp::acceptor> m_acceptorPtr;
 
-	int maxConnections;
-	bool doRoutines;
+	int m_maxConnections;
+	bool m_doRoutines;
 
-	std::unordered_map<std::string, std::shared_ptr<User>> usersMap;
+	std::unordered_map<std::string, std::shared_ptr<User>> m_usersMap;
 
-	std::queue<std::shared_ptr<User>> matchmakingQueue;
-	std::list<TemporaryThread> tempThreadsList;
+	std::queue<std::shared_ptr<User>> m_matchmakingQueue;
+	std::list<TemporaryThread> m_tempThreadsList;
 
-	std::mutex mtx;
-	std::shared_ptr<std::thread> clearThread;
+	std::mutex m_mtx;
+	std::shared_ptr<std::thread> m_clearThread;
 };

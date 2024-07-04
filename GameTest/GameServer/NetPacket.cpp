@@ -1,41 +1,41 @@
 #include "NetPacket.h"
 
 std::vector<uint8_t> NetPacket::serialize() const {
-    std::vector<uint8_t> serializedData(sizeof(messageType) + sizeof(size_t) + dataSize);
+    std::vector<uint8_t> serializedData(sizeof(m_messageType) + sizeof(size_t) + m_dataSize);
 
-    std::memcpy(serializedData.data(), &messageType, sizeof(messageType));
-    std::memcpy(serializedData.data() + sizeof(messageType), &dataSize, sizeof(size_t));
-    std::memcpy(serializedData.data() + sizeof(messageType) + sizeof(size_t), data.data(), dataSize);
+    std::memcpy(serializedData.data(), &m_messageType, sizeof(m_messageType));
+    std::memcpy(serializedData.data() + sizeof(m_messageType), &m_dataSize, sizeof(size_t));
+    std::memcpy(serializedData.data() + sizeof(m_messageType) + sizeof(size_t), m_Data.data(), m_dataSize);
 
     return serializedData;
 }
 
 NetPacket NetPacket::deserialize(const std::vector<uint8_t>& serializedData) {
-    NetMessages messageType;
-    std::memcpy(&messageType, serializedData.data(), sizeof(messageType));
+    NetMessages m_messageType;
+    std::memcpy(&m_messageType, serializedData.data(), sizeof(m_messageType));
 
-    size_t dataSize;
-    std::memcpy(&dataSize, serializedData.data() + sizeof(messageType), sizeof(size_t));
+    size_t m_DataSize;
+    std::memcpy(&m_DataSize, serializedData.data() + sizeof(m_messageType), sizeof(size_t));
 
-    const uint8_t* dataPtr = serializedData.data() + sizeof(messageType) + sizeof(size_t);
+    const uint8_t* m_DataPtr = serializedData.data() + sizeof(m_messageType) + sizeof(size_t);
 
-    return NetPacket(messageType, dataPtr, dataSize);
+    return NetPacket(m_messageType, m_DataPtr, m_DataSize);
 }
 
-NetPacket::NetPacket(NetMessages type, const uint8_t* data, size_t dataSize) {
-    this->messageType = type;
-    this->dataSize = dataSize;
-    this->data = std::vector<uint8_t>(data, data + dataSize);
+NetPacket::NetPacket(NetMessages type, const uint8_t* data_, size_t dataSize_) {
+    m_messageType = type;
+    m_dataSize = dataSize_;
+    m_Data = std::vector<uint8_t>(data_, data_ + m_dataSize);
 }
 
 NetPacket::NetMessages NetPacket::getMsgType() const {
-    return this->messageType;
+    return m_messageType;
 }
 
 const std::vector<uint8_t>& NetPacket::getData() const {
-    return this->data;
+    return m_Data;
 }
 
 size_t NetPacket::getDataSize() {
-    return this->dataSize;
+    return m_dataSize;
 }

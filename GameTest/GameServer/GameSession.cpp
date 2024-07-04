@@ -1,9 +1,9 @@
 #include "GameSession.h"
 
 GameSession::GameSession(std::unordered_map<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2) {
-	this->usersMap = usersMap;
-	this->user1 = user1;
-	this->user2 = user2;
+	m_usersMap = usersMap;
+	m_user1 = user1;
+	m_user2 = user2;
 	m_gameEnd = false;
 }
 
@@ -14,10 +14,10 @@ void GameSession::start() {
 	sendDefaultPositions();
 
 	/* start the game session */
-	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " started.\n";
+	std::cout << "\nGameSession between " << m_user1->getNick() << " and " << m_user2->getNick() << " started.\n";
 
-	std::thread thUser1(&GameSession::handleClientMessages, this, this->user1, this->user2);
-	std::thread thUser2(&GameSession::handleClientMessages, this, this->user2, this->user1);
+	std::thread thUser1(&GameSession::handleClientMessages, this, m_user1, m_user2);
+	std::thread thUser2(&GameSession::handleClientMessages, this, m_user2, m_user1);
 
 	/* calculate the damage area's coordinates and send it to the clients */
 	setDamageAreasCoordinates();
@@ -30,23 +30,23 @@ void GameSession::start() {
 	if (m_gameEnd) {
 		handleGameEnd();
 	}
-	std::cout << "\nGameSession between " << this->user1->getNick() << " and " << this->user2->getNick() << " end.\n";
+	std::cout << "\nGameSession between " << m_user1->getNick() << " and " << m_user2->getNick() << " end.\n";
 }
 
 void GameSession::sendNicknames() {
-	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user2->getNick().c_str()), user2->getNick().size()));
-	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(user1->getNick().c_str()), user1->getNick().size()));
+	NetUtils::write_(*m_user1->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(m_user2->getNick().c_str()), m_user2->getNick().size()));
+	NetUtils::write_(*m_user2->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(m_user1->getNick().c_str()), m_user1->getNick().size()));
 }
 
 void GameSession::sendDefaultPositions() {
 	float player1Position[] = { 530.f, 470.f };
 	float player2Position[] = { 670.f, 470.f };
 
-	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
-	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
+	NetUtils::write_(*m_user1->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
+	NetUtils::write_(*m_user2->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
 
-	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
-	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
+	NetUtils::write_(*m_user1->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
+	NetUtils::write_(*m_user2->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
 }
 
 void GameSession::setDamageAreasCoordinates() {
@@ -96,27 +96,27 @@ void GameSession::setDamageAreasCoordinates() {
 
 			tempCordsVec.push_back(std::pair<float, float>(tmpX, tmpY));
 		}
-		damageAreasCoordinates.push_back(tempCordsVec);
+		m_damageAreasCoordinates.push_back(tempCordsVec);
 	}
 }
 
 void GameSession::sendDamageAreasConrdinates() {
 	size_t dataSize;
-	std::vector<uint8_t> byteArray = GameSessionUtils::convertCoordinatesToBytes(this->damageAreasCoordinates);
+	std::vector<uint8_t> byteArray = GameSessionUtils::convertCoordinatesToBytes(m_damageAreasCoordinates);
 	NetPacket packet(NetPacket::NetMessages::GAME_STARTED, byteArray.data(), byteArray.size());
 
-	NetUtils::write_(*this->user1->getSocket(), packet);
-	NetUtils::write_(*this->user2->getSocket(), packet);
+	NetUtils::write_(*m_user1->getSocket(), packet);
+	NetUtils::write_(*m_user2->getSocket(), packet);
 }
 
 void GameSession::handleGameEnd() {
-	NetUtils::write_(*user1->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
-	NetUtils::write_(*user2->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
+	NetUtils::write_(*m_user1->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
+	NetUtils::write_(*m_user2->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
 
-	user1->getSocket()->close();
-	user2->getSocket()->close();
-	this->usersMap->erase(this->usersMap->find(user1->getNick()));
-	this->usersMap->erase(this->usersMap->find(user2->getNick()));
+	m_user1->getSocket()->close();
+	m_user2->getSocket()->close();
+	m_usersMap->erase(m_usersMap->find(m_user1->getNick()));
+	m_usersMap->erase(m_usersMap->find(m_user2->getNick()));
 }
 
 void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient) {
@@ -141,7 +141,7 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 			}
 
 			client->getSocket()->close();
-			usersMap->erase(usersMap->find(client->getNick()));
+			m_usersMap->erase(m_usersMap->find(client->getNick()));
 			return;
 		}
 	}

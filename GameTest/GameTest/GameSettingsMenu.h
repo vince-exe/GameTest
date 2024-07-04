@@ -10,12 +10,12 @@
 
 class GameSettingsMenu {
 private:
-	std::shared_ptr<sf::RenderWindow> windowPtr;
+	std::shared_ptr<sf::RenderWindow> m_Window;
 
-	Entity backText;
+	Entity m_backText;
 
-	bool exitWindow;
-	std::atomic<bool>* closeFlag;
+	bool m_exitWindow;
+	std::atomic<bool>* m_closeFlag;
 
 private:
 	void setTextures();
@@ -29,6 +29,6 @@ private:
 public:
 	GameSettingsMenu() = default;
 
-	bool init(std::shared_ptr<sf::RenderWindow> windowPtr, std::atomic<bool>* closeFlag);
+	bool init(std::shared_ptr<sf::RenderWindow> window, std::atomic<bool>* closeFlag);
 };
 

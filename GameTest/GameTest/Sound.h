@@ -3,6 +3,10 @@
 #include <SFML/Audio.hpp>
 
 class Sound {
+private:
+	sf::SoundBuffer m_soundBuff;
+	sf::Sound m_sound;
+
 public:
 	Sound() = default;
 
@@ -15,9 +19,4 @@ public:
 	float getVolume();
 
 	void play();
-
-private:
-	sf::SoundBuffer soundBuff;
-	sf::Sound sound;
 };
-

@@ -111,6 +111,9 @@
     <ClCompile Include="EndGameWindow.cpp">
       <Filter>File di origine\GameMenus</Filter>
     </ClCompile>
+    <ClCompile Include="windows_utils.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -124,9 +127,6 @@
     </ClInclude>
     <ClInclude Include="OptionsMainMenu.h">
       <Filter>File di intestazione\Game\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="ui_utils.h">
-      <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Music.h">
       <Filter>File di intestazione\Game</Filter>
@@ -178,6 +178,9 @@
     </ClInclude>
     <ClInclude Include="EndGameWindow.h">
       <Filter>File di intestazione\GameMenus</Filter>
+    </ClInclude>
+    <ClInclude Include="windows_utils.h">
+      <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

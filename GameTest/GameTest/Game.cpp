@@ -98,13 +98,13 @@ void Game::handlePlayerMovement(sf::Event& event, Player& player, sf::RenderWind
 		const sf::Vector2i mousePosition{ sf::Mouse::getPosition(window) };
 		const sf::Vector2f mouseCoord{ window.mapPixelToCoords(mousePosition) };
 
-		if (wantSprint) {
+		if (wantSprint && !player.isSprinting()) {
 			if (player.canSprint()) {
 				player.setTarget(mouseCoord);
 				player.startSprint(true);
 			}
 		}
-		else {
+		else if(!player.isSprinting()) {
 			player.setTarget(mouseCoord);
 		}
 	}

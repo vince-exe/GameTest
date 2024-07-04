@@ -4,6 +4,10 @@
 #include <boost/asio.hpp>
 
 class Client  {
+private:
+	boost::asio::io_service m_ioService;
+	std::shared_ptr<boost::asio::ip::tcp::socket> m_Socket;
+
 public:
 	Client();
 
@@ -12,9 +16,4 @@ public:
 	std::shared_ptr<boost::asio::ip::tcp::socket> getSocket();
 
 	void close();
-
-private:
-	boost::asio::io_service io_service;
-	std::shared_ptr<boost::asio::ip::tcp::socket> socketPtr;
 };
-

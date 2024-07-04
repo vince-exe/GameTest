@@ -1,7 +1,7 @@
 #include "MenuConfirmationExit.h"
 
-void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, PopupReturnValues& checker) {
-	this->windowPtr = windowPtr;
+void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> window, UiUtils::WindowsReturnValues& checker) {
+	m_Window = window;
 
 	setTextures();
 	setSprite();
@@ -9,13 +9,13 @@ void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Pop
 	sf::Event event;
 	bool exitRequested = false;
 
-	while (windowPtr->isOpen() && !exitRequested) {
-		while (windowPtr->pollEvent(event)) {
+	while (m_Window->isOpen() && !exitRequested) {
+		while (m_Window->pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
-				windowPtr->close();
+				m_Window->close();
 			}
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-				checker = PopupReturnValues::BACK;
+				checker = UiUtils::WindowsReturnValues::BACK;
 				exitRequested = true;
 			}
 			handleButtonClicks(checker, event, exitRequested);
@@ -25,37 +25,37 @@ void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> windowPtr, Pop
 }
 
 void MenuConfirmationExit::setTextures() {
-	backBtn.setTexture(MainMenuTextureManager::cancelText);
-	exitBtn.setTexture(MainMenuTextureManager::doneText);
-	text.setTexture(MainMenuTextureManager::confirmationExitText);
+	m_backBtn.setTexture(MainMenuTextureManager::cancelText);
+	m_exitBtn.setTexture(MainMenuTextureManager::doneText);
+	m_Text.setTexture(MainMenuTextureManager::confirmationExitText);
 }
 
 void MenuConfirmationExit::setSprite() {
-	text.getSprite().setPosition((windowPtr->getSize().x - text.getTexture().getSize().x) / 2, 230);
-	backBtn.getSprite().setPosition((windowPtr->getSize().x - backBtn.getTexture().getSize().x) / 2 - 120, 390.f);
-	exitBtn.getSprite().setPosition((windowPtr->getSize().x - exitBtn.getTexture().getSize().x) / 2 + 120, 390.f);
+	m_Text.getSprite().setPosition((m_Window->getSize().x - m_Text.getTexture().getSize().x) / 2, 230);
+	m_backBtn.getSprite().setPosition((m_Window->getSize().x - m_backBtn.getTexture().getSize().x) / 2 - 120, 390.f);
+	m_exitBtn.getSprite().setPosition((m_Window->getSize().x - m_exitBtn.getTexture().getSize().x) / 2 + 120, 390.f);
 }
 
-void MenuConfirmationExit::handleButtonClicks(PopupReturnValues& checker, sf::Event& event, bool& exitRequested) {
-	sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
+void MenuConfirmationExit::handleButtonClicks(UiUtils::WindowsReturnValues& checker, sf::Event& event, bool& exitRequested) {
+	sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-		if (exitBtn.isInside(position)) {
-			windowPtr->close();
-			checker = PopupReturnValues::EXIT;
+		if (m_exitBtn.isInside(position)) {
+			m_Window->close();
+			checker = UiUtils::WindowsReturnValues::EXIT;
 			exitRequested = true;
 		}
-		else if (backBtn.isInside(position)) {
-			checker = PopupReturnValues::BACK;
+		else if (m_backBtn.isInside(position)) {
+			checker = UiUtils::WindowsReturnValues::BACK;
 			exitRequested = true;
 		}
 	}
 }
 
 void MenuConfirmationExit::draw() {
-	windowPtr->clear();
-	windowPtr->draw(backBtn);
-	windowPtr->draw(exitBtn);
-	windowPtr->draw(text);
-	windowPtr->display();
+	m_Window->clear();
+	m_Window->draw(m_backBtn);
+	m_Window->draw(m_exitBtn);
+	m_Window->draw(m_Text);
+	m_Window->display();
 }

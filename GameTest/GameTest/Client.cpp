@@ -1,13 +1,13 @@
 #include "Client.h"
 
 Client::Client() {
-	this->socketPtr = std::make_shared<boost::asio::ip::tcp::socket>(io_service);
+    m_Socket = std::make_shared<boost::asio::ip::tcp::socket>(m_ioService);
 }
 
 bool Client::connect(const std::string& ip, int port) {
     boost::system::error_code ec;
   
-    socketPtr->connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ip), port), ec);
+    m_Socket->connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ip), port), ec);
     
     if (ec) {
         std::cerr << "Errore while connecting: " << ec.message() << std::endl;
@@ -18,9 +18,9 @@ bool Client::connect(const std::string& ip, int port) {
 }
 
 std::shared_ptr<boost::asio::ip::tcp::socket> Client::getSocket() {
-	return this->socketPtr;
+	return m_Socket;
 }
 
 void Client::close() {
-    this->socketPtr->close();
+    m_Socket->close();
 }

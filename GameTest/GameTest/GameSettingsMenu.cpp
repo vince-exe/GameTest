@@ -1,17 +1,17 @@
 #include "GameSettingsMenu.h"
 
-bool GameSettingsMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, std::atomic<bool>* closeFlag) {
-	this->closeFlag = closeFlag;
-	this->windowPtr = windowPtr;
+bool GameSettingsMenu::init(std::shared_ptr<sf::RenderWindow> window, std::atomic<bool>* closeFlag) {
+	m_closeFlag = closeFlag;
+	m_Window = window;
 
 	setTextures();
 	setSprites();
 	
 	sf::Event event;
-	/* we can't use the close() of the windowPtr because if we do this, even the MainGameWindow is closed */
-	this->exitWindow = false;
-	while (!this->exitWindow && !this->closeFlag->load()) {
-		while (windowPtr->pollEvent(event)) {
+	/* we can't use the close() of the m_Window because if we do this, even the MainGameWindow is closed */
+	m_exitWindow = false;
+	while (!m_exitWindow && !m_closeFlag->load()) {
+		while (m_Window->pollEvent(event)) {
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
 				return false;
 			}
@@ -20,31 +20,31 @@ bool GameSettingsMenu::init(std::shared_ptr<sf::RenderWindow> windowPtr, std::at
 		draw();
 	}
 
-	return (this->closeFlag->load());
+	return (m_closeFlag->load());
 }
 
 void GameSettingsMenu::setTextures() {
-	backText.setTexture(MainMenuTextureManager::cancelText);
+	m_backText.setTexture(MainMenuTextureManager::cancelText);
 }
 
 void GameSettingsMenu::setSprites() {
-	backText.getSprite().setPosition(20.f, windowPtr->getSize().y - backText.getSprite().getGlobalBounds().height - 40);
+	m_backText.getSprite().setPosition(20.f, m_Window->getSize().y - m_backText.getSprite().getGlobalBounds().height - 40);
 }
 
 void GameSettingsMenu::draw() {
-	windowPtr->clear();
+	m_Window->clear();
 
-	windowPtr->draw(backText);
+	m_Window->draw(m_backText);
 
-	windowPtr->display();
+	m_Window->display();
 }
 
 void GameSettingsMenu::handleMouseButtonPressed(sf::Event& event) {
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-		sf::Vector2f position = windowPtr->mapPixelToCoords(sf::Mouse::getPosition(*windowPtr));
+		sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
-		if (backText.isInside(position)) {
-			this->exitWindow = true;
+		if (m_backText.isInside(position)) {
+			m_exitWindow = true;
 		}
 	}
 }

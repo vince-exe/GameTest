@@ -1,25 +1,25 @@
 #include "Sound.h"
 
 bool Sound::openFromFile(const std::string& path) {
-    if (!this->soundBuff.loadFromFile(path)) {
+    if (!m_soundBuff.loadFromFile(path)) {
         return false;
     }
-    this->sound.setBuffer(this->soundBuff);
+    m_sound.setBuffer(m_soundBuff);
     return true;
 }
 
 sf::Sound& Sound::getSound() {
-    return this->sound;
+    return m_sound;
 }
 
 void Sound::setVolume(float v) {
-    this->sound.setVolume(v);
+    m_sound.setVolume(v);
 }
 
 float Sound::getVolume() {
-    return this->sound.getVolume();
+    return m_sound.getVolume();
 }
 
 void Sound::play() {
-    this->sound.play();
+    m_sound.play();
 }

@@ -6,6 +6,11 @@
 using boost::asio::ip::tcp;
 
 class User {
+private:
+	std::string m_Nick;
+	std::string m_Ip;
+	std::shared_ptr<tcp::socket> m_socketPtr;
+
 public:
 	User(const std::string& nick, std::shared_ptr<tcp::socket> socketPtr);
 
@@ -14,10 +19,4 @@ public:
 	const std::string getIp();
 
 	const std::shared_ptr<tcp::socket> getSocket();
-
-private:
-	std::string nick;
-	std::string ip;
-	std::shared_ptr<tcp::socket> socketPtr;
 };
-

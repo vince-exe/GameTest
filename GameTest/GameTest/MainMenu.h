@@ -24,6 +24,24 @@
 
 class MainMenu {
 private:
+	std::shared_ptr<sf::RenderWindow> m_Window;
+
+	std::shared_ptr<Music> m_backgroundMusicPtr;
+	std::shared_ptr<Sound> m_notificationSound;
+
+	Entity m_matchText, m_settingsText, m_settings2Text, m_undoMatchText, m_mainText, m_quitText;
+	Entity m_menuMsgs[4];
+	Entity* m_msgToDisplay;
+
+	bool m_displayText;
+	bool m_exitRequested;
+	bool m_displayGameWindow;
+	std::atomic<bool> m_inMatchmaking;
+
+	std::shared_ptr<Client> m_Client;
+	std::string m_Nickname;
+
+private:
 	bool loadMusicSound();
 
 	void setMusicSound();
@@ -52,25 +70,7 @@ private:
 
 	void exitMenu();
 
-	void matchFound(std::string nickname);
-
-private:
-	std::shared_ptr<sf::RenderWindow> windowPtr;
-
-	std::shared_ptr<Music> backgroundMusicPtr;
-	std::shared_ptr<Sound> notificationSound;
-
-	Entity matchText, settingsText, settings2Text, undoMatchText, mainText, quitText;
-	Entity menuMsgs[4];
-	Entity* msgToDisplay;
-
-	bool displayText;
-	bool exitRequested;
-	bool displayGameWindow;
-	std::atomic<bool> inMatchmaking;
-
-	std::shared_ptr<Client> client;
-	std::string nickname;
+	void matchFound(std::string nick);
 
 public:
 	MainMenu();

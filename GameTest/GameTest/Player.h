@@ -18,27 +18,33 @@ protected:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 private:
-    sf::RectangleShape rectangle;
-    sf::Vector2f targetPosition;
-    sf::ConvexShape indicator;
-    sf::Clock sprintClock;
+    sf::RectangleShape m_Rectangle;
+    sf::Vector2f m_targetPosition;
+    sf::ConvexShape m_Indicator;
+    sf::Clock m_sprintClock;
 
-    float sprintTimeout;
-    float distanceAbove;
-    float speed;
-    bool targetReached;
-    bool moving;
-    float indicatorBaseHalf = 10.f;
-    float indicatorHeight = 15.f;
-    float sprintPower;
+    float m_sprintTimeout;
+    float m_distanceAbove;
+    float m_Speed;
+    bool m_targetReached;
+    bool m_Moving;
+    float m_indicatorBaseHalf = 10.f;
+    float m_indicatorHeight = 15.f;
+    float m_sprintPower;
     bool m_isSprinting;
-    bool enemyHit;
-    CollisionSide collidedSide;
+    bool m_enemyHit;
+    CollisionSide m_collidedSide;
 
 private:
     void move(const sf::Vector2f& offset, const sf::RectangleShape& other);
 
     void setCollidedSide(const sf::RectangleShape& other);
+
+    void updateIndicatorPos();
+
+    bool hasReachedTarget() const;
+
+    void resetSprint();
 
 public:
     Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout);
@@ -59,8 +65,6 @@ public:
 
     float getVelocity();
 
-    void updateIndicatorPos();
-
     void setTarget(const sf::Vector2f& target);
 
     bool isMoving() const;
@@ -75,20 +79,15 @@ public:
 
     sf::Vector2f getPosition() const;
 
-    bool hasReachedTarget() const;
-
     bool intersect(const sf::RectangleShape& rect);
-
-    void resetSprint();
 
     sf::FloatRect getGlobalBounds() const;
 
     sf::Clock getClock();
 
     float getSprintTimeout();
-    
-    bool isEnemyHit();
-    
-    void resetEnemyHit();
 
+    bool isEnemyHit();
+
+    void resetEnemyHit();
 };

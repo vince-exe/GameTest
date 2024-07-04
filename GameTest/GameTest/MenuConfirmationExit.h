@@ -4,12 +4,12 @@
 #include <SFML/Graphics.hpp>
 
 #include "Entity.h"
-#include "ui_utils.h"
+#include "windows_utils.h"
 #include "MainMenuTextureManager.h"
 
 class MenuConfirmationExit {
 private:
-	void handleButtonClicks(PopupReturnValues& checker, sf::Event& event, bool& exitRequested);
+	void handleButtonClicks(UiUtils::WindowsReturnValues& checker, sf::Event& event, bool& exitRequested);
 
 	void setTextures();
 
@@ -18,11 +18,11 @@ private:
 	void draw();
 
 private:
-	std::shared_ptr<sf::RenderWindow> windowPtr;
-	Entity backBtn, exitBtn, text;
+	std::shared_ptr<sf::RenderWindow> m_Window;
+	Entity m_backBtn, m_exitBtn, m_Text;
 
 public:
-	void init(std::shared_ptr<sf::RenderWindow> windowPtr, PopupReturnValues& checker);
+	void init(std::shared_ptr<sf::RenderWindow> window, UiUtils::WindowsReturnValues& checker);
 };
 
 

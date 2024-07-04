@@ -1,6 +1,3 @@
-RISOLVERE:
-rendere migliore il raggiungimento del target del player.
-
 IDEA-GIOCO:
 delle "aree di danno" vengono generate nella mappa e l'intento del player è quello di buttare il nemico in quelle aree
 per fargli prendere danno e vincere la partita.
@@ -8,8 +5,6 @@ per fargli prendere danno e vincere la partita.
 REFACTORING PRINCIPALE:
 -utilizzare due tipologie di pacchetti differenti ( in base ai messaggi del server o ai messaggi di gioco )
 -in generale un refactoring totale del progetto, delle classi, della gestione delle finestre...
--trasformare tutti i membri di una classe con la m_ iniziale senza usare il this
--mostrare prima tutti i membri privati di una classe e poi quelli pubblici.
 -cerare di utilizzare più memoria statica che dinamica ( eliminare gli shared_ptr etc.. )
 
 PRINCIPALE:

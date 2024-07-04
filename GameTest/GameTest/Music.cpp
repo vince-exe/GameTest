@@ -1,26 +1,26 @@
 #include "Music.h"
 
 bool Music::openFromFile(const std::string& path) {
-    return this->music.openFromFile(path);
+    return m_Music.openFromFile(path);
 }
 
 sf::Music& Music::getMusic() {
-    return this->music;
+    return m_Music;
 }
 
 void Music::setVolume(float v) {
-    this->currentVolume = v;
-    this->music.setVolume(v);
+    m_currentVolume = v;
+    m_Music.setVolume(v);
 }
 
 float Music::getVolume() {
-    return this->currentVolume;
+    return m_currentVolume;
 }
 
 void Music::play() {
-    this->music.play();
+    m_Music.play();
 }
 
 void Music::loop(bool loop) {
-    this->music.setLoop(loop);
+    m_Music.setLoop(loop);
 }

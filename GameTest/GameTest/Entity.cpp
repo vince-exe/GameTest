@@ -1,26 +1,26 @@
 #include "Entity.h"
 
 Entity::Entity(sf::Texture& texture) {
-	this->texture = texture;
-	this->sprite.setTexture(this->texture);
+	m_Texture= texture;
+	m_Sprite.setTexture(m_Texture);
 }
 
 sf::Sprite& Entity::getSprite() {
-	return this->sprite;
+	return m_Sprite;
 }
 
 sf::Texture& Entity::getTexture() {
-	return this->texture;
+	return m_Texture;
 }
 
 void Entity::setTexture(sf::Texture& texture) {
-	this->texture = texture;
-	this->sprite.setTexture(texture, true);
+	m_Texture = texture;
+	m_Sprite.setTexture(texture, true);
 }
 
 bool Entity::loadTexture(const std::string& path) {
-	if (this->texture.loadFromFile(path)) {
-		this->sprite.setTexture(this->texture);
+	if (m_Texture.loadFromFile(path)) {
+		m_Sprite.setTexture(m_Texture);
 		return true;
 	}
 
@@ -28,12 +28,12 @@ bool Entity::loadTexture(const std::string& path) {
 }
 
 bool Entity::isInside(const sf::Vector2f& pos) {
-	return this->sprite.getGlobalBounds().contains(pos);
+	return m_Sprite.getGlobalBounds().contains(pos);
 
 	sf::Text cao;
 
 }
 
 void Entity::draw(sf::RenderTarget& window, sf::RenderStates state) const {
-	window.draw(this->sprite, state);
+	window.draw(m_Sprite, state);
 }

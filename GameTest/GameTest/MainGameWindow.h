@@ -18,16 +18,40 @@
 
 class MainGameWindow {
 private:
+	std::shared_ptr<sf::RenderWindow> m_Window;
+	std::shared_ptr<Client> m_Client;
+	Game m_Game;
+
+	sf::Text m_myNickname, m_enemyNickname, m_vsText, m_waitRoundText, m_gameTimer;
+
+	float m_rechargeBarProgress;
+	sf::RectangleShape m_rechargeBarBorder;
+	sf::RectangleShape m_rechargeBar;
+
+	sf::RectangleShape m_youHealth[3];
+	sf::RectangleShape m_enemyHealth[3];
+
+	std::shared_ptr<Player> m_youPlayer, m_enemyPlayer;
+
+	bool m_displayWindow, m_inGameSettings;
+	std::atomic<bool> m_closeSettingsWindowFlag;
+
+	GameSettingsMenu m_gameSettingsMenu;
+	EndGameWindow m_endGameWindow;
+
+	std::vector<std::vector<sf::CircleShape>> m_damageAreasVector;
+
+private:
 	void update(sf::Time deltaTime);
 
 	void draw();
 
 	void initSprites();
-	
+
 	void handleKeyBoards(sf::Event event);
 
 	void handleMouseClick(sf::Event& event);
-	
+
 	void quitGame();
 
 	void updateRechargeBar();
@@ -39,34 +63,9 @@ private:
 	bool handleEnemyNickname();
 
 	void handleMessages();
-	
+
 	bool initPlayerAndEnemyPosition();
-
-private:
-	std::shared_ptr<sf::RenderWindow> windowPtr;
-	std::shared_ptr<Client> client;
-	Game m_Game;
-
-	sf::Text myNickname, enemyNickname, vsText, m_waitRoundText, m_gameTimer;
-
-	float rechargeBarProgress;
-	sf::RectangleShape rechargeBarBorder;
-	sf::RectangleShape rechargeBar;
-
-	sf::RectangleShape youHealth[3];
-	sf::RectangleShape enemyHealth[3];
-
-	std::shared_ptr<Player> youPlayer, enemyPlayer;
-
-	bool displayWindow, inGameSettings;
-	std::atomic<bool> closeSettingsWindowFlag;
-
-	GameSettingsMenu gameSettingsMenu;
-	EndGameWindow endGameWindow;
-
-	std::vector<std::vector<sf::CircleShape>> m_damageAreasVector;
 
 public:
 	void init(const std::string nickname, std::shared_ptr<Client> client);
 };
-

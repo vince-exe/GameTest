@@ -5,13 +5,23 @@
 #include <iostream>
 
 #include "Entity.h"
-#include "ui_utils.h"
+#include "windows_utils.h"
 #include "MainMenuTextureManager.h"
 #include "FontManager.h"
 
 class NicknameMenu {
+private:
+	std::shared_ptr<sf::RenderWindow> m_Window;
+	std::string m_inputText;
+
+	sf::Text m_inputDisplay;
+	sf::RectangleShape m_Line;
+
+	Entity m_Text;
+	Entity m_doneBtn, m_cancelBtn;
+
 public:
-	std::string init(std::shared_ptr<sf::RenderWindow> windowPtr, PopupReturnValues& checker);
+	std::string init(std::shared_ptr<sf::RenderWindow> window, UiUtils::WindowsReturnValues& checker);
 
 private:
 	void draw();
@@ -22,16 +32,6 @@ private:
 
 	void handleTextEntered(sf::Event& event);
 	
-	void handleMouseButtons(sf::Event& event, PopupReturnValues& checker, bool& exitRequested);
-
-private:
-	std::shared_ptr<sf::RenderWindow> windowPtr;
-	std::string inputText;
-	
-	sf::Text inputDisplay;
-	sf::RectangleShape line;
-
-	Entity text;
-	Entity doneBtn, cancelBtn;
+	void handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValues& checker, bool& exitRequested);
 };
 

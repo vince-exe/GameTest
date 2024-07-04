@@ -3,18 +3,18 @@
 int TemporaryThread::uselessThreadCounter = 0;
 
 TemporaryThread::TemporaryThread(std::shared_ptr<std::thread> t, bool cancellable) {
-	this->t = t;
-	this->cancellable = cancellable;
+	m_Thread = t;
+	m_Cancellable = cancellable;
 }
 
 std::shared_ptr<std::thread> TemporaryThread::getThread() {
-	return this->t;
+	return m_Thread;
 }
 
 bool TemporaryThread::isCancellable() {
-	return this->cancellable;
+	return m_Cancellable;
 }
 
 void TemporaryThread::setCancellable() {
-	this->cancellable = true;
+	m_Cancellable = true;
 }

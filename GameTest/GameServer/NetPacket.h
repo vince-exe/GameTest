@@ -5,9 +5,6 @@
 
 class NetPacket  {
 public:
-	static NetPacket deserialize(const std::vector<uint8_t>& serializedData);
-
-public:
 	enum class NetMessages {
 		SERVER_DOWN,
 		IDLE,
@@ -27,10 +24,18 @@ public:
 		GAME_END
 	};
 
+private:
+	NetMessages m_messageType;
+	std::vector<uint8_t> m_Data;
+	size_t m_dataSize;
+
+public:
+	static NetPacket deserialize(const std::vector<uint8_t>& serializedData);
+
 public:
 	NetPacket() = default;
 
-	NetPacket(NetMessages type, const uint8_t* data, size_t dataSize);
+	NetPacket(NetMessages type, const uint8_t* data_, size_t dataSize_);
 
 	NetMessages getMsgType() const;
 
@@ -39,10 +44,4 @@ public:
 	size_t getDataSize();
 
 	std::vector<uint8_t> serialize() const;
-
-private:
-	NetMessages messageType;
-	std::vector<uint8_t> data;
-	size_t dataSize;
 };
-
