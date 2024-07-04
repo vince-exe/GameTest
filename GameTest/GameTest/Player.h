@@ -13,7 +13,7 @@ public:
         Left,
         Right
     };
-
+    
 protected:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -22,6 +22,7 @@ private:
     sf::Vector2f m_targetPosition;
     sf::ConvexShape m_Indicator;
     sf::Clock m_sprintClock;
+    sf::RectangleShape m_targetToReach;
 
     float m_sprintTimeout;
     float m_distanceAbove;
@@ -45,6 +46,8 @@ private:
     bool hasReachedTarget() const;
 
     void resetSprint();
+
+    int calcPlayerTrend(sf::Vector2f newPos);
 
 public:
     Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout);

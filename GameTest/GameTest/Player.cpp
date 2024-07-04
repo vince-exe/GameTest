@@ -2,6 +2,7 @@
 
 Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout) {
     m_Rectangle.setSize(rectSize);
+    m_targetToReach.setSize(sf::Vector2f(2.f, 2.f));
 
     m_Rectangle.setFillColor(rectColor);
 
@@ -24,6 +25,51 @@ Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorCo
 
 Player::CollisionSide& Player::getCollidedSide() {
     return m_collidedSide;
+}
+
+int Player::calcPlayerTrend(sf::Vector2f newPos) {
+    sf::Vector2f oldPos = m_Rectangle.getPosition();
+
+    if (newPos.y > oldPos.y) {
+        if (newPos.y > oldPos.y && newPos.y < (oldPos.y + 70.f)) {
+            if (newPos.x > oldPos.x) {
+                std::cout << "\nDestra";
+                return 1;
+            }
+            else {
+                std::cout << "\nSinistra";
+                return 1;
+            }
+        }
+        if (newPos.x >= oldPos.x && newPos.x <= (oldPos.x + 70.f)) {
+            std::cout << "\nBasso";
+            return 1;
+        }
+        else if (newPos.x > (oldPos.x + 70)) {
+            std::cout << "\nBasso a destra";
+            return 1;
+        }
+        else {
+            std::cout << "\nBasso a sinistra";
+            return 1;
+        }
+    }
+    if (newPos.y < oldPos.y) {
+        if (newPos.x >= oldPos.x && newPos.x <= (oldPos.x + 70.f)) {
+            std::cout << "\nAlto";
+            return 1;
+        }
+        else if (newPos.x > (oldPos.x + 70)) {
+            std::cout << "\nAlto a destra";
+            return 1;
+        }
+        else {
+            std::cout << "\nAlto a sinistra";
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 void Player::setCollidedSide(const sf::RectangleShape& other) {
@@ -90,15 +136,17 @@ void Player::update(sf::Time deltaTime, const sf::RectangleShape& other) {
 }
 
 bool Player::hasReachedTarget() const {
-    float epsilon = 1.f;
-    sf::Vector2f position = getPosition();
-    return (std::abs(position.x - m_targetPosition.x) < epsilon && std::abs(position.y - m_targetPosition.y) < epsilon);
+    /*
+        float epsilon = 1.f;
+        sf::Vector2f position = getPosition();
+        return (std::abs(position.x - m_targetPosition.x) < epsilon && std::abs(position.y - m_targetPosition.y) < epsilon);
+    */
+    return m_targetToReach.getGlobalBounds().intersects(m_Rectangle.getGlobalBounds());
 }
 
 void Player::move(const sf::Vector2f& offset, const sf::RectangleShape& other) {
     sf::Vector2f newPosition = m_Rectangle.getPosition() + offset;
     m_Rectangle.setPosition(newPosition);
-
     // check collision
     if (intersect(other)) {
         setCollidedSide(other);
@@ -166,6 +214,7 @@ void Player::updateIndicatorPos() {
 }
 
 void Player::setTarget(const sf::Vector2f& target) {
+    calculatePlayerOrientation(target);
     m_targetPosition = target;
     m_targetReached = false;
     m_Moving = true;

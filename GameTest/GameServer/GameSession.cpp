@@ -134,8 +134,6 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 			NetUtils::write_(*otherClient->getSocket(), packet);
 		}
 		catch (const boost::system::system_error& ex) {
-			std::cerr << "\nCatch in handle client [ " << client->getNick() << " ] GameSession.cpp | " << ex.what();
-
 			if (otherClient->getSocket()->is_open()) {
 				NetUtils::write_(*otherClient->getSocket(), NetPacket(NetPacket::NetMessages::QUIT_GAME, nullptr, 0));
 			}

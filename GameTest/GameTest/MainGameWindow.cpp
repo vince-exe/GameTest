@@ -36,7 +36,8 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     sf::Clock sprintClock;
 
     resolvePlayerSprint();
-
+    //DEBUG
+    std::cout << "\nPlayer: " << nickname;
     while (m_displayWindow) {
         while (m_Window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {

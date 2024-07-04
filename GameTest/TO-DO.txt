@@ -1,3 +1,6 @@
+*CONTINUARE*
+migliorare il movimento del player.
+
 IDEA-GIOCO:
 delle "aree di danno" vengono generate nella mappa e l'intento del player è quello di buttare il nemico in quelle aree
 per fargli prendere danno e vincere la partita.
