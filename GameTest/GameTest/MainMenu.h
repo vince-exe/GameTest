@@ -24,10 +24,9 @@
 
 class MainMenu {
 private:
-	std::shared_ptr<sf::RenderWindow> m_Window;
-
-	std::shared_ptr<Music> m_backgroundMusicPtr;
-	std::shared_ptr<Sound> m_notificationSound;
+	sf::RenderWindow m_Window;
+	Music m_backgroundMusic;
+	Sound m_notificationSound;
 
 	Entity m_matchText, m_settingsText, m_settings2Text, m_undoMatchText, m_mainText, m_quitText;
 	Entity m_menuMsgs[4];
@@ -44,7 +43,7 @@ private:
 private:
 	bool loadMusicSound();
 
-	void setMusicSound();
+	void setMusicAndSound();
 
 	void setTextures();
 

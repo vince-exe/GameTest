@@ -12,7 +12,7 @@
 
 class OptionsMainMenu {
 private:
-	std::shared_ptr<sf::RenderWindow> m_Window;
+	sf::RenderWindow* m_Window;
 
 	const sf::Color m_defCheckpointColor = sf::Color(163, 163, 163);
 	const sf::Color m_selectedCheckpointColor = sf::Color(58, 59, 60);
@@ -28,14 +28,14 @@ private:
 private:
 	void draw();
 
-	void handleMouseButtons(std::shared_ptr<Music> backgroundMusicPtr, sf::Event& event, bool& requestExit, UiUtils::WindowsReturnValues& checker);
+	void handleMouseButtons(Music& backgroundMusic, sf::Event& event, bool& requestExit, UiUtils::WindowsReturnValues& checker);
 
-	void checkVolumeLevel(std::shared_ptr<Music> backgroundMusicPtr, sf::Vector2f& position);
+	void checkVolumeLevel(Music& backgroundMusic, sf::Vector2f& position);
 
-	void initSprites(std::shared_ptr<Music> backgroundMusicPtr);
+	void initSprites(Music& backgroundMusic);
 
 	void setTextures();
 
 public:
-	void init(std::shared_ptr<sf::RenderWindow> window, std::shared_ptr<Music> backgroundMusicPtr, UiUtils::WindowsReturnValues& checker);
+	void init(sf::RenderWindow& window, Music& backgroundMusic, UiUtils::WindowsReturnValues& checker);
 };

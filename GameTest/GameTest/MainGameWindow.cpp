@@ -3,10 +3,8 @@
 void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client) {
     m_Client = client;
 
-    m_Window = std::make_shared<sf::RenderWindow>();
-
-    m_Window->create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
-    m_Window->setFramerateLimit(60);
+    m_Window.create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
+    m_Window.setFramerateLimit(60);
 
     m_closeSettingsWindowFlag.store(false);
     m_inGameSettings = false;
@@ -39,7 +37,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     //DEBUG
     std::cout << "\nPlayer: " << nickname;
     while (m_displayWindow) {
-        while (m_Window->pollEvent(event)) {
+        while (m_Window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 quitGame();
                 return;
@@ -63,8 +61,8 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
             }
             m_closeSettingsWindowFlag.store(true);
 
-            m_endGameWindow.init(*m_Window, m_Game, m_myNickname, m_vsText, m_enemyNickname);
-            m_Window->close();
+            m_endGameWindow.init(m_Window, m_Game, m_myNickname, m_vsText, m_enemyNickname);
+            m_Window.close();
             return;
         }
         draw();
@@ -185,10 +183,10 @@ void MainGameWindow::checkPlayerWindowBorders() {
 void MainGameWindow::handleMouseClick(sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) {
-            m_Game.handlePlayerMovement(event, *m_youPlayer, *m_Window, false);
+            m_Game.handlePlayerMovement(event, *m_youPlayer, m_Window, false);
         }
         else if (event.mouseButton.button == sf::Mouse::Right) {
-            m_Game.handlePlayerMovement(event, *m_youPlayer, *m_Window, true);
+            m_Game.handlePlayerMovement(event, *m_youPlayer, m_Window, true);
         }
     }
 }
@@ -246,34 +244,34 @@ void MainGameWindow::update(sf::Time deltaTime) {
 }
 
 void MainGameWindow::draw() {
-    m_Window->clear();
+    m_Window.clear();
 
-    m_Window->draw(m_myNickname);
-    m_Window->draw(m_enemyNickname);
-    m_Window->draw(*m_youPlayer);
-    m_Window->draw(*m_enemyPlayer);
-    m_Window->draw(m_rechargeBarBorder);
-    m_Window->draw(m_rechargeBar);
-    m_Window->draw(m_vsText);
+    m_Window.draw(m_myNickname);
+    m_Window.draw(m_enemyNickname);
+    m_Window.draw(*m_youPlayer);
+    m_Window.draw(*m_enemyPlayer);
+    m_Window.draw(m_rechargeBarBorder);
+    m_Window.draw(m_rechargeBar);
+    m_Window.draw(m_vsText);
 
     for (int i = 0; i < m_Game.getPlayerLife(); i++) {
-        m_Window->draw(m_youHealth[i]);
+        m_Window.draw(m_youHealth[i]);
     }
     for (int i = 0; i < m_Game.getEnemyLife(); i++) {
-        m_Window->draw(m_enemyHealth[i]);
+        m_Window.draw(m_enemyHealth[i]);
     }
     if (m_Game.getGameState() == Game::GameStates::RUNNING) {
-        m_Window->draw(m_gameTimer);
+        m_Window.draw(m_gameTimer);
 
         for (sf::CircleShape& shape : m_damageAreasVector.at(m_Game.getCurrentRound())) {
-            m_Window->draw(shape);
+            m_Window.draw(shape);
         }
     }
     /* draw the 3..2..1 text */
     if (m_Game.areActionsBlocked()) {
-        m_Window->draw(m_waitRoundText);
+        m_Window.draw(m_waitRoundText);
     }
-    m_Window->display();
+    m_Window.display();
 }
 
 void MainGameWindow::initSprites() {
@@ -311,7 +309,7 @@ void MainGameWindow::initSprites() {
     m_waitRoundText.setFont(FontManager::fredokaOne);
     m_waitRoundText.setCharacterSize(80);
     m_waitRoundText.setFillColor(sf::Color(255, 255, 255));
-    m_waitRoundText.setPosition((m_Window->getSize().x / 2.f) - (m_waitRoundText.getGlobalBounds().width / 2.f), (m_Window->getSize().y / 3.f) - (m_waitRoundText.getGlobalBounds().height / 2.f));
+    m_waitRoundText.setPosition((m_Window.getSize().x / 2.f) - (m_waitRoundText.getGlobalBounds().width / 2.f), (m_Window.getSize().y / 3.f) - (m_waitRoundText.getGlobalBounds().height / 2.f));
 
     m_youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f, 1000.f, 4.f);
     m_enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f, 1000.f, 4.f);

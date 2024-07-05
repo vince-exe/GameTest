@@ -11,7 +11,7 @@
 
 class NicknameMenu {
 private:
-	std::shared_ptr<sf::RenderWindow> m_Window;
+	sf::RenderWindow* m_Window;
 	std::string m_inputText;
 
 	sf::Text m_inputDisplay;
@@ -21,7 +21,7 @@ private:
 	Entity m_doneBtn, m_cancelBtn;
 
 public:
-	std::string init(std::shared_ptr<sf::RenderWindow> window, UiUtils::WindowsReturnValues& checker);
+	std::string init(sf::RenderWindow& window, UiUtils::WindowsReturnValues& checker);
 
 private:
 	void draw();

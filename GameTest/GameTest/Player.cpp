@@ -214,7 +214,7 @@ void Player::updateIndicatorPos() {
 }
 
 void Player::setTarget(const sf::Vector2f& target) {
-    calculatePlayerOrientation(target);
+    calcPlayerTrend(target);
     m_targetPosition = target;
     m_targetReached = false;
     m_Moving = true;

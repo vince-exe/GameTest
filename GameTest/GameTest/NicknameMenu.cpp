@@ -1,7 +1,7 @@
 #include "NicknameMenu.h"
 
-std::string NicknameMenu::init(std::shared_ptr<sf::RenderWindow> window, UiUtils::WindowsReturnValues& checker) {
-	m_Window = window;
+std::string NicknameMenu::init(sf::RenderWindow& window, UiUtils::WindowsReturnValues& checker) {
+	m_Window = &window;
 
     setTextures();
     initSprites();

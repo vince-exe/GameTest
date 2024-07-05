@@ -4,7 +4,7 @@ void EndGameWindow::initTextures() {
 	m_doneButton.setTexture(MainMenuTextureManager::doneText);
 }
 
-void EndGameWindow::initSprites(sf::RenderWindow& window, Game& game) {
+void EndGameWindow::initSprites() {
 	m_resultsText.setFont(FontManager::fredokaOne);
 	m_resultsText.setCharacterSize(70);
 	m_resultsText.setPosition(sf::Vector2f(450, 350));
@@ -15,11 +15,11 @@ void EndGameWindow::initSprites(sf::RenderWindow& window, Game& game) {
 	m_enemyQuitText.setString("( L'avversario ha abbandonato la partita )");
 	m_enemyQuitText.setPosition(sf::Vector2f(m_resultsText.getPosition().x - 107.f, m_resultsText.getPosition().y + m_enemyQuitText.getGlobalBounds().height + 66.f));
 
-	if (game.getGameResults() == Game::GameResults::WON) {
+	if (m_Game->getGameResults() == Game::GameResults::WON) {
 		m_resultsText.setFillColor(sf::Color(31, 110, 2));
 		m_resultsText.setString("Hai Vinto!");
 	}
-	else if(game.getGameResults() == Game::GameResults::LOST) {
+	else if(m_Game->getGameResults() == Game::GameResults::LOST) {
 		m_resultsText.setFillColor(sf::Color(110, 6, 2));
 		m_resultsText.setString("Hai Perso!");
 	}
@@ -31,32 +31,32 @@ void EndGameWindow::initSprites(sf::RenderWindow& window, Game& game) {
 	m_gameText.setFont(FontManager::fredokaOne);
 	m_gameText.setCharacterSize(50);
 	m_gameText.setFillColor(sf::Color(110, 6, 2));
-	m_gameText.setPosition(sf::Vector2f(20.f, window.getSize().y - m_gameText.getGlobalBounds().height - 72.f));
+	m_gameText.setPosition(sf::Vector2f(20.f, m_Window->getSize().y - m_gameText.getGlobalBounds().height - 72.f));
 	m_gameText.setString("Skyfall Show|Down");
 
-	m_doneButton.getSprite().setPosition(sf::Vector2f(window.getSize().x - m_doneButton.getSprite().getGlobalBounds().width - 20.f, window.getSize().y - m_doneButton.getSprite().getGlobalBounds().height - 20.f));
+	m_doneButton.getSprite().setPosition(sf::Vector2f(m_Window->getSize().x - m_doneButton.getSprite().getGlobalBounds().width - 20.f, m_Window->getSize().y - m_doneButton.getSprite().getGlobalBounds().height - 20.f));
 }
 
-void EndGameWindow::draw(sf::RenderWindow& window, Game& game, sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText) {
-	window.clear();
+void EndGameWindow::draw(sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText) {
+	m_Window->clear();
 
-	window.draw(m_resultsText);
-	window.draw(m_gameText);
-	window.draw(m_doneButton);
-	window.draw(playerNickText);
-	window.draw(vsText);
-	window.draw(enemyNickText);
+	m_Window->draw(m_resultsText);
+	m_Window->draw(m_gameText);
+	m_Window->draw(m_doneButton);
+	m_Window->draw(playerNickText);
+	m_Window->draw(vsText);
+	m_Window->draw(enemyNickText);
 
-	if (game.hasEnemyQuit()) {
-		window.draw(m_enemyQuitText);
+	if (m_Game->hasEnemyQuit()) {
+		m_Window->draw(m_enemyQuitText);
 	}
 
-	window.display();
+	m_Window->display();
 }
 
-void EndGameWindow::handleMouseButtons(sf::Event& event, sf::RenderWindow& window) {
+void EndGameWindow::handleMouseButtons(sf::Event& event) {
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-		sf::Vector2f position = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+		sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
 		if (m_doneButton.isInside(position)) {
 			m_closeWindow = true;
@@ -67,9 +67,11 @@ void EndGameWindow::handleMouseButtons(sf::Event& event, sf::RenderWindow& windo
 
 void EndGameWindow::init(sf::RenderWindow& window, Game& game, sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText) {
 	m_closeWindow = false;
+	m_Window = &window;
+	m_Game = &game;
 
 	initTextures();
-	initSprites(window, game);
+	initSprites();
 
 	sf::Event event;
 	while (!m_closeWindow) {
@@ -78,8 +80,8 @@ void EndGameWindow::init(sf::RenderWindow& window, Game& game, sf::Text& playerN
 				m_closeWindow = true;
 			}
 		}
-		handleMouseButtons(event, window);
+		handleMouseButtons(event);
 
-		draw(window, game, playerNickText, vsText, enemyNickText);
+		draw(playerNickText, vsText, enemyNickText);
 	}
 }

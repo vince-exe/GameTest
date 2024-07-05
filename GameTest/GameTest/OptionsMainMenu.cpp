@@ -1,14 +1,14 @@
 #include "OptionsMainMenu.h"
 
-void OptionsMainMenu::init(std::shared_ptr<sf::RenderWindow> window, std::shared_ptr<Music> backgroundMusicPtr, UiUtils::WindowsReturnValues& checker) {
-    m_Window = window;
+void OptionsMainMenu::init(sf::RenderWindow& window, Music& backgroundMusic, UiUtils::WindowsReturnValues& checker) {
+    m_Window = &window;
 
     sf::Cursor defaultCursor;
     defaultCursor.loadFromSystem(sf::Cursor::Arrow);
     m_Window->setMouseCursor(defaultCursor);
     
     setTextures();
-    initSprites(backgroundMusicPtr);
+    initSprites(backgroundMusic);
 
     bool requestExit = false;
     sf::Event event;
@@ -21,7 +21,7 @@ void OptionsMainMenu::init(std::shared_ptr<sf::RenderWindow> window, std::shared
                 checker = UiUtils::WindowsReturnValues::BACK;
                 return;
             }
-            handleMouseButtons(backgroundMusicPtr, event, requestExit, checker);
+            handleMouseButtons(backgroundMusic, event, requestExit, checker);
         }
         draw();
     }
@@ -39,11 +39,11 @@ void OptionsMainMenu::draw() {
     m_Window->display();
 }
 
-void OptionsMainMenu::handleMouseButtons(std::shared_ptr<Music> backgroundMusicPtr, sf::Event& event, bool& requestExit, UiUtils::WindowsReturnValues& checker) {
+void OptionsMainMenu::handleMouseButtons(Music& backgroundMusic, sf::Event& event, bool& requestExit, UiUtils::WindowsReturnValues& checker) {
     sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-        checkVolumeLevel(backgroundMusicPtr, position);
+        checkVolumeLevel(backgroundMusic, position);
 
         if (m_backBtn.isInside(position)) {
             requestExit = true;
@@ -53,7 +53,7 @@ void OptionsMainMenu::handleMouseButtons(std::shared_ptr<Music> backgroundMusicP
     }
 }
 
-void OptionsMainMenu::checkVolumeLevel(std::shared_ptr<Music> backgroundMusicPtr, sf::Vector2f& position) {
+void OptionsMainMenu::checkVolumeLevel(Music& backgroundMusic, sf::Vector2f& position) {
     int volumeLevel = 0;
 
     sf::Vector2i mousePosition = sf::Mouse::getPosition(*m_Window);
@@ -62,7 +62,7 @@ void OptionsMainMenu::checkVolumeLevel(std::shared_ptr<Music> backgroundMusicPtr
             m_checkPoints[m_oldVolumeIndex].setFillColor(m_defCheckpointColor);
             m_oldVolumeIndex = i;
             m_checkPoints[i].setFillColor(m_selectedCheckpointColor);
-            backgroundMusicPtr->setVolume(volumeLevel);
+            backgroundMusic.setVolume(volumeLevel);
             SettingsManager::setInt_("VolumeMenu", volumeLevel);
         }
         volumeLevel += 10;
@@ -74,7 +74,7 @@ void OptionsMainMenu::setTextures() {
     m_backBtn.setTexture(MainMenuTextureManager::cancelText);
 }
 
-void OptionsMainMenu::initSprites(std::shared_ptr<Music> backgroundMusicPtr) {
+void OptionsMainMenu::initSprites(Music& backgroundMusic) {
     m_Slider.setSize(sf::Vector2f(500, 10));
     m_Slider.setFillColor(sf::Color(163, 163, 163));
     /* center the sprite */
@@ -95,7 +95,7 @@ void OptionsMainMenu::initSprites(std::shared_ptr<Music> backgroundMusicPtr) {
     } 
 
     /* set the current level of music*/
-    int volume = backgroundMusicPtr->getVolume();
+    int volume = backgroundMusic.getVolume();
     if ( volume == 0) {
         m_checkPoints[0].setFillColor(m_selectedCheckpointColor);
         m_oldVolumeIndex = 0;

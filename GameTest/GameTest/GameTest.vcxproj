@@ -138,12 +138,12 @@
     <ClCompile Include="..\GameServer\NetPacket.cpp" />
     <ClCompile Include="..\GameServer\network_utilities.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="EndGameWindow.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameSettingsMenu.cpp" />
     <ClCompile Include="IpPortMenu.cpp" />
-    <ClCompile Include="MainGameTextureManager.cpp" />
     <ClCompile Include="MainGameWindow.cpp" />
     <ClCompile Include="MainMenuTextureManager.cpp" />
     <ClCompile Include="network_game_utilities.cpp" />
@@ -156,17 +156,18 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SettingsManager.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="windows_utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GameServer\NetPacket.h" />
     <ClInclude Include="..\GameServer\network_utilities.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="EndGameWindow.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameSettingsMenu.h" />
     <ClInclude Include="IpPortMenu.h" />
-    <ClInclude Include="MainGameTextureManager.h" />
     <ClInclude Include="MainGameWindow.h" />
     <ClInclude Include="MainMenuTextureManager.h" />
     <ClInclude Include="network_game_utilities.h" />
@@ -178,7 +179,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="Sound.h" />
-    <ClInclude Include="ui_utils.h" />
+    <ClInclude Include="windows_utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

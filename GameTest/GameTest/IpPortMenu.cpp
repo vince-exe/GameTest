@@ -1,7 +1,7 @@
 #include "IpPortMenu.h"
 
-std::pair<std::string, int> IpPortMenu::init(std::shared_ptr<sf::RenderWindow> window, std::shared_ptr<Sound> notificationSound, UiUtils::WindowsReturnValues& checker) {
-    m_Window = window;
+std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, Sound& notificationSound, UiUtils::WindowsReturnValues& checker) {
+    m_Window = &window;
     
     setTextures();
     initSprites();
@@ -107,7 +107,7 @@ void IpPortMenu::handleTextEntered(sf::Event& event) {
     }
 }
 
-void IpPortMenu::handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValues& checker, bool& exitRequested, std::shared_ptr<Sound> notificationSound) {
+void IpPortMenu::handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValues& checker, bool& exitRequested, Sound& notificationSound) {
     sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
@@ -124,7 +124,7 @@ void IpPortMenu::handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValu
                 exitRequested = true;
             }
             else {
-                notificationSound->play();
+                notificationSound.play();
                 displayTextFuncTime(m_entityToDisplay, 5);
             }
         }

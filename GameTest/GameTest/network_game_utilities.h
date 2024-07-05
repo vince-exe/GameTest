@@ -11,6 +11,6 @@ namespace NetGameUtils {
 	std::string getString(NetPacket& packet);
 
 	sf::Vector2f getSfvector2f(NetPacket& packet);
-
+	
 	std::vector<std::vector<std::pair<float, float>>> getDamageAreasCoordinates(NetPacket& packet);
 }

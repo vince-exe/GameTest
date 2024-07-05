@@ -1,6 +1,5 @@
 #include "MainMenu.h"
 #include "MainMenuTextureManager.h"
-#include "MainGameTextureManager.h"
 #include "FontManager.h"
 #include "SettingsManager.h"
 
@@ -15,10 +14,6 @@ int main() {
         std::cout << "\n[ ERROR ]: Failed to load some / all MainMenu textures";
         return 1;
     }
-    if (!MainGameTextureManager::init()) {
-        std::cout << "\n[ ERROR ]: Failed to load some / all Game textures";
-        return 1;
-    }
     if (!FontManager::init()) {
         std::cout << "\n[ ERROR ]: Failed to load game's fonts";
         return 1;
@@ -26,7 +21,7 @@ int main() {
     
     MainMenu mainMenu;
     mainMenu.init();
-   
+
     if (SettingsManager::storeSettings()) {
         std::cout << "\nSuccessfully stored the settings";
     }

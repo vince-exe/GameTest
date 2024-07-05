@@ -1,8 +1,8 @@
 #include "GameSettingsMenu.h"
 
-bool GameSettingsMenu::init(std::shared_ptr<sf::RenderWindow> window, std::atomic<bool>* closeFlag) {
+bool GameSettingsMenu::init(sf::RenderWindow& window, std::atomic<bool>* closeFlag) {
 	m_closeFlag = closeFlag;
-	m_Window = window;
+	m_Window = &window;
 
 	setTextures();
 	setSprites();

@@ -9,7 +9,6 @@
 #include "Client.h"
 #include "Player.h"
 #include "../GameServer/network_utilities.h"
-#include "MainGameTextureManager.h"
 #include "network_game_utilities.h"
 #include "Game.h"
 
@@ -18,7 +17,7 @@
 
 class MainGameWindow {
 private:
-	std::shared_ptr<sf::RenderWindow> m_Window;
+	sf::RenderWindow m_Window;
 	std::shared_ptr<Client> m_Client;
 	Game m_Game;
 

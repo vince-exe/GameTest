@@ -34,13 +34,13 @@
     <Filter Include="File di origine\Network">
       <UniqueIdentifier>{98a6005c-9134-4db3-8651-d2fbc3fb3b51}</UniqueIdentifier>
     </Filter>
-    <Filter Include="File di origine\GameMenus">
+    <Filter Include="File di origine\Game\GameMenus">
       <UniqueIdentifier>{3938a967-b8d0-4e68-9f22-486ccdeafeb9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="File di intestazione\GameMenus">
+    <Filter Include="File di intestazione\Game\GameMenus">
       <UniqueIdentifier>{f9e3020b-74bf-4cf7-94fd-d23736ca3368}</UniqueIdentifier>
     </Filter>
-    <Filter Include="File di intestazione\Game\Menu">
+    <Filter Include="File di intestazione\Menu">
       <UniqueIdentifier>{d64ac55b-16c3-472e-858c-f98877810bf2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -93,14 +93,11 @@
     <ClCompile Include="MainGameWindow.cpp">
       <Filter>File di origine\Game</Filter>
     </ClCompile>
-    <ClCompile Include="MainGameTextureManager.cpp">
-      <Filter>File di origine\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>File di origine\Game</Filter>
     </ClCompile>
     <ClCompile Include="GameSettingsMenu.cpp">
-      <Filter>File di origine\GameMenus</Filter>
+      <Filter>File di origine\Game\GameMenus</Filter>
     </ClCompile>
     <ClCompile Include="network_game_utilities.cpp">
       <Filter>File di origine\Network</Filter>
@@ -109,7 +106,7 @@
       <Filter>File di origine\Game</Filter>
     </ClCompile>
     <ClCompile Include="EndGameWindow.cpp">
-      <Filter>File di origine\GameMenus</Filter>
+      <Filter>File di origine\Game\GameMenus</Filter>
     </ClCompile>
     <ClCompile Include="windows_utils.cpp">
       <Filter>File di origine\Utils</Filter>
@@ -117,22 +114,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
-      <Filter>File di intestazione\Game\Menu</Filter>
+      <Filter>File di intestazione\Menu</Filter>
     </ClInclude>
     <ClInclude Include="MenuConfirmationExit.h">
-      <Filter>File di intestazione\Game\Menu</Filter>
+      <Filter>File di intestazione\Menu</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>File di intestazione\Game</Filter>
     </ClInclude>
     <ClInclude Include="OptionsMainMenu.h">
-      <Filter>File di intestazione\Game\Menu</Filter>
+      <Filter>File di intestazione\Menu</Filter>
     </ClInclude>
     <ClInclude Include="Music.h">
       <Filter>File di intestazione\Game</Filter>
     </ClInclude>
     <ClInclude Include="NicknameMenu.h">
-      <Filter>File di intestazione\Game\Menu</Filter>
+      <Filter>File di intestazione\Menu</Filter>
     </ClInclude>
     <ClInclude Include="MainMenuTextureManager.h">
       <Filter>File di intestazione\Utils</Filter>
@@ -153,7 +150,7 @@
       <Filter>File di intestazione\Game</Filter>
     </ClInclude>
     <ClInclude Include="IpPortMenu.h">
-      <Filter>File di intestazione\Game\Menu</Filter>
+      <Filter>File di intestazione\Menu</Filter>
     </ClInclude>
     <ClInclude Include="SettingsManager.h">
       <Filter>File di intestazione\Utils</Filter>
@@ -161,14 +158,11 @@
     <ClInclude Include="MainGameWindow.h">
       <Filter>File di intestazione\Game</Filter>
     </ClInclude>
-    <ClInclude Include="MainGameTextureManager.h">
-      <Filter>File di intestazione\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>File di intestazione\Game</Filter>
     </ClInclude>
     <ClInclude Include="GameSettingsMenu.h">
-      <Filter>File di intestazione\GameMenus</Filter>
+      <Filter>File di intestazione\Game\GameMenus</Filter>
     </ClInclude>
     <ClInclude Include="network_game_utilities.h">
       <Filter>File di intestazione\Network</Filter>
@@ -177,7 +171,7 @@
       <Filter>File di intestazione\Game</Filter>
     </ClInclude>
     <ClInclude Include="EndGameWindow.h">
-      <Filter>File di intestazione\GameMenus</Filter>
+      <Filter>File di intestazione\Game\GameMenus</Filter>
     </ClInclude>
     <ClInclude Include="windows_utils.h">
       <Filter>File di intestazione\Utils</Filter>

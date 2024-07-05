@@ -1,13 +1,8 @@
 #include "MainMenu.h"
 
 MainMenu::MainMenu() {
-    m_Window = std::make_shared<sf::RenderWindow>();
-
-    m_backgroundMusicPtr = std::make_shared<Music>();
-    m_notificationSound = std::make_shared<Sound>();
-
-	m_Window->create(sf::VideoMode(650, 600), "SkyFall Showdown", sf::Style::Close);
-    m_Window->setFramerateLimit(60);
+	m_Window.create(sf::VideoMode(650, 600), "SkyFall Showdown", sf::Style::Close);
+    m_Window.setFramerateLimit(60);
 }
 
 bool MainMenu::init() {
@@ -15,7 +10,7 @@ bool MainMenu::init() {
         std::cout << "\n[ Error ]: Failed to load the music/sound ( MainMenu )\n";
         return false;
     }
-    setMusicSound();
+    setMusicAndSound();
     
     /* Menu Variables */
     m_displayText = false;
@@ -30,20 +25,20 @@ bool MainMenu::init() {
     initSprites();
     sf::Event event;
 
-    while (m_Window->isOpen() && !m_exitRequested) {
+    while (m_Window.isOpen() && !m_exitRequested) {
         if (m_displayGameWindow) {
-            m_Window->setVisible(false);
+            m_Window.setVisible(false);
             
             MainGameWindow mainGameWindow;
             mainGameWindow.init(m_Nickname, m_Client);
 
             m_displayGameWindow = false;
             m_displayText = false;
-            m_Window->setVisible(true);
+            m_Window.setVisible(true);
         }
-        while (m_Window->pollEvent(event)) {
+        while (m_Window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
-                m_Window->close();
+                m_Window.close();
             }
             handleKeyBoard(event);
             handleButtonClicks(event);
@@ -51,7 +46,7 @@ bool MainMenu::init() {
         draw();
     }
 
-    m_backgroundMusicPtr->getMusic().stop();
+    m_backgroundMusic.getMusic().stop();
     return (m_exitRequested == false);
 }
 
@@ -69,7 +64,7 @@ void MainMenu::setTextures() {
 }
 
 void MainMenu::initSprites() {
-    float windowXSize = m_Window->getSize().x;
+    float windowXSize = m_Window.getSize().x;
 
     m_matchText.getSprite().setPosition((windowXSize - m_matchText.getTexture().getSize().x) / 2, 130.f);
     m_undoMatchText.getSprite().setPosition((windowXSize - m_undoMatchText.getTexture().getSize().x) / 2, 130.f);
@@ -79,43 +74,43 @@ void MainMenu::initSprites() {
 
     m_quitText.getSprite().setPosition((windowXSize - m_quitText.getTexture().getSize().x) / 2, 370.f);
 
-    m_mainText.getSprite().setPosition(20.f, m_Window->getSize().y - m_mainText.getSprite().getGlobalBounds().height - 10);
+    m_mainText.getSprite().setPosition(20.f, m_Window.getSize().y - m_mainText.getSprite().getGlobalBounds().height - 10);
 }
 
 bool MainMenu::loadMusicSound() {
-    return m_backgroundMusicPtr->openFromFile("assets/Music-Sound/Background_Menu_Music.ogg") &&
-           m_notificationSound->openFromFile("assets/Music-Sound/notification.ogg");
+    return m_backgroundMusic.openFromFile("assets/Music-Sound/Background_Menu_Music.ogg") &&
+           m_notificationSound.openFromFile("assets/Music-Sound/notification.ogg");
 }
 
-void MainMenu::setMusicSound() {
-    m_backgroundMusicPtr->setVolume(SettingsManager::getValue("VolumeMenu").GetInt());
-    m_backgroundMusicPtr->play();
-    m_backgroundMusicPtr->loop(true);
+void MainMenu::setMusicAndSound() {
+    m_backgroundMusic.setVolume(SettingsManager::getValue("VolumeMenu").GetInt());
+    m_backgroundMusic.play();
+    m_backgroundMusic.loop(true);
 
-    m_notificationSound->setVolume(70.f);
+    m_notificationSound.setVolume(70.f);
 }
 
 void MainMenu::draw() {
-    m_Window->clear();
+    m_Window.clear();
 
-    m_Window->draw(m_mainText);
-    m_Window->draw(m_quitText);
+    m_Window.draw(m_mainText);
+    m_Window.draw(m_quitText);
 
     if (m_inMatchmaking.load()) {
-        m_Window->draw(m_settings2Text);
-        m_Window->draw(m_undoMatchText);
+        m_Window.draw(m_settings2Text);
+        m_Window.draw(m_undoMatchText);
     }
     else {
-        m_Window->draw(m_settingsText);
-        m_Window->draw(m_matchText);
+        m_Window.draw(m_settingsText);
+        m_Window.draw(m_matchText);
     }
 
     /* display the notification message from the server */
     if (m_displayText) {
-        m_Window->draw(*m_msgToDisplay);
+        m_Window.draw(*m_msgToDisplay);
     }
     
-    m_Window->display();
+    m_Window.display();
 }
 
 void MainMenu::handleKeyBoard(sf::Event& event) {
@@ -133,7 +128,7 @@ void MainMenu::handleKeyBoard(sf::Event& event) {
 
 void MainMenu::handleButtonClicks(sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-        sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
+        sf::Vector2f position = m_Window.mapPixelToCoords(sf::Mouse::getPosition(m_Window));
 
         /* UNDO MATCHMAKING */
         if (m_inMatchmaking.load() && m_undoMatchText.isInside(position)) {
@@ -164,7 +159,7 @@ void MainMenu::handleButtonClicks(sf::Event& event) {
             OptionsMainMenu optionsMainMenu;
             UiUtils::WindowsReturnValues checker{};
 
-            optionsMainMenu.init(m_Window, m_backgroundMusicPtr, checker);
+            optionsMainMenu.init(m_Window, m_backgroundMusic, checker);
         }
         /* EXIT MENU */
         else if (m_quitText.isInside(position)) {
@@ -184,7 +179,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
     try {
         if (!m_Client->connect(ip, port)) {
             /* "Server Down" message */
-            m_notificationSound->play();
+            m_notificationSound.play();
             displayTextThread(m_menuMsgs[0], 7);
         }
         else {
@@ -192,7 +187,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
 
             if (msg == NetPacket::NetMessages::SERVER_FULL) {
                 /* display the "Server Full" message */
-                m_notificationSound->play();
+                m_notificationSound.play();
                 displayTextThread(m_menuMsgs[2], 7);
             }
             else {
@@ -202,7 +197,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 /* check the m_Nickname */
                 if (NetUtils::read_(*m_Client->getSocket()).getMsgType() == NetPacket::NetMessages::NICK_EXITS) {
                     /* Nick exists text */
-                    m_notificationSound->play();
+                    m_notificationSound.play();
                     m_Client->getSocket()->close();
 
                     displayTextThread(m_menuMsgs[1], 7);
@@ -218,7 +213,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
     catch (const boost::system::system_error& e) {
         std::cerr << "\nError in handle m_Client connection: " << e.what() << std::endl;
         /* "Server Down" message */
-        m_notificationSound->play();
+        m_notificationSound.play();
         displayTextThread(m_menuMsgs[0], 7);
     }
 }
@@ -226,7 +221,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
 void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, std::string m_Nickname) {
     if (msg == NetPacket::NetMessages::WAIT_FOR_MATCH) {
         /* in queue for a match text */
-        m_notificationSound->play();
+        m_notificationSound.play();
         displayTextFunc(m_menuMsgs[3]);
 
         /* start a thread to listen if the matchmaking is requested */
@@ -307,7 +302,7 @@ void MainMenu::matchFound(std::string nick) {
 
 void MainMenu::displayTextFunc(Entity& entity) {
     m_msgToDisplay = &entity;
-    m_msgToDisplay->getSprite().setPosition((m_Window->getSize().x - entity.getTexture().getSize().x) / 2, 50.f);
+    m_msgToDisplay->getSprite().setPosition((m_Window.getSize().x - entity.getTexture().getSize().x) / 2, 50.f);
     m_displayText = true;
 }
 
@@ -316,7 +311,7 @@ void MainMenu::displayTextThread(Entity& entity, int seconds) {
         using namespace std::chrono_literals;
         
         m_msgToDisplay = &entity;
-        m_msgToDisplay->getSprite().setPosition((m_Window->getSize().x - entity.getTexture().getSize().x) / 2, 50);
+        m_msgToDisplay->getSprite().setPosition((m_Window.getSize().x - entity.getTexture().getSize().x) / 2, 50);
         m_displayText = true;
 
         for (int i = 0; i < seconds; i++) {

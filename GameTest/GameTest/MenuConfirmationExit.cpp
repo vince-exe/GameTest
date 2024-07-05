@@ -1,7 +1,7 @@
 #include "MenuConfirmationExit.h"
 
-void MenuConfirmationExit::init(std::shared_ptr<sf::RenderWindow> window, UiUtils::WindowsReturnValues& checker) {
-	m_Window = window;
+void MenuConfirmationExit::init(sf::RenderWindow& window, UiUtils::WindowsReturnValues& checker) {
+	m_Window = &window;
 
 	setTextures();
 	setSprite();

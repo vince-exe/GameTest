@@ -16,7 +16,7 @@
 
 class IpPortMenu {
 private:
-	std::shared_ptr<sf::RenderWindow> m_Window;
+	sf::RenderWindow* m_Window;
 	std::pair<std::string, int> m_Pair;
 
 	sf::Text m_inputDisplay;
@@ -38,13 +38,13 @@ private:
 
 	void handleTextEntered(sf::Event& event);
 
-	void handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValues& checker, bool& exitRequested, std::shared_ptr<Sound> notificationSound);
+	void handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValues& checker, bool& exitRequested, Sound& notificationSound);
 
 	bool setIpPort(std::string ipPort);
 
 	void displayTextFuncTime(Entity& entity, int seconds);
 
 public:
-	std::pair<std::string, int> init(std::shared_ptr<sf::RenderWindow> windowPtr, std::shared_ptr<Sound> notificationSound, UiUtils::WindowsReturnValues& checker);
+	std::pair<std::string, int> init(sf::RenderWindow& window, Sound& notificationSound, UiUtils::WindowsReturnValues& checker);
 };
 

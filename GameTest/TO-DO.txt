@@ -6,9 +6,7 @@ delle "aree di danno" vengono generate nella mappa e l'intento del player è que
 per fargli prendere danno e vincere la partita.
 
 REFACTORING PRINCIPALE:
--utilizzare due tipologie di pacchetti differenti ( in base ai messaggi del server o ai messaggi di gioco )
--in generale un refactoring totale del progetto, delle classi, della gestione delle finestre...
--cerare di utilizzare più memoria statica che dinamica ( eliminare gli shared_ptr etc.. )
+modificare il TextureManager ( vedere chatGPT )
 
 PRINCIPALE:
 il gioco è completamente customizzabile tramite un file json ( numero round, vite, e tutte le caratteristiche possibili )

@@ -18,11 +18,11 @@ private:
 	void draw();
 
 private:
-	std::shared_ptr<sf::RenderWindow> m_Window;
+	sf::RenderWindow* m_Window;
 	Entity m_backBtn, m_exitBtn, m_Text;
 
 public:
-	void init(std::shared_ptr<sf::RenderWindow> window, UiUtils::WindowsReturnValues& checker);
+	void init(sf::RenderWindow& window, UiUtils::WindowsReturnValues& checker);
 };
 
 
