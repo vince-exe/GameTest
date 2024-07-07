@@ -5,7 +5,7 @@
 
 #include "Game.h"
 #include "Entity.h"
-#include "MainMenuTextureManager.h"
+#include "TextureManager.h"
 
 class EndGameWindow {
 private:
@@ -18,7 +18,7 @@ private:
 	Entity m_doneButton;
 
 private:
-	void initTextures();
+	void initTextures(TextureManager& textureManager);
 
 	void initSprites();
 
@@ -27,6 +27,6 @@ private:
 	void handleMouseButtons(sf::Event& event);
 
 public:
-	void init(sf::RenderWindow& window, Game& game, sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText);
+	void init(sf::RenderWindow& window, Game& game, TextureManager& textureManagerm, sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText);
 };
 

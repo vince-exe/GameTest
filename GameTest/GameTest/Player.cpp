@@ -21,55 +21,106 @@ Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorCo
     m_isSprinting = false;
     m_targetReached = true;
     m_Moving = false;
+    m_vertexLine = std::make_shared<sf::VertexArray>(sf::Lines, 2);
+    m_drawVertexLine = false;
 }
 
 Player::CollisionSide& Player::getCollidedSide() {
     return m_collidedSide;
 }
 
-int Player::calcPlayerTrend(sf::Vector2f newPos) {
+void Player::calcPlayerTrend(const sf::Vector2f& newPos) {
     sf::Vector2f oldPos = m_Rectangle.getPosition();
 
     if (newPos.y > oldPos.y) {
         if (newPos.y > oldPos.y && newPos.y < (oldPos.y + 70.f)) {
+            // RIGHT
             if (newPos.x > oldPos.x) {
-                std::cout << "\nDestra";
-                return 1;
+                (*m_vertexLine)[0].position = newPos;
+                (*m_vertexLine)[1].position = sf::Vector2f(newPos.x, newPos.y + m_Rectangle.getSize().y);
+                (*m_vertexLine)[0].color = sf::Color::Green;
+                (*m_vertexLine)[1].color = sf::Color::Green;
+                m_drawVertexLine = true;
+                return;
             }
+            // LEFT
             else {
-                std::cout << "\nSinistra";
-                return 1;
+                (*m_vertexLine)[0].position = newPos;
+                (*m_vertexLine)[1].position = sf::Vector2f(newPos.x, newPos.y + m_Rectangle.getSize().y);
+
+                (*m_vertexLine)[0].color = sf::Color::Green;
+                (*m_vertexLine)[1].color = sf::Color::Green;
+                m_drawVertexLine = true;
+                return;
             }
         }
+        // BOTTOM 
         if (newPos.x >= oldPos.x && newPos.x <= (oldPos.x + 70.f)) {
-            std::cout << "\nBasso";
-            return 1;
+            (*m_vertexLine)[0].position = newPos;
+            (*m_vertexLine)[1].position = sf::Vector2f(newPos.x + m_Rectangle.getSize().x, newPos.y);
+
+            (*m_vertexLine)[0].color = sf::Color::Green;
+            (*m_vertexLine)[1].color = sf::Color::Green;
+            m_drawVertexLine = true;
+            return;
         }
+        // BOTTOM RIGHT
         else if (newPos.x > (oldPos.x + 70)) {
-            std::cout << "\nBasso a destra";
-            return 1;
+            (*m_vertexLine)[0].position = newPos;
+            (*m_vertexLine)[1].position = sf::Vector2f(newPos.x + 100.f, newPos.y);
+
+            (*m_vertexLine)[0].color = sf::Color::Green;
+            (*m_vertexLine)[1].color = sf::Color::Green;
+
+            m_drawVertexLine = true;
+            return;
         }
+        // BOTTOM LEFT
         else {
-            std::cout << "\nBasso a sinistra";
-            return 1;
+            (*m_vertexLine)[0].position = newPos;
+            (*m_vertexLine)[1].position = sf::Vector2f(newPos.x, newPos.y + 100.f);
+
+            (*m_vertexLine)[0].color = sf::Color::Green;
+            (*m_vertexLine)[1].color = sf::Color::Green;
+
+            m_drawVertexLine = true;
+            return;
         }
     }
+    // TOP 
     if (newPos.y < oldPos.y) {
         if (newPos.x >= oldPos.x && newPos.x <= (oldPos.x + 70.f)) {
-            std::cout << "\nAlto";
-            return 1;
+            (*m_vertexLine)[0].position = newPos;
+            (*m_vertexLine)[1].position = sf::Vector2f(newPos.x + m_Rectangle.getSize().x, newPos.y);
+
+            (*m_vertexLine)[0].color = sf::Color::Green;
+            (*m_vertexLine)[1].color = sf::Color::Green;
+            m_drawVertexLine = true;
+            return;
         }
+        // TOP RIGHT
         else if (newPos.x > (oldPos.x + 70)) {
-            std::cout << "\nAlto a destra";
-            return 1;
+            (*m_vertexLine)[0].position = newPos;
+            (*m_vertexLine)[1].position = sf::Vector2f(newPos.x + 100.f, newPos.y);
+  
+            (*m_vertexLine)[0].color = sf::Color::Green;
+            (*m_vertexLine)[1].color = sf::Color::Green;
+
+            m_drawVertexLine = true;
+            return;
         }
+        // TOP LEFT
         else {
-            std::cout << "\nAlto a sinistra";
-            return 1;
+            (*m_vertexLine)[0].position = newPos;
+            (*m_vertexLine)[1].position = sf::Vector2f(newPos.x - 100.f, newPos.y);
+
+            (*m_vertexLine)[0].color = sf::Color::Green;
+            (*m_vertexLine)[1].color = sf::Color::Green;
+
+            m_drawVertexLine = true;
+            return;
         }
     }
-
-    return 0;
 }
 
 void Player::setCollidedSide(const sf::RectangleShape& other) {
@@ -124,7 +175,7 @@ void Player::update(sf::Time deltaTime, const sf::RectangleShape& other) {
                 stopMove();
             }
             else {
-                if (hasReachedTarget()) {
+                if (SkyfallUtils::doesRectangleIntersectLine(m_Rectangle, *m_vertexLine)) {
                     stopMove();
                 }
                 else {
@@ -133,15 +184,6 @@ void Player::update(sf::Time deltaTime, const sf::RectangleShape& other) {
             }
         }
     }
-}
-
-bool Player::hasReachedTarget() const {
-    /*
-        float epsilon = 1.f;
-        sf::Vector2f position = getPosition();
-        return (std::abs(position.x - m_targetPosition.x) < epsilon && std::abs(position.y - m_targetPosition.y) < epsilon);
-    */
-    return m_targetToReach.getGlobalBounds().intersects(m_Rectangle.getGlobalBounds());
 }
 
 void Player::move(const sf::Vector2f& offset, const sf::RectangleShape& other) {
@@ -214,7 +256,6 @@ void Player::updateIndicatorPos() {
 }
 
 void Player::setTarget(const sf::Vector2f& target) {
-    calcPlayerTrend(target);
     m_targetPosition = target;
     m_targetReached = false;
     m_Moving = true;
@@ -260,6 +301,10 @@ void Player::resetSprint() {
 }
 
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    if (m_drawVertexLine) {
+        target.draw(*m_vertexLine);
+    }
+
     target.draw(m_Rectangle, states);
     target.draw(m_Indicator, states);
 }

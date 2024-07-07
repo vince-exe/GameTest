@@ -1,13 +1,13 @@
 #include "OptionsMainMenu.h"
 
-void OptionsMainMenu::init(sf::RenderWindow& window, Music& backgroundMusic, UiUtils::WindowsReturnValues& checker) {
+void OptionsMainMenu::init(sf::RenderWindow& window, Music& backgroundMusic, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker) {
     m_Window = &window;
 
     sf::Cursor defaultCursor;
     defaultCursor.loadFromSystem(sf::Cursor::Arrow);
     m_Window->setMouseCursor(defaultCursor);
     
-    setTextures();
+    setTextures(textureManager);
     initSprites(backgroundMusic);
 
     bool requestExit = false;
@@ -18,7 +18,7 @@ void OptionsMainMenu::init(sf::RenderWindow& window, Music& backgroundMusic, UiU
                 m_Window->close();
             }
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                checker = UiUtils::WindowsReturnValues::BACK;
+                checker = SkyfallUtils::WindowsReturnValues::BACK;
                 return;
             }
             handleMouseButtons(backgroundMusic, event, requestExit, checker);
@@ -39,7 +39,7 @@ void OptionsMainMenu::draw() {
     m_Window->display();
 }
 
-void OptionsMainMenu::handleMouseButtons(Music& backgroundMusic, sf::Event& event, bool& requestExit, UiUtils::WindowsReturnValues& checker) {
+void OptionsMainMenu::handleMouseButtons(Music& backgroundMusic, sf::Event& event, bool& requestExit, SkyfallUtils::WindowsReturnValues& checker) {
     sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
@@ -47,7 +47,7 @@ void OptionsMainMenu::handleMouseButtons(Music& backgroundMusic, sf::Event& even
 
         if (m_backBtn.isInside(position)) {
             requestExit = true;
-            checker = UiUtils::WindowsReturnValues::BACK;
+            checker = SkyfallUtils::WindowsReturnValues::BACK;
             return;
         }
     }
@@ -69,9 +69,9 @@ void OptionsMainMenu::checkVolumeLevel(Music& backgroundMusic, sf::Vector2f& pos
     }
 }
 
-void OptionsMainMenu::setTextures() {
-    m_volumeText.setTexture(MainMenuTextureManager::optionsTextVolume);
-    m_backBtn.setTexture(MainMenuTextureManager::cancelText);
+void OptionsMainMenu::setTextures(TextureManager& textureManager) {
+    m_volumeText.setTexture(textureManager.getTextImage(9));
+    m_backBtn.setTexture(textureManager.getCancelBtn());
 }
 
 void OptionsMainMenu::initSprites(Music& backgroundMusic) {

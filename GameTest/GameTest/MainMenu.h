@@ -14,10 +14,10 @@
 
 #include "MenuConfirmationExit.h"
 #include "OptionsMainMenu.h"
-#include "MainMenuTextureManager.h"
 #include "NicknameMenu.h"
 #include "IpPortMenu.h"
 #include "MainGameWindow.h"
+#include "TextureManager.h"
 
 #include "../GameServer/NetPacket.h"
 #include "../GameServer/network_utilities.h"
@@ -45,15 +45,15 @@ private:
 
 	void setMusicAndSound();
 
-	void setTextures();
+	void setTextures(TextureManager& textureManager);
 
 	void initSprites();
 
 	void draw();
 
-	void handleKeyBoard(sf::Event& event);
+	void handleKeyBoard(sf::Event& event, TextureManager& textureManager);
 
-	void handleButtonClicks(sf::Event& event);
+	void handleButtonClicks(sf::Event& event, TextureManager& textureManager);
 
 	void handleClientConnection(std::string nick, std::string ip, int port);
 
@@ -67,12 +67,12 @@ private:
 
 	void undoMatchmaking();
 
-	void exitMenu();
+	void exitMenu(TextureManager& textureManager);
 
 	void matchFound(std::string nick);
 
 public:
 	MainMenu();
 
-	bool init();
+	bool init(TextureManager& textureManager);
 };

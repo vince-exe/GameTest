@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#include "utils.h"
+
 class Player : public sf::Drawable {
 public:
     enum class CollisionSide {
@@ -24,6 +26,10 @@ private:
     sf::Clock m_sprintClock;
     sf::RectangleShape m_targetToReach;
 
+    bool m_drawVertexLine;
+    /* this is used to have a more precise player movement */
+    std::shared_ptr<sf::VertexArray> m_vertexLine;
+
     float m_sprintTimeout;
     float m_distanceAbove;
     float m_Speed;
@@ -43,11 +49,7 @@ private:
 
     void updateIndicatorPos();
 
-    bool hasReachedTarget() const;
-
     void resetSprint();
-
-    int calcPlayerTrend(sf::Vector2f newPos);
 
 public:
     Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout);
@@ -55,6 +57,8 @@ public:
     CollisionSide& getCollidedSide();
 
     void handleEnemyCollision(const CollisionSide collidionSide);
+
+    void calcPlayerTrend(const sf::Vector2f& newPos);
 
     void update(sf::Time deltaTime, const sf::RectangleShape& other);
 

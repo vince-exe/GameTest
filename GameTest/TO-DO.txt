@@ -1,18 +1,19 @@
-*CONTINUARE*
-migliorare il movimento del player.
+*BUG DA RISOLVERE*
+mentre si è nella finestra dei settings, la main window deve continuare a svolgere le proprie azioni.
 
 IDEA-GIOCO:
 delle "aree di danno" vengono generate nella mappa e l'intento del player è quello di buttare il nemico in quelle aree
 per fargli prendere danno e vincere la partita.
 
 REFACTORING PRINCIPALE:
-modificare il TextureManager ( vedere chatGPT )
+avviare l'implementazione anche del singleton per i FONT
 
 PRINCIPALE:
 il gioco è completamente customizzabile tramite un file json ( numero round, vite, e tutte le caratteristiche possibili )
 
 DA FARE SECONDARIE:
 -introdurre più funzionalità nella finestra di settings
+-introdurre una funzionalità di debug del gioco nella finestra impostazioni gioco
 -Poter limitare il volume dei sound effects
 -Cambiare musica per la game lobby
 -Introdurre musica per la game window

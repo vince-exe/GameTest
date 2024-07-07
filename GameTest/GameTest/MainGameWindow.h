@@ -11,7 +11,7 @@
 #include "../GameServer/network_utilities.h"
 #include "network_game_utilities.h"
 #include "Game.h"
-
+#include "TextureManager.h"
 #include "GameSettingsMenu.h"
 #include "EndGameWindow.h"
 
@@ -66,5 +66,5 @@ private:
 	bool initPlayerAndEnemyPosition();
 
 public:
-	void init(const std::string nickname, std::shared_ptr<Client> client);
+	void init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager);
 };

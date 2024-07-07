@@ -13,7 +13,7 @@ sf::Texture& Entity::getTexture() {
 	return m_Texture;
 }
 
-void Entity::setTexture(sf::Texture& texture) {
+void Entity::setTexture(const sf::Texture& texture) {
 	m_Texture = texture;
 	m_Sprite.setTexture(texture, true);
 }

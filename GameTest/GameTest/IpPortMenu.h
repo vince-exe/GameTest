@@ -9,8 +9,8 @@
 #include  "SettingsManager.h"
 
 #include "Entity.h"
-#include "windows_utils.h"
-#include "MainMenuTextureManager.h"
+#include "utils.h"
+#include "TextureManager.h"
 #include "FontManager.h"
 #include "Sound.h"
 
@@ -28,7 +28,7 @@ private:
 	Entity* m_msgToDisplay;
 
 private:
-	void setTextures();
+	void setTextures(TextureManager& textureManager);
 
 	void setPlaceholder();
 
@@ -38,13 +38,13 @@ private:
 
 	void handleTextEntered(sf::Event& event);
 
-	void handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValues& checker, bool& exitRequested, Sound& notificationSound);
+	void handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested, Sound& notificationSound);
 
 	bool setIpPort(std::string ipPort);
 
 	void displayTextFuncTime(Entity& entity, int seconds);
 
 public:
-	std::pair<std::string, int> init(sf::RenderWindow& window, Sound& notificationSound, UiUtils::WindowsReturnValues& checker);
+	std::pair<std::string, int> init(sf::RenderWindow& window, Sound& notificationSound, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker);
 };
 

@@ -6,7 +6,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Entity.h"
-#include "MainMenuTextureManager.h"
+#include "TextureManager.h"
 
 class GameSettingsMenu {
 private:
@@ -18,7 +18,7 @@ private:
 	std::atomic<bool>* m_closeFlag;
 
 private:
-	void setTextures();
+	void setTextures(TextureManager& textureManager);
 	
 	void setSprites();
 
@@ -29,6 +29,6 @@ private:
 public:
 	GameSettingsMenu() = default;
 
-	bool init(sf::RenderWindow& window, std::atomic<bool>* closeFlag);
+	bool init(sf::RenderWindow& window, TextureManager& textureManager, std::atomic<bool>* closeFlag);
 };
 

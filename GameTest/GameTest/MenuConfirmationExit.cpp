@@ -1,9 +1,9 @@
 #include "MenuConfirmationExit.h"
 
-void MenuConfirmationExit::init(sf::RenderWindow& window, UiUtils::WindowsReturnValues& checker) {
+void MenuConfirmationExit::init(sf::RenderWindow& window, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker) {
 	m_Window = &window;
 
-	setTextures();
+	setTextures(textureManager);
 	setSprite();
 
 	sf::Event event;
@@ -15,7 +15,7 @@ void MenuConfirmationExit::init(sf::RenderWindow& window, UiUtils::WindowsReturn
 				m_Window->close();
 			}
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-				checker = UiUtils::WindowsReturnValues::BACK;
+				checker = SkyfallUtils::WindowsReturnValues::BACK;
 				exitRequested = true;
 			}
 			handleButtonClicks(checker, event, exitRequested);
@@ -24,10 +24,10 @@ void MenuConfirmationExit::init(sf::RenderWindow& window, UiUtils::WindowsReturn
 	}
 }
 
-void MenuConfirmationExit::setTextures() {
-	m_backBtn.setTexture(MainMenuTextureManager::cancelText);
-	m_exitBtn.setTexture(MainMenuTextureManager::doneText);
-	m_Text.setTexture(MainMenuTextureManager::confirmationExitText);
+void MenuConfirmationExit::setTextures(TextureManager& textureManager) {
+	m_backBtn.setTexture(textureManager.getCancelBtn());
+	m_exitBtn.setTexture(textureManager.getDoneBtn());
+	m_Text.setTexture(textureManager.getTextImage(6));
 }
 
 void MenuConfirmationExit::setSprite() {
@@ -36,17 +36,17 @@ void MenuConfirmationExit::setSprite() {
 	m_exitBtn.getSprite().setPosition((m_Window->getSize().x - m_exitBtn.getTexture().getSize().x) / 2 + 120, 390.f);
 }
 
-void MenuConfirmationExit::handleButtonClicks(UiUtils::WindowsReturnValues& checker, sf::Event& event, bool& exitRequested) {
+void MenuConfirmationExit::handleButtonClicks(SkyfallUtils::WindowsReturnValues& checker, sf::Event& event, bool& exitRequested) {
 	sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 		if (m_exitBtn.isInside(position)) {
 			m_Window->close();
-			checker = UiUtils::WindowsReturnValues::EXIT;
+			checker = SkyfallUtils::WindowsReturnValues::EXIT;
 			exitRequested = true;
 		}
 		else if (m_backBtn.isInside(position)) {
-			checker = UiUtils::WindowsReturnValues::BACK;
+			checker = SkyfallUtils::WindowsReturnValues::BACK;
 			exitRequested = true;
 		}
 	}

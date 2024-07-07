@@ -5,8 +5,8 @@
 #include <iostream>
 
 #include "Entity.h"
-#include "windows_utils.h"
-#include "MainMenuTextureManager.h"
+#include "utils.h"
+#include "TextureManager.h"
 #include "FontManager.h"
 
 class NicknameMenu {
@@ -21,17 +21,17 @@ private:
 	Entity m_doneBtn, m_cancelBtn;
 
 public:
-	std::string init(sf::RenderWindow& window, UiUtils::WindowsReturnValues& checker);
+	std::string init(sf::RenderWindow& window, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker);
 
 private:
 	void draw();
 
-	void setTextures();
+	void setTextures(TextureManager& textureManager);
 
 	void initSprites();
 
 	void handleTextEntered(sf::Event& event);
 	
-	void handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValues& checker, bool& exitRequested);
+	void handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested);
 };
 

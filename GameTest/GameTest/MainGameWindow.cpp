@@ -1,6 +1,6 @@
 #include "MainGameWindow.h"
 
-void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client) {
+void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager) {
     m_Client = client;
 
     m_Window.create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
@@ -44,7 +44,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
             }
             else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 m_inGameSettings = true;
-                if (m_gameSettingsMenu.init(m_Window, &m_closeSettingsWindowFlag)) {
+                if (m_gameSettingsMenu.init(m_Window, textureManager, &m_closeSettingsWindowFlag)) {
                     return;
                 }
                 m_inGameSettings = false;
@@ -61,7 +61,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
             }
             m_closeSettingsWindowFlag.store(true);
 
-            m_endGameWindow.init(m_Window, m_Game, m_myNickname, m_vsText, m_enemyNickname);
+            m_endGameWindow.init(m_Window, m_Game, textureManager, m_myNickname, m_vsText, m_enemyNickname);
             m_Window.close();
             return;
         }
@@ -183,10 +183,10 @@ void MainGameWindow::checkPlayerWindowBorders() {
 void MainGameWindow::handleMouseClick(sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) {
-            m_Game.handlePlayerMovement(event, *m_youPlayer, m_Window, false);
+            m_Game.handlePlayerMovement(*m_youPlayer, m_Window, false);
         }
         else if (event.mouseButton.button == sf::Mouse::Right) {
-            m_Game.handlePlayerMovement(event, *m_youPlayer, m_Window, true);
+            m_Game.handlePlayerMovement(*m_youPlayer, m_Window, true);
         }
     }
 }

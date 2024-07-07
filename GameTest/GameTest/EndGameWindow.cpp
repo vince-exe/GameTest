@@ -1,7 +1,7 @@
 #include "EndGameWindow.h" 
 
-void EndGameWindow::initTextures() {
-	m_doneButton.setTexture(MainMenuTextureManager::doneText);
+void EndGameWindow::initTextures(TextureManager& textureManager) {
+	m_doneButton.setTexture(textureManager.getDoneBtn());
 }
 
 void EndGameWindow::initSprites() {
@@ -65,12 +65,12 @@ void EndGameWindow::handleMouseButtons(sf::Event& event) {
 	
 }
 
-void EndGameWindow::init(sf::RenderWindow& window, Game& game, sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText) {
+void EndGameWindow::init(sf::RenderWindow& window, Game& game, TextureManager& textureManager, sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText) {
 	m_closeWindow = false;
 	m_Window = &window;
 	m_Game = &game;
 
-	initTextures();
+	initTextures(textureManager);
 	initSprites();
 
 	sf::Event event;

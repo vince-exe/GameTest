@@ -93,7 +93,7 @@ bool Game::checkCollision(std::vector<sf::CircleShape> vec, Player& player) {
 	return false;
 }
 
-void Game::handlePlayerMovement(sf::Event& event, Player& player, sf::RenderWindow& window, bool wantSprint) {
+void Game::handlePlayerMovement(Player& player, sf::RenderWindow& window, bool wantSprint) {
 	if (!m_blockActions.load()) {
 		const sf::Vector2i mousePosition{ sf::Mouse::getPosition(window) };
 		const sf::Vector2f mouseCoord{ window.mapPixelToCoords(mousePosition) };
@@ -102,10 +102,12 @@ void Game::handlePlayerMovement(sf::Event& event, Player& player, sf::RenderWind
 			if (player.canSprint()) {
 				player.setTarget(mouseCoord);
 				player.startSprint(true);
+				player.calcPlayerTrend(mouseCoord);
 			}
 		}
 		else if(!player.isSprinting()) {
 			player.setTarget(mouseCoord);
+			player.calcPlayerTrend(mouseCoord);
 		}
 	}
 }

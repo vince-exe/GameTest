@@ -21,7 +21,7 @@ public:
 
 	sf::Texture& getTexture();
 
-	virtual void setTexture(sf::Texture& texture);
+	virtual void setTexture(const sf::Texture& texture);
 
 	virtual bool loadTexture(const std::string& path);
 

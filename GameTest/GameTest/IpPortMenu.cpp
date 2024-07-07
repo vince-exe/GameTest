@@ -1,9 +1,9 @@
 #include "IpPortMenu.h"
 
-std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, Sound& notificationSound, UiUtils::WindowsReturnValues& checker) {
-    m_Window = &window;
+std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, Sound& notificationSound, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker) {
+    m_Window = &window; 
     
-    setTextures();
+    setTextures(textureManager);
     initSprites();
     setPlaceholder();
 
@@ -16,7 +16,7 @@ std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, Sound& no
                 m_Window->close();
             }
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                checker = UiUtils::WindowsReturnValues::BACK;
+                checker = SkyfallUtils::WindowsReturnValues::BACK;
                 return std::pair<std::string, int>();
             }
             
@@ -29,11 +29,11 @@ std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, Sound& no
     return m_Pair;
 }
 
-void IpPortMenu::setTextures() {
-    m_Text.setTexture(MainMenuTextureManager::connectionText);
-    m_connectBtn.setTexture(MainMenuTextureManager::doneText);
-    m_cancelBtn.setTexture(MainMenuTextureManager::cancelText);
-    m_entityToDisplay.setTexture(MainMenuTextureManager::invalidFormatText);
+void IpPortMenu::setTextures(TextureManager& textureManager) {
+    m_Text.setTexture(textureManager.getTextImage(5));
+    m_connectBtn.setTexture(textureManager.getDoneBtn());
+    m_cancelBtn.setTexture(textureManager.getCancelBtn());
+    m_entityToDisplay.setTexture(textureManager.getTextImage(7));
 }
 
 void IpPortMenu::initSprites() {
@@ -107,12 +107,12 @@ void IpPortMenu::handleTextEntered(sf::Event& event) {
     }
 }
 
-void IpPortMenu::handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValues& checker, bool& exitRequested, Sound& notificationSound) {
+void IpPortMenu::handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested, Sound& notificationSound) {
     sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         if (m_cancelBtn.isInside(position)) {
-            checker = UiUtils::WindowsReturnValues::BACK;
+            checker = SkyfallUtils::WindowsReturnValues::BACK;
             exitRequested = true;
         }
         else if (m_connectBtn.isInside(position)) {
@@ -120,7 +120,7 @@ void IpPortMenu::handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValu
             std::string check = m_Pair.first;
             if (setIpPort(check)) {
                 SettingsManager::setString_("DefaultIpPort", check);
-                checker = UiUtils::WindowsReturnValues::DONE;
+                checker = SkyfallUtils::WindowsReturnValues::DONE;
                 exitRequested = true;
             }
             else {

@@ -66,9 +66,6 @@
     <ClCompile Include="NicknameMenu.cpp">
       <Filter>File di origine\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="MainMenuTextureManager.cpp">
-      <Filter>File di origine\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="FontManager.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
@@ -108,7 +105,10 @@
     <ClCompile Include="EndGameWindow.cpp">
       <Filter>File di origine\Game\GameMenus</Filter>
     </ClCompile>
-    <ClCompile Include="windows_utils.cpp">
+    <ClCompile Include="utils.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -130,9 +130,6 @@
     </ClInclude>
     <ClInclude Include="NicknameMenu.h">
       <Filter>File di intestazione\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="MainMenuTextureManager.h">
-      <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
     <ClInclude Include="FontManager.h">
       <Filter>File di intestazione\Utils</Filter>
@@ -173,7 +170,10 @@
     <ClInclude Include="EndGameWindow.h">
       <Filter>File di intestazione\Game\GameMenus</Filter>
     </ClInclude>
-    <ClInclude Include="windows_utils.h">
+    <ClInclude Include="utils.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>

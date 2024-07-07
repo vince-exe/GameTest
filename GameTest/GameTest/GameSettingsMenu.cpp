@@ -1,10 +1,10 @@
 #include "GameSettingsMenu.h"
 
-bool GameSettingsMenu::init(sf::RenderWindow& window, std::atomic<bool>* closeFlag) {
+bool GameSettingsMenu::init(sf::RenderWindow& window, TextureManager& textureManager, std::atomic<bool>* closeFlag) {
 	m_closeFlag = closeFlag;
 	m_Window = &window;
 
-	setTextures();
+	setTextures(textureManager);
 	setSprites();
 	
 	sf::Event event;
@@ -23,8 +23,8 @@ bool GameSettingsMenu::init(sf::RenderWindow& window, std::atomic<bool>* closeFl
 	return (m_closeFlag->load());
 }
 
-void GameSettingsMenu::setTextures() {
-	m_backText.setTexture(MainMenuTextureManager::cancelText);
+void GameSettingsMenu::setTextures(TextureManager& textureManager) {
+	m_backText.setTexture(textureManager.getCancelBtn());
 }
 
 void GameSettingsMenu::setSprites() {

@@ -6,8 +6,8 @@
 
 #include "Entity.h"
 #include "Music.h"
-#include "windows_utils.h"
-#include "MainMenuTextureManager.h"
+#include "utils.h"
+#include "TextureManager.h"
 #include "SettingsManager.h"
 
 class OptionsMainMenu {
@@ -28,14 +28,14 @@ private:
 private:
 	void draw();
 
-	void handleMouseButtons(Music& backgroundMusic, sf::Event& event, bool& requestExit, UiUtils::WindowsReturnValues& checker);
+	void handleMouseButtons(Music& backgroundMusic, sf::Event& event, bool& requestExit, SkyfallUtils::WindowsReturnValues& checker);
 
 	void checkVolumeLevel(Music& backgroundMusic, sf::Vector2f& position);
 
 	void initSprites(Music& backgroundMusic);
 
-	void setTextures();
+	void setTextures(TextureManager& textureManager);
 
 public:
-	void init(sf::RenderWindow& window, Music& backgroundMusic, UiUtils::WindowsReturnValues& checker);
+	void init(sf::RenderWindow& window, Music& backgroundMusic, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker);
 };

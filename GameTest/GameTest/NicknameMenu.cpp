@@ -1,9 +1,9 @@
 #include "NicknameMenu.h"
 
-std::string NicknameMenu::init(sf::RenderWindow& window, UiUtils::WindowsReturnValues& checker) {
+std::string NicknameMenu::init(sf::RenderWindow& window, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker) {
 	m_Window = &window;
 
-    setTextures();
+    setTextures(textureManager);
     initSprites();
     
     bool requestExit = false;
@@ -14,7 +14,7 @@ std::string NicknameMenu::init(sf::RenderWindow& window, UiUtils::WindowsReturnV
                 m_Window->close();
             }
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                checker = UiUtils::WindowsReturnValues::BACK;
+                checker = SkyfallUtils::WindowsReturnValues::BACK;
                 return "";
             }
             handleTextEntered(event);
@@ -39,10 +39,10 @@ void NicknameMenu::draw() {
 	m_Window->display();
 }
 
-void NicknameMenu::setTextures() {
-    m_Text.setTexture(MainMenuTextureManager::nicknameText);
-    m_doneBtn.setTexture(MainMenuTextureManager::doneText);
-    m_cancelBtn.setTexture(MainMenuTextureManager::cancelText);
+void NicknameMenu::setTextures(TextureManager& textureManager) {
+    m_Text.setTexture(textureManager.getTextImage(8));
+    m_doneBtn.setTexture(textureManager.getDoneBtn());
+    m_cancelBtn.setTexture(textureManager.getCancelBtn());
 }
 
 void NicknameMenu::initSprites() {
@@ -83,16 +83,16 @@ void NicknameMenu::handleTextEntered(sf::Event& event) {
     }
 }
 
-void NicknameMenu::handleMouseButtons(sf::Event& event, UiUtils::WindowsReturnValues& checker, bool& exitRequested) {
+void NicknameMenu::handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested) {
     sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         if (m_cancelBtn.isInside(position)) {
-            checker = UiUtils::WindowsReturnValues::BACK;
+            checker = SkyfallUtils::WindowsReturnValues::BACK;
             exitRequested = true;
         }
         else if (m_doneBtn.isInside(position) && m_inputText.size()) {
-            checker = UiUtils::WindowsReturnValues::DONE;
+            checker = SkyfallUtils::WindowsReturnValues::DONE;
             exitRequested = true;
         }
     }
