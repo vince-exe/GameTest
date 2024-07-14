@@ -1,11 +1,12 @@
 #include "Server.h"
 
-Server::Server(int port, int maxConnections) {
+Server::Server(int port, int maxConnections, int clearUselessThreadsTime) {
 	m_acceptorPtr = std::make_unique<tcp::acceptor>(m_ioServicePtr, tcp::endpoint(tcp::v4(), port));
 	
 	TemporaryThread::uselessThreadCounter = 0;
 	m_maxConnections = maxConnections;
 	m_doRoutines = true;
+	m_clearUselessThreadsTime = clearUselessThreadsTime;
 }
 
 void Server::accept() {
@@ -194,8 +195,8 @@ void Server::addUselessThread() {
 void Server::clearUselessThreads() {
 	while (m_doRoutines) {
 		using namespace std::chrono_literals;
-		std::this_thread::sleep_for(15s);
-
+		std::this_thread::sleep_for(std::chrono::seconds(m_clearUselessThreadsTime));
+		
 		m_mtx.lock();
 		std::list<TemporaryThread>::iterator it = m_tempThreadsList.begin();
 		int i = 0;

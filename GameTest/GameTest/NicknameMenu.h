@@ -21,14 +21,14 @@ private:
 	Entity m_doneBtn, m_cancelBtn;
 
 public:
-	std::string init(sf::RenderWindow& window, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker);
+	std::string init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SkyfallUtils::WindowsReturnValues& checker);
 
 private:
 	void draw();
 
 	void setTextures(TextureManager& textureManager);
 
-	void initSprites();
+	void initSprites(FontManager& fontManager);
 
 	void handleTextEntered(sf::Event& event);
 	

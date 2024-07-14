@@ -30,21 +30,21 @@ private:
 private:
 	void setTextures(TextureManager& textureManager);
 
-	void setPlaceholder();
+	void setPlaceholder(SettingsManager& settingsManager);
 
-	void initSprites();
+	void initSprites(FontManager& fontManager);
 
 	void draw();
 
 	void handleTextEntered(sf::Event& event);
 
-	void handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested, Sound& notificationSound);
+	void handleMouseButtons(sf::Event& event, SettingsManager& settingsManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested);
 
 	bool setIpPort(std::string ipPort);
 
 	void displayTextFuncTime(Entity& entity, int seconds);
 
 public:
-	std::pair<std::string, int> init(sf::RenderWindow& window, Sound& notificationSound, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker);
+	std::pair<std::string, int> init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, SkyfallUtils::WindowsReturnValues& checker);
 };
 

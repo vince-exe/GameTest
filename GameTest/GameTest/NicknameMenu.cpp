@@ -1,10 +1,10 @@
 #include "NicknameMenu.h"
 
-std::string NicknameMenu::init(sf::RenderWindow& window, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker) {
+std::string NicknameMenu::init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SkyfallUtils::WindowsReturnValues& checker) {
 	m_Window = &window;
 
     setTextures(textureManager);
-    initSprites();
+    initSprites(fontManager);
     
     bool requestExit = false;
     sf::Event event;
@@ -45,7 +45,7 @@ void NicknameMenu::setTextures(TextureManager& textureManager) {
     m_cancelBtn.setTexture(textureManager.getCancelBtn());
 }
 
-void NicknameMenu::initSprites() {
+void NicknameMenu::initSprites(FontManager& fontManager) {
     float windowXSize = m_Window->getSize().x;
     float windowYSize = m_Window->getSize().y;
 
@@ -56,7 +56,7 @@ void NicknameMenu::initSprites() {
     m_Line.setRotation(0);
     m_Line.setPosition(m_Text.getSprite().getPosition().x, m_Text.getSprite().getPosition().y + 240);
 
-    m_inputDisplay.setFont(FontManager::fredokaOne);
+    m_inputDisplay.setFont(fontManager.getFredokaOne());
     m_inputDisplay.setCharacterSize(45);
 
     m_cancelBtn.getSprite().setPosition((windowXSize - m_cancelBtn.getTexture().getSize().x) / 2 - 230, m_Line.getPosition().y + 100);

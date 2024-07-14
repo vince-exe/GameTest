@@ -5,12 +5,8 @@ MainMenu::MainMenu() {
     m_Window.setFramerateLimit(60);
 }
 
-bool MainMenu::init(TextureManager& textureManager) {
-    if (!loadMusicSound()) {
-        std::cout << "\n[ Error ]: Failed to load the music/sound ( MainMenu )\n";
-        return false;
-    }
-    setMusicAndSound();
+bool MainMenu::init(TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager) {
+    setMusicAndSound(settingsManager, audioManager);
     
     /* Menu Variables */
     m_displayText = false;
@@ -30,7 +26,7 @@ bool MainMenu::init(TextureManager& textureManager) {
             m_Window.setVisible(false);
             
             MainGameWindow mainGameWindow;
-            mainGameWindow.init(m_Nickname, m_Client, textureManager);
+            mainGameWindow.init(m_Nickname, m_Client, textureManager, fontManager);
 
             m_displayGameWindow = false;
             m_displayText = false;
@@ -41,12 +37,12 @@ bool MainMenu::init(TextureManager& textureManager) {
                 m_Window.close();
             }
             handleKeyBoard(event, textureManager);
-            handleButtonClicks(event, textureManager);
+            handleButtonClicks(event, textureManager, fontManager, settingsManager, audioManager);
         }
         draw();
     }
 
-    m_backgroundMusic.getMusic().stop();
+    audioManager.getBackgroundMusic().stop();
     return (m_exitRequested == false);
 }
 
@@ -73,21 +69,17 @@ void MainMenu::initSprites() {
     m_settings2Text.getSprite().setPosition((windowXSize - m_settings2Text.getTexture().getSize().x) / 2, 250.f);
 
     m_quitText.getSprite().setPosition((windowXSize - m_quitText.getTexture().getSize().x) / 2, 370.f);
-
+   
     m_mainText.getSprite().setPosition(20.f, m_Window.getSize().y - m_mainText.getSprite().getGlobalBounds().height - 10);
 }
 
-bool MainMenu::loadMusicSound() {
-    return m_backgroundMusic.openFromFile("assets/Music-Sound/Background_Menu_Music.ogg") &&
-           m_notificationSound.openFromFile("assets/Music-Sound/notification.ogg");
-}
+void MainMenu::setMusicAndSound(SettingsManager& settingsManager, AudioManager& audioManager) {
+    Music& backMusic = audioManager.getBackgroundMusic();
+    audioManager.getMatchmakingSound().setVolume(70);
 
-void MainMenu::setMusicAndSound() {
-    m_backgroundMusic.setVolume(SettingsManager::getValue("VolumeMenu").GetInt());
-    m_backgroundMusic.play();
-    m_backgroundMusic.loop(true);
-
-    m_notificationSound.setVolume(70.f);
+    backMusic.setVolume(settingsManager.getValue(SkyfallUtils::Settings::MUSIC_VOLUME).GetInt());
+    backMusic.play();
+    backMusic.loop(true);
 }
 
 void MainMenu::draw() {
@@ -126,7 +118,7 @@ void MainMenu::handleKeyBoard(sf::Event& event, TextureManager& textureManager) 
     }
 }
 
-void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManager) {
+void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager) {
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2f position = m_Window.mapPixelToCoords(sf::Mouse::getPosition(m_Window));
 
@@ -141,15 +133,15 @@ void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManag
              NicknameMenu m_NicknameMenu;
              SkyfallUtils::WindowsReturnValues checker{};
 
-             std::string nick = m_NicknameMenu.init(m_Window, textureManager, checker);
+             std::string nick = m_NicknameMenu.init(m_Window, textureManager, fontManager, checker);
              if (checker == SkyfallUtils::WindowsReturnValues::DONE) {
                 /* OPEN THE CONNECT MENU */
                 IpPortMenu ipPortMenu;
-                std::pair<std::string, int> ipPort = ipPortMenu.init(m_Window, m_notificationSound, textureManager, checker);
+                std::pair<std::string, int> ipPort = ipPortMenu.init(m_Window, textureManager, fontManager, settingsManager, checker);
 
                 if (checker == SkyfallUtils::WindowsReturnValues::DONE) {
                     /* start the connection thread */
-                    std::thread t(&MainMenu::handleClientConnection, this, nick, ipPort.first, ipPort.second);
+                    std::thread t(&MainMenu::handleClientConnection, this, nick, ipPort.first, ipPort.second, std::ref(audioManager));
                     t.detach();
                 }
              }
@@ -159,7 +151,7 @@ void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManag
             OptionsMainMenu optionsMainMenu;
             SkyfallUtils::WindowsReturnValues checker{};
 
-            optionsMainMenu.init(m_Window, m_backgroundMusic, textureManager, checker);
+            optionsMainMenu.init(m_Window, textureManager, settingsManager, fontManager, audioManager, checker);
         }
         /* EXIT MENU */
         else if (m_quitText.isInside(position)) {
@@ -175,11 +167,10 @@ void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManag
     }
 }
 
-void MainMenu::handleClientConnection(std::string nick, std::string ip, int port) {
+void MainMenu::handleClientConnection(std::string nick, std::string ip, int port, AudioManager& audioManager) {
     try {
         if (!m_Client->connect(ip, port)) {
             /* "Server Down" message */
-            m_notificationSound.play();
             displayTextThread(m_menuMsgs[0], 7);
         }
         else {
@@ -187,7 +178,6 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
 
             if (msg == NetPacket::NetMessages::SERVER_FULL) {
                 /* display the "Server Full" message */
-                m_notificationSound.play();
                 displayTextThread(m_menuMsgs[2], 7);
             }
             else {
@@ -197,7 +187,6 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 /* check the m_Nickname */
                 if (NetUtils::read_(*m_Client->getSocket()).getMsgType() == NetPacket::NetMessages::NICK_EXITS) {
                     /* Nick exists text */
-                    m_notificationSound.play();
                     m_Client->getSocket()->close();
 
                     displayTextThread(m_menuMsgs[1], 7);
@@ -205,7 +194,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 /* send the matchmaking request */
                 else {
                     NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
-                    handleMatchmakingClient(NetUtils::read_(*m_Client->getSocket()).getMsgType(), nick);
+                    handleMatchmakingClient(NetUtils::read_(*m_Client->getSocket()).getMsgType(), audioManager, nick);
                 }
             }
         }
@@ -213,15 +202,15 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
     catch (const boost::system::system_error& e) {
         std::cerr << "\nError in handle m_Client connection: " << e.what() << std::endl;
         /* "Server Down" message */
-        m_notificationSound.play();
         displayTextThread(m_menuMsgs[0], 7);
     }
 }
 
-void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, std::string m_Nickname) {
+void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, AudioManager& audioManager, std::string m_Nickname) {
     if (msg == NetPacket::NetMessages::WAIT_FOR_MATCH) {
         /* in queue for a match text */
-        m_notificationSound.play();
+
+        audioManager.getMatchmakingSound().play();
         displayTextFunc(m_menuMsgs[3]);
 
         /* start a thread to listen if the matchmaking is requested */

@@ -9,6 +9,8 @@
 #include "utils.h"
 #include "TextureManager.h"
 #include "SettingsManager.h"
+#include "FontManager.h"
+#include "AudioManager.h"
 
 class OptionsMainMenu {
 private:
@@ -20,7 +22,7 @@ private:
 	sf::RectangleShape m_Slider;
 	sf::RectangleShape m_checkPoints[10];
 
-	Entity m_volumeText;
+	sf::Text m_musicText;
 	Entity m_backBtn;
 
 	int m_oldVolumeIndex;
@@ -28,14 +30,14 @@ private:
 private:
 	void draw();
 
-	void handleMouseButtons(Music& backgroundMusic, sf::Event& event, bool& requestExit, SkyfallUtils::WindowsReturnValues& checker);
+	void handleMouseButtons(sf::Event& event, bool& requestExit, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker);
 
-	void checkVolumeLevel(Music& backgroundMusic, sf::Vector2f& position);
+	void checkVolumeLevel(SettingsManager& settingsManager, AudioManager& audioManager, sf::Vector2f& position);
 
-	void initSprites(Music& backgroundMusic);
+	void initSprites(FontManager& fontManager, AudioManager& audioManager);
 
 	void setTextures(TextureManager& textureManager);
 
 public:
-	void init(sf::RenderWindow& window, Music& backgroundMusic, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker);
+	void init(sf::RenderWindow& window, TextureManager& textureManager, SettingsManager& settingsManager, FontManager& fontManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker);
 };

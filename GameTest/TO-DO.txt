@@ -5,8 +5,9 @@ IDEA-GIOCO:
 delle "aree di danno" vengono generate nella mappa e l'intento del player è quello di buttare il nemico in quelle aree
 per fargli prendere danno e vincere la partita.
 
-REFACTORING PRINCIPALE:
-avviare l'implementazione anche del singleton per i FONT
+REFACTORING-PRINCIPALE:
+continuare il refactoring con l'AudioManager
+-assicurarsi che il matchmaking sound avvenga solo quando il client entra in matchmaking ( trovare poi altri suoni di errore per le altre situazioni )
 
 PRINCIPALE:
 il gioco è completamente customizzabile tramite un file json ( numero round, vite, e tutte le caratteristiche possibili )

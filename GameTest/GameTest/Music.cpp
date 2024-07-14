@@ -3,8 +3,8 @@
 bool Music::openFromFile(const std::string& path) {
     return m_Music.openFromFile(path);
 }
-
-sf::Music& Music::getMusic() {
+ 
+const sf::Music& Music::getMusic() const {
     return m_Music;
 }
 
@@ -13,7 +13,7 @@ void Music::setVolume(float v) {
     m_Music.setVolume(v);
 }
 
-float Music::getVolume() {
+const float Music::getVolume() const {
     return m_currentVolume;
 }
 
@@ -23,4 +23,8 @@ void Music::play() {
 
 void Music::loop(bool loop) {
     m_Music.setLoop(loop);
+}
+
+void Music::stop() {
+    m_Music.stop();
 }

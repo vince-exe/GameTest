@@ -4,12 +4,12 @@ void EndGameWindow::initTextures(TextureManager& textureManager) {
 	m_doneButton.setTexture(textureManager.getDoneBtn());
 }
 
-void EndGameWindow::initSprites() {
-	m_resultsText.setFont(FontManager::fredokaOne);
+void EndGameWindow::initSprites(FontManager& fontManager) {
+	m_resultsText.setFont(fontManager.getFredokaOne());
 	m_resultsText.setCharacterSize(70);
 	m_resultsText.setPosition(sf::Vector2f(450, 350));
 
-	m_enemyQuitText.setFont(FontManager::fredokaOne);
+	m_enemyQuitText.setFont(fontManager.getFredokaOne());
 	m_enemyQuitText.setCharacterSize(27);
 	m_enemyQuitText.setFillColor(sf::Color::White);
 	m_enemyQuitText.setString("( L'avversario ha abbandonato la partita )");
@@ -28,7 +28,7 @@ void EndGameWindow::initSprites() {
 		m_resultsText.setString("Pareggio!");
 	}
 
-	m_gameText.setFont(FontManager::fredokaOne);
+	m_gameText.setFont(fontManager.getFredokaOne());
 	m_gameText.setCharacterSize(50);
 	m_gameText.setFillColor(sf::Color(110, 6, 2));
 	m_gameText.setPosition(sf::Vector2f(20.f, m_Window->getSize().y - m_gameText.getGlobalBounds().height - 72.f));
@@ -65,13 +65,13 @@ void EndGameWindow::handleMouseButtons(sf::Event& event) {
 	
 }
 
-void EndGameWindow::init(sf::RenderWindow& window, Game& game, TextureManager& textureManager, sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText) {
+void EndGameWindow::init(sf::RenderWindow& window, Game& game, TextureManager& textureManager, FontManager& fontManager, sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText) {
 	m_closeWindow = false;
 	m_Window = &window;
 	m_Game = &game;
 
 	initTextures(textureManager);
-	initSprites();
+	initSprites(fontManager);
 
 	sf::Event event;
 	while (!m_closeWindow) {

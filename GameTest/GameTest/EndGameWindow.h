@@ -20,13 +20,13 @@ private:
 private:
 	void initTextures(TextureManager& textureManager);
 
-	void initSprites();
+	void initSprites(FontManager& fontManager);
 
 	void draw(sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText);
 
 	void handleMouseButtons(sf::Event& event);
 
 public:
-	void init(sf::RenderWindow& window, Game& game, TextureManager& textureManagerm, sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText);
+	void init(sf::RenderWindow& window, Game& game, TextureManager& textureManagerm, FontManager& fontManager, sf::Text& playerNickText, sf::Text& vsText, sf::Text& enemyNickText);
 };
 

@@ -111,6 +111,9 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenu.h">
@@ -174,6 +177,9 @@
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,24 +7,32 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
+#include "utils.h"
+
 class SettingsManager {
-private:
-	static const std::string SETTINGS_PATH;
-	static rapidjson::Document document;
+	SettingsManager() = default;
+	~SettingsManager() = default;
+	SettingsManager& operator=(const SettingsManager&) = delete; // Disable = operator
+	SettingsManager& operator=(SettingsManager&&) = delete; // disable move operator
 
 private:
-	static const char* jsonToString();
+	std::string m_settingsPath;
+	rapidjson::Document m_Document;
 
-	static bool createSettingsFile();
+private:
+	bool createSettingsFile();
 
 public:
-	static bool init();
+	static SettingsManager& getInstance();
 
-	static bool storeSettings();
+public:
+	bool init(const std::string& filePath);
 
-	static rapidjson::Value& getValue (const std::string& key);
+	bool storeSettings();
 
-	static void setInt_(const std::string& key, int v);
+	rapidjson::Value& getValue (const std::string& key);
 
-	static void setString_(const std::string& key, std::string v);
+	void setInt_(const std::string& key, int v);
+
+	void setString_(const std::string& key, const std::string& v);
 };

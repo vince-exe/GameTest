@@ -6,9 +6,7 @@
 #include <thread>
 
 #include "Entity.h"
-#include "Music.h"
 #include "Client.h"
-#include "Sound.h"
 
 #include "SettingsManager.h"
 
@@ -18,6 +16,7 @@
 #include "IpPortMenu.h"
 #include "MainGameWindow.h"
 #include "TextureManager.h"
+#include "AudioManager.h"
 
 #include "../GameServer/NetPacket.h"
 #include "../GameServer/network_utilities.h"
@@ -25,8 +24,6 @@
 class MainMenu {
 private:
 	sf::RenderWindow m_Window;
-	Music m_backgroundMusic;
-	Sound m_notificationSound;
 
 	Entity m_matchText, m_settingsText, m_settings2Text, m_undoMatchText, m_mainText, m_quitText;
 	Entity m_menuMsgs[4];
@@ -41,9 +38,7 @@ private:
 	std::string m_Nickname;
 
 private:
-	bool loadMusicSound();
-
-	void setMusicAndSound();
+	void setMusicAndSound(SettingsManager& settingsManager, AudioManager& audioManager);
 
 	void setTextures(TextureManager& textureManager);
 
@@ -53,13 +48,13 @@ private:
 
 	void handleKeyBoard(sf::Event& event, TextureManager& textureManager);
 
-	void handleButtonClicks(sf::Event& event, TextureManager& textureManager);
+	void handleButtonClicks(sf::Event& event, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager);
 
-	void handleClientConnection(std::string nick, std::string ip, int port);
+	void handleClientConnection(std::string nick, std::string ip, int port, AudioManager& audioManager);
 
 	void displayTextThread(Entity& entity, int seconds);
 
-	void handleMatchmakingClient(const NetPacket::NetMessages& msg, std::string nickname);
+	void handleMatchmakingClient(const NetPacket::NetMessages& msg, AudioManager& audioManager, std::string nickname);
 
 	void listenForMatchmaking(std::string nickname);
 
@@ -74,5 +69,5 @@ private:
 public:
 	MainMenu();
 
-	bool init(TextureManager& textureManager);
+	bool init(TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager);
 };

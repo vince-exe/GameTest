@@ -2,7 +2,7 @@
 
 bool TextureManager::init() {
     // load the texs images
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 9; i++) {
         if (!m_textsImages[i].loadFromFile("assets/Texts-Messages/" + std::to_string(i) + ".png")) {
             return false;
         }

@@ -51,6 +51,9 @@
     <ClCompile Include="User.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="ServerSettings.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetPacket.h">
@@ -72,6 +75,9 @@
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
     <ClInclude Include="User.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerSettings.h">
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>

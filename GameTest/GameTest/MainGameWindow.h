@@ -45,7 +45,7 @@ private:
 
 	void draw();
 
-	void initSprites();
+	void initSprites(FontManager& fontManager);
 
 	void handleKeyBoards(sf::Event event);
 
@@ -66,5 +66,5 @@ private:
 	bool initPlayerAndEnemyPosition();
 
 public:
-	void init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager);
+	void init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager);
 };

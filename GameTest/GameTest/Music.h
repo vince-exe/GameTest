@@ -13,14 +13,15 @@ public:
 
 	bool openFromFile(const std::string& path);
 
-	sf::Music& getMusic();
+	const sf::Music& getMusic() const;
 
 	void setVolume(float v);
 
-	float getVolume();
+	const float getVolume() const;
 
 	void play();
 
 	void loop(bool loop);
-};
 
+	void stop();
+};

@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Skyfall Showdown", "GameTest\GameTest.vcxproj", "{5F43DDE1-FF62-4C45-81E5-D101D50BA01B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1B43FA80-9DC3-41FA-B99D-826B6628D694} = {1B43FA80-9DC3-41FA-B99D-826B6628D694}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServer", "GameServer\GameServer.vcxproj", "{1B43FA80-9DC3-41FA-B99D-826B6628D694}"
 EndProject

@@ -3,10 +3,21 @@
 #include <SFML/Graphics.hpp>
 
 class FontManager {
-public:
-	static bool init();
+private:
+	FontManager() = default;
+	~FontManager() = default;
+	FontManager& operator=(const FontManager&) = delete; // Disable = operator
+	FontManager& operator=(FontManager&&) = delete; // disable move operator
+
+private:
+	sf::Font m_fredokaOne;
 
 public:
-	static sf::Font fredokaOne;
+	static FontManager& getInstance();
+
+public:	
+	bool init();
+
+	const sf::Font& getFredokaOne() const ;
 };
 

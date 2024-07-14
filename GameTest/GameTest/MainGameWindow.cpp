@@ -1,6 +1,6 @@
 #include "MainGameWindow.h"
 
-void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager) {
+void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager) {
     m_Client = client;
 
     m_Window.create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
@@ -17,7 +17,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     }
     m_myNickname.setString(nickname);
 
-    initSprites();
+    initSprites(fontManager);
 
     /* try to get the default position of the player and enemy player*/
     if (!initPlayerAndEnemyPosition()) {
@@ -61,7 +61,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
             }
             m_closeSettingsWindowFlag.store(true);
 
-            m_endGameWindow.init(m_Window, m_Game, textureManager, m_myNickname, m_vsText, m_enemyNickname);
+            m_endGameWindow.init(m_Window, m_Game, textureManager, fontManager, m_myNickname, m_vsText, m_enemyNickname);
             m_Window.close();
             return;
         }
@@ -274,7 +274,7 @@ void MainGameWindow::draw() {
     m_Window.display();
 }
 
-void MainGameWindow::initSprites() {
+void MainGameWindow::initSprites(FontManager& fontManager) {
     m_rechargeBarBorder.setSize(sf::Vector2f(170.f, 30.f));
     m_rechargeBarBorder.setPosition(1000.f, 30.f);
     m_rechargeBarBorder.setFillColor(sf::Color::Transparent);
@@ -285,28 +285,28 @@ void MainGameWindow::initSprites() {
     m_rechargeBar.setPosition(1000.f, 30.f);
     m_rechargeBar.setFillColor(sf::Color(196, 154, 39));
 
-    m_myNickname.setFont(FontManager::fredokaOne);
+    m_myNickname.setFont(fontManager.getFredokaOne());
     m_myNickname.setCharacterSize(35);
     m_myNickname.setPosition(20.f, 22.f);
     m_myNickname.setFillColor(sf::Color(31, 110, 2));
 
-    m_vsText.setFont(FontManager::fredokaOne);
+    m_vsText.setFont(fontManager.getFredokaOne());
     m_vsText.setCharacterSize(30);
     m_vsText.setPosition(m_myNickname.getGlobalBounds().left + m_myNickname.getGlobalBounds().width + m_vsText.getGlobalBounds().width + 20.f, 24.f);
     m_vsText.setFillColor(sf::Color(219, 219, 219));
     m_vsText.setString("vs");
 
-    m_enemyNickname.setFont(FontManager::fredokaOne);
+    m_enemyNickname.setFont(fontManager.getFredokaOne());
     m_enemyNickname.setCharacterSize(35);
     m_enemyNickname.setPosition(m_vsText.getGlobalBounds().left + m_vsText.getGlobalBounds().width + 20.f, 22.f);
     m_enemyNickname.setFillColor(sf::Color(110, 6, 2));
 
-    m_gameTimer.setFont(FontManager::fredokaOne);
+    m_gameTimer.setFont(fontManager.getFredokaOne());
     m_gameTimer.setCharacterSize(30);
     m_gameTimer.setPosition(600.f, m_gameTimer.getGlobalBounds().height + (m_rechargeBarBorder.getGlobalBounds().height / 2) + 4.f);
     m_gameTimer.setFillColor(sf::Color(219, 219, 219));
 
-    m_waitRoundText.setFont(FontManager::fredokaOne);
+    m_waitRoundText.setFont(fontManager.getFredokaOne());
     m_waitRoundText.setCharacterSize(80);
     m_waitRoundText.setFillColor(sf::Color(255, 255, 255));
     m_waitRoundText.setPosition((m_Window.getSize().x / 2.f) - (m_waitRoundText.getGlobalBounds().width / 2.f), (m_Window.getSize().y / 3.f) - (m_waitRoundText.getGlobalBounds().height / 2.f));

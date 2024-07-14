@@ -18,7 +18,7 @@ using boost::asio::ip::tcp;
 
 class Server {
 public:
-	Server(int port, int maxConnections);
+	Server(int port, int maxConnections, int clearUselessThreadsTime);
 
 	void accept();
 
@@ -48,7 +48,7 @@ private:
 	boost::asio::io_service m_ioServicePtr;
 	std::unique_ptr<tcp::acceptor> m_acceptorPtr;
 
-	int m_maxConnections;
+	int m_maxConnections, m_clearUselessThreadsTime;
 	bool m_doRoutines;
 
 	std::unordered_map<std::string, std::shared_ptr<User>> m_usersMap;
