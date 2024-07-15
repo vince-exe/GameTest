@@ -2,12 +2,14 @@
 -mentre si è nella finestra dei settings, la main window deve continuare a svolgere le proprie azioni ( ora non lo fa si frizza ).
 
 PRINCIPALE:
--introdurre effetti sonori per quando si clicca sulle voci del MainMenu, oppure quando si fallisce in un operazione nel MainMenu etc.
--introdurre la funzionalità di poter regolare il volume degli effetti sonori nella finestra opzioni ( Fare stessa cosa nella finestra opzioni gioco )
--introdurre la modalità DEBUG ( il giocatore vedrà quelle linee verdi del player, gli fps, gli ms e tutti sti dettagli )
--cambiare musica per la game window ( più  seria di azione )
 -Introdurre effetti sonori per quando si usa lo sprint
 -Introdurre effetti sonori per quando si viene colpiti con lo sprint, quando lo sprint si ricarica etc..
+-Modificare la OptionsGameWindow e metterci le stesse cose della OptionsMainMenu
+
+
+REFACTORING-SECONDARIO:
+trasformare Player da shared_ptr a instanza normale ( MainGameWindow )
+
 
 DA FARE SECONDARIE ( rispettare l'ordine per una maggiore chiarezza ):
 1)continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )

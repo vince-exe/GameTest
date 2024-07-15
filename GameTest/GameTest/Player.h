@@ -56,6 +56,8 @@ public:
 
     CollisionSide& getCollidedSide();
 
+    void setDebugMode(bool flag);
+
     void handleEnemyCollision(const CollisionSide collidionSide);
 
     void calcPlayerTrend(const sf::Vector2f& newPos);

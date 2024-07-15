@@ -126,6 +126,7 @@ void IpPortMenu::handleMouseButtons(sf::Event& event, SettingsManager& settingsM
                 exitRequested = true;
             }
             else {
+                audioManager.getErrorSound().play();
                 displayTextFuncTime(m_entityToDisplay, 5);
             }
         }

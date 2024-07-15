@@ -40,7 +40,6 @@ void Player::calcPlayerTrend(const sf::Vector2f& newPos) {
                 (*m_vertexLine)[1].position = sf::Vector2f(newPos.x, newPos.y + m_Rectangle.getSize().y);
                 (*m_vertexLine)[0].color = sf::Color::Green;
                 (*m_vertexLine)[1].color = sf::Color::Green;
-                m_drawVertexLine = true;
                 return;
             }
             // LEFT
@@ -50,7 +49,6 @@ void Player::calcPlayerTrend(const sf::Vector2f& newPos) {
 
                 (*m_vertexLine)[0].color = sf::Color::Green;
                 (*m_vertexLine)[1].color = sf::Color::Green;
-                m_drawVertexLine = true;
                 return;
             }
         }
@@ -61,7 +59,6 @@ void Player::calcPlayerTrend(const sf::Vector2f& newPos) {
 
             (*m_vertexLine)[0].color = sf::Color::Green;
             (*m_vertexLine)[1].color = sf::Color::Green;
-            m_drawVertexLine = true;
             return;
         }
         // BOTTOM RIGHT
@@ -71,8 +68,6 @@ void Player::calcPlayerTrend(const sf::Vector2f& newPos) {
 
             (*m_vertexLine)[0].color = sf::Color::Green;
             (*m_vertexLine)[1].color = sf::Color::Green;
-
-            m_drawVertexLine = true;
             return;
         }
         // BOTTOM LEFT
@@ -82,8 +77,6 @@ void Player::calcPlayerTrend(const sf::Vector2f& newPos) {
 
             (*m_vertexLine)[0].color = sf::Color::Green;
             (*m_vertexLine)[1].color = sf::Color::Green;
-
-            m_drawVertexLine = true;
             return;
         }
     }
@@ -95,7 +88,6 @@ void Player::calcPlayerTrend(const sf::Vector2f& newPos) {
 
             (*m_vertexLine)[0].color = sf::Color::Green;
             (*m_vertexLine)[1].color = sf::Color::Green;
-            m_drawVertexLine = true;
             return;
         }
         // TOP RIGHT
@@ -105,8 +97,6 @@ void Player::calcPlayerTrend(const sf::Vector2f& newPos) {
   
             (*m_vertexLine)[0].color = sf::Color::Green;
             (*m_vertexLine)[1].color = sf::Color::Green;
-
-            m_drawVertexLine = true;
             return;
         }
         // TOP LEFT
@@ -116,8 +106,6 @@ void Player::calcPlayerTrend(const sf::Vector2f& newPos) {
 
             (*m_vertexLine)[0].color = sf::Color::Green;
             (*m_vertexLine)[1].color = sf::Color::Green;
-
-            m_drawVertexLine = true;
             return;
         }
     }
@@ -327,4 +315,8 @@ bool Player::isEnemyHit() {
 
 void Player::resetEnemyHit() {
     m_enemyHit = false;
+}
+
+void Player::setDebugMode(bool flag) {
+    m_drawVertexLine = flag;
 }

@@ -1,6 +1,6 @@
 #include "MainGameWindow.h"
 
-void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager) {
+void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager) {
     m_Client = client;
 
     m_Window.create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
@@ -17,7 +17,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     }
     m_myNickname.setString(nickname);
 
-    initSprites(fontManager);
+    initSprites(fontManager, settingsManager);
 
     /* try to get the default position of the player and enemy player*/
     if (!initPlayerAndEnemyPosition()) {
@@ -274,7 +274,7 @@ void MainGameWindow::draw() {
     m_Window.display();
 }
 
-void MainGameWindow::initSprites(FontManager& fontManager) {
+void MainGameWindow::initSprites(FontManager& fontManager, SettingsManager& settingsManager) {
     m_rechargeBarBorder.setSize(sf::Vector2f(170.f, 30.f));
     m_rechargeBarBorder.setPosition(1000.f, 30.f);
     m_rechargeBarBorder.setFillColor(sf::Color::Transparent);
@@ -313,7 +313,8 @@ void MainGameWindow::initSprites(FontManager& fontManager) {
 
     m_youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f, 1000.f, 4.f);
     m_enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f, 1000.f, 4.f);
-
+    m_youPlayer->setDebugMode(std::strcmp(settingsManager.getValue(SkyfallUtils::Settings::DEBUG_MODE).GetString(), "ON") == 0);
+    
     float youHealthPosX = 850.f;
     float enemyHealthPosX = 720.f;
 

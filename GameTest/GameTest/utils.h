@@ -11,6 +11,10 @@ namespace SkyfallUtils {
 		const std::string MUSIC_VOLUME = "MusicVolume";
 
 		const std::string DEFAULT_NETWORK = "DefaultIpPort";
+
+		const std::string SOUND_EFFECTS_VOLUME = "SoundEffectsVolume";
+
+		const std::string DEBUG_MODE = "DebugMode";
 	}
 	namespace Audio {
 		const std::string BACKGROUND_MUSIC_PATH = "assets/Music-Sound/background_menu_music.ogg";
@@ -18,6 +22,8 @@ namespace SkyfallUtils {
 		const std::string BUTTON_CLICK_SOUND = "assets/Music-Sound/button_click.ogg";
 
 		const std::string MATCHMAKING_SOUND = "assets/Music-Sound/matchmaking.ogg";
+
+		const std::string ERROR_SOUND = "assets/Music-Sound/error_sound.ogg";
 	}
 
 	/*

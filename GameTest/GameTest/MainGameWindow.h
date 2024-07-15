@@ -14,6 +14,7 @@
 #include "TextureManager.h"
 #include "GameSettingsMenu.h"
 #include "EndGameWindow.h"
+#include "SettingsManager.h"
 
 class MainGameWindow {
 private:
@@ -45,7 +46,7 @@ private:
 
 	void draw();
 
-	void initSprites(FontManager& fontManager);
+	void initSprites(FontManager& fontManager, SettingsManager& settingsManager);
 
 	void handleKeyBoards(sf::Event event);
 
@@ -66,5 +67,5 @@ private:
 	bool initPlayerAndEnemyPosition();
 
 public:
-	void init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager);
+	void init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager);
 };

@@ -26,7 +26,7 @@ bool MainMenu::init(TextureManager& textureManager, FontManager& fontManager, Se
             m_Window.setVisible(false);
             
             MainGameWindow mainGameWindow;
-            mainGameWindow.init(m_Nickname, m_Client, textureManager, fontManager);
+            mainGameWindow.init(m_Nickname, m_Client, textureManager, fontManager, settingsManager);
 
             m_displayGameWindow = false;
             m_displayText = false;
@@ -75,11 +75,11 @@ void MainMenu::initSprites() {
 
 void MainMenu::setMusicAndSound(SettingsManager& settingsManager, AudioManager& audioManager) {
     Music& backMusic = audioManager.getBackgroundMusic();
-    audioManager.getMatchmakingSound().setVolume(70);
-
     backMusic.setVolume(settingsManager.getValue(SkyfallUtils::Settings::MUSIC_VOLUME).GetInt());
     backMusic.play();
     backMusic.loop(true);
+
+    audioManager.setSoundEffectsVolume(settingsManager.getValue(SkyfallUtils::Settings::SOUND_EFFECTS_VOLUME).GetInt());
 }
 
 void MainMenu::draw() {
@@ -174,15 +174,15 @@ void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManag
 void MainMenu::handleClientConnection(std::string nick, std::string ip, int port, AudioManager& audioManager) {
     try {
         if (!m_Client->connect(ip, port)) {
-            /* "Server Down" message */
-            displayTextThread(m_menuMsgs[0], 7);
-        }
+            audioManager.getErrorSound().play();    
+            displayTextThread(m_menuMsgs[0], 7); // "Server Down" message.
+        } 
         else {
             NetPacket::NetMessages msg = NetUtils::read_(*m_Client->getSocket()).getMsgType();
 
             if (msg == NetPacket::NetMessages::SERVER_FULL) {
-                /* display the "Server Full" message */
-                displayTextThread(m_menuMsgs[2], 7);
+                audioManager.getErrorSound().play();
+                displayTextThread(m_menuMsgs[2], 7); // display the "Server Full" message
             }
             else {
                 /* send the m_Nickname */
@@ -190,10 +190,10 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
 
                 /* check the m_Nickname */
                 if (NetUtils::read_(*m_Client->getSocket()).getMsgType() == NetPacket::NetMessages::NICK_EXITS) {
-                    /* Nick exists text */
+                    audioManager.getErrorSound().play();
                     m_Client->getSocket()->close();
-
-                    displayTextThread(m_menuMsgs[1], 7);
+                    displayTextThread(m_menuMsgs[1], 7); // Nick exists text
+                    
                 }
                 /* send the matchmaking request */
                 else {
@@ -212,9 +212,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
 
 void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, AudioManager& audioManager, std::string m_Nickname) {
     if (msg == NetPacket::NetMessages::WAIT_FOR_MATCH) {
-        /* in queue for a match text */
-
-        audioManager.getMatchmakingSound().play();
+        audioManager.getMatchmakingSound().play(); // "in queue for a match" text
         displayTextFunc(m_menuMsgs[3]);
 
         /* start a thread to listen if the matchmaking is requested */

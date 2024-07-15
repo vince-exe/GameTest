@@ -15,6 +15,9 @@ private:
 	Music m_backgroundMusic;
 	Sound m_matchmakingSound;
 	Sound m_buttonClick;
+	Sound m_errorSound;
+
+	int m_soundEffectsVolume;
 
 public:
 	static AudioManager& getInstance();
@@ -26,4 +29,10 @@ public:
 	Sound& getMatchmakingSound();
 
 	Sound& getButtonClickSound();
+
+	Sound& getErrorSound();
+
+	int getSoundEffectsVolume();
+
+	void setSoundEffectsVolume(int vol);
 };

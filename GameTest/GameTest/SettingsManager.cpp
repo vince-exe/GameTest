@@ -8,11 +8,18 @@ SettingsManager& SettingsManager::getInstance() {
 
 bool SettingsManager::init(const std::string& filePath) {
     m_settingsPath = filePath;
-    
     std::ifstream inputFile(filePath);
+
     if (!inputFile.is_open()) {
-        std::cerr << "\nNo file found [ Creating a new settings file ]";
-        return createSettingsFile();
+        std::cerr << "\nNo settings file found...[ Creating a new settings file ]";
+        
+        if (createSettingsFile()) {
+            /* successfully created the settings file*/
+            inputFile.open(filePath);
+        }
+        else {
+            return false;
+        }
     }
 
     std::string json((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
@@ -37,7 +44,13 @@ bool SettingsManager::createSettingsFile() {
     writer.StartObject();
 
     writer.Key(SkyfallUtils::Settings::MUSIC_VOLUME.c_str());
+    writer.Int(10);
+
+    writer.Key(SkyfallUtils::Settings::SOUND_EFFECTS_VOLUME.c_str());
     writer.Int(20);
+
+    writer.Key(SkyfallUtils::Settings::DEBUG_MODE.c_str());
+    writer.String("OFF");
 
     writer.Key(SkyfallUtils::Settings::DEFAULT_NETWORK.c_str());
     writer.String("127.0.0.1:8888");
@@ -69,9 +82,8 @@ bool SettingsManager::storeSettings() {
 
         return true;
     }
-    else {
-        return false;
-    }
+    
+    return false;
 }
 
 rapidjson::Value& SettingsManager::getValue(const std::string& key) {
