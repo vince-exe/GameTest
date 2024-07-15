@@ -46,7 +46,7 @@ private:
 
 	void draw();
 
-	void handleKeyBoard(sf::Event& event, TextureManager& textureManager);
+	void handleKeyBoard(sf::Event& event, TextureManager& textureManager, AudioManager& audioManager);
 
 	void handleButtonClicks(sf::Event& event, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager);
 
@@ -62,7 +62,7 @@ private:
 
 	void undoMatchmaking();
 
-	void exitMenu(TextureManager& textureManager);
+	void exitMenu(TextureManager& textureManager, AudioManager& audioManager);
 
 	void matchFound(std::string nick);
 

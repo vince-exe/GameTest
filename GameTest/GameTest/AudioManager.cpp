@@ -6,7 +6,9 @@ AudioManager& AudioManager::getInstance() {
 }
 
 bool AudioManager::init() {
-    return m_backgroundMusic.openFromFile(SkyfallUtils::Audio::BACKGROUND_MUSIC_PATH) && m_matchmakingSound.openFromFile(SkyfallUtils::Audio::MATCHMAKING_SOUND);
+    return 
+        m_backgroundMusic.openFromFile(SkyfallUtils::Audio::BACKGROUND_MUSIC_PATH) && m_matchmakingSound.openFromFile(SkyfallUtils::Audio::MATCHMAKING_SOUND)
+        && m_buttonClick.openFromFile(SkyfallUtils::Audio::BUTTON_CLICK_SOUND);
 }
 
 Music& AudioManager::getBackgroundMusic() {
@@ -15,4 +17,8 @@ Music& AudioManager::getBackgroundMusic() {
 
 Sound& AudioManager::getMatchmakingSound() {
     return m_matchmakingSound;
+}
+
+Sound& AudioManager::getButtonClickSound() {
+    return m_buttonClick;
 }

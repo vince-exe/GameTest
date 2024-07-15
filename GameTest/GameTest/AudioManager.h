@@ -14,6 +14,7 @@ private:
 private:
 	Music m_backgroundMusic;
 	Sound m_matchmakingSound;
+	Sound m_buttonClick;
 
 public:
 	static AudioManager& getInstance();
@@ -23,4 +24,6 @@ public:
 	Music& getBackgroundMusic();
 	
 	Sound& getMatchmakingSound();
+
+	Sound& getButtonClickSound();
 };

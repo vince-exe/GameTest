@@ -6,10 +6,11 @@
 #include "Entity.h"
 #include "utils.h"
 #include "TextureManager.h"
+#include "AudioManager.h"
 
 class MenuConfirmationExit {
 private:
-	void handleButtonClicks(SkyfallUtils::WindowsReturnValues& checker, sf::Event& event, bool& exitRequested);
+	void handleButtonClicks(SkyfallUtils::WindowsReturnValues& checker, sf::Event& event, bool& exitRequested, AudioManager& audioManager);
 
 	void setTextures(TextureManager& textureManager);
 
@@ -22,7 +23,7 @@ private:
 	Entity m_backBtn, m_exitBtn, m_Text;
 
 public:
-	void init(sf::RenderWindow& window, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker);
+	void init(sf::RenderWindow& window, TextureManager& textureManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker);
 };
 
 

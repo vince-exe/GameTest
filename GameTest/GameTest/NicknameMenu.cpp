@@ -1,6 +1,6 @@
 #include "NicknameMenu.h"
 
-std::string NicknameMenu::init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SkyfallUtils::WindowsReturnValues& checker) {
+std::string NicknameMenu::init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker) {
 	m_Window = &window;
 
     setTextures(textureManager);
@@ -18,7 +18,7 @@ std::string NicknameMenu::init(sf::RenderWindow& window, TextureManager& texture
                 return "";
             }
             handleTextEntered(event);
-            handleMouseButtons(event, checker, requestExit);
+            handleMouseButtons(event, audioManager, checker, requestExit);
         }
         draw();
     }
@@ -83,15 +83,17 @@ void NicknameMenu::handleTextEntered(sf::Event& event) {
     }
 }
 
-void NicknameMenu::handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested) {
+void NicknameMenu::handleMouseButtons(sf::Event& event, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested) {
     sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         if (m_cancelBtn.isInside(position)) {
+            audioManager.getButtonClickSound().play();
             checker = SkyfallUtils::WindowsReturnValues::BACK;
             exitRequested = true;
         }
         else if (m_doneBtn.isInside(position) && m_inputText.size()) {
+            audioManager.getButtonClickSound().play();
             checker = SkyfallUtils::WindowsReturnValues::DONE;
             exitRequested = true;
         }

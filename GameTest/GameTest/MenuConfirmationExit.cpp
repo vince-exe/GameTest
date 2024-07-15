@@ -1,6 +1,6 @@
 #include "MenuConfirmationExit.h"
 
-void MenuConfirmationExit::init(sf::RenderWindow& window, TextureManager& textureManager, SkyfallUtils::WindowsReturnValues& checker) {
+void MenuConfirmationExit::init(sf::RenderWindow& window, TextureManager& textureManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker) {
 	m_Window = &window;
 
 	setTextures(textureManager);
@@ -18,7 +18,7 @@ void MenuConfirmationExit::init(sf::RenderWindow& window, TextureManager& textur
 				checker = SkyfallUtils::WindowsReturnValues::BACK;
 				exitRequested = true;
 			}
-			handleButtonClicks(checker, event, exitRequested);
+			handleButtonClicks(checker, event, exitRequested, audioManager);
 		}
 		draw();
 	}
@@ -36,16 +36,18 @@ void MenuConfirmationExit::setSprite() {
 	m_exitBtn.getSprite().setPosition((m_Window->getSize().x - m_exitBtn.getTexture().getSize().x) / 2 + 120, 390.f);
 }
 
-void MenuConfirmationExit::handleButtonClicks(SkyfallUtils::WindowsReturnValues& checker, sf::Event& event, bool& exitRequested) {
+void MenuConfirmationExit::handleButtonClicks(SkyfallUtils::WindowsReturnValues& checker, sf::Event& event, bool& exitRequested, AudioManager& audioManager) {
 	sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 		if (m_exitBtn.isInside(position)) {
+			audioManager.getButtonClickSound().play();
 			m_Window->close();
 			checker = SkyfallUtils::WindowsReturnValues::EXIT;
 			exitRequested = true;
 		}
 		else if (m_backBtn.isInside(position)) {
+			audioManager.getButtonClickSound().play();
 			checker = SkyfallUtils::WindowsReturnValues::BACK;
 			exitRequested = true;
 		}

@@ -13,6 +13,7 @@
 #include "TextureManager.h"
 #include "FontManager.h"
 #include "Sound.h"
+#include "AudioManager.h"
 
 class IpPortMenu {
 private:
@@ -38,13 +39,13 @@ private:
 
 	void handleTextEntered(sf::Event& event);
 
-	void handleMouseButtons(sf::Event& event, SettingsManager& settingsManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested);
+	void handleMouseButtons(sf::Event& event, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested);
 
 	bool setIpPort(std::string ipPort);
 
 	void displayTextFuncTime(Entity& entity, int seconds);
 
 public:
-	std::pair<std::string, int> init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, SkyfallUtils::WindowsReturnValues& checker);
+	std::pair<std::string, int> init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker);
 };
 

@@ -1,6 +1,6 @@
 #include "IpPortMenu.h"
 
-std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, SkyfallUtils::WindowsReturnValues& checker) {
+std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker) {
     m_Window = &window; 
     
     setTextures(textureManager);
@@ -21,7 +21,7 @@ std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, TextureMa
             }
             
             handleTextEntered(event);
-            handleMouseButtons(event, settingsManager, checker, requestExit);
+            handleMouseButtons(event, settingsManager, audioManager, checker, requestExit);
         }
         draw();
     }
@@ -107,11 +107,12 @@ void IpPortMenu::handleTextEntered(sf::Event& event) {
     }
 }
 
-void IpPortMenu::handleMouseButtons(sf::Event& event, SettingsManager& settingsManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested) {
+void IpPortMenu::handleMouseButtons(sf::Event& event, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested) {
     sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         if (m_cancelBtn.isInside(position)) {
+            audioManager.getButtonClickSound();
             checker = SkyfallUtils::WindowsReturnValues::BACK;
             exitRequested = true;
         }
@@ -119,6 +120,7 @@ void IpPortMenu::handleMouseButtons(sf::Event& event, SettingsManager& settingsM
             /* check if the format is valid */
             std::string check = m_Pair.first;
             if (setIpPort(check)) {
+                audioManager.getButtonClickSound().play();
                 settingsManager.setString_("DefaultIpPort", check);
                 checker = SkyfallUtils::WindowsReturnValues::DONE;
                 exitRequested = true;

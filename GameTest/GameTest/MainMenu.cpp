@@ -36,7 +36,7 @@ bool MainMenu::init(TextureManager& textureManager, FontManager& fontManager, Se
             if (event.type == sf::Event::Closed) {
                 m_Window.close();
             }
-            handleKeyBoard(event, textureManager);
+            handleKeyBoard(event, textureManager, audioManager);
             handleButtonClicks(event, textureManager, fontManager, settingsManager, audioManager);
         }
         draw();
@@ -105,13 +105,13 @@ void MainMenu::draw() {
     m_Window.display();
 }
 
-void MainMenu::handleKeyBoard(sf::Event& event, TextureManager& textureManager) {
+void MainMenu::handleKeyBoard(sf::Event& event, TextureManager& textureManager, AudioManager& audioManager) {
     /* OPEN THE EXIT MENU */
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
         MenuConfirmationExit menuConfirmationExit;
         SkyfallUtils::WindowsReturnValues checker{};
 
-        menuConfirmationExit.init(m_Window, textureManager, checker);
+        menuConfirmationExit.init(m_Window, textureManager, audioManager, checker);
         if (checker == SkyfallUtils::WindowsReturnValues::EXIT) {
             m_exitRequested = true;
         }
@@ -124,20 +124,22 @@ void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManag
 
         /* UNDO MATCHMAKING */
         if (m_inMatchmaking.load() && m_undoMatchText.isInside(position)) {
+            audioManager.getButtonClickSound().play();
             undoMatchmaking();
             return;
         }
         /* OPEN THE NICKNAME MENU */
         if (m_matchText.isInside(position) && !m_inMatchmaking.load()) {
+             audioManager.getButtonClickSound().play();
              m_displayText = false;
              NicknameMenu m_NicknameMenu;
              SkyfallUtils::WindowsReturnValues checker{};
 
-             std::string nick = m_NicknameMenu.init(m_Window, textureManager, fontManager, checker);
+             std::string nick = m_NicknameMenu.init(m_Window, textureManager, fontManager, audioManager, checker);
              if (checker == SkyfallUtils::WindowsReturnValues::DONE) {
                 /* OPEN THE CONNECT MENU */
                 IpPortMenu ipPortMenu;
-                std::pair<std::string, int> ipPort = ipPortMenu.init(m_Window, textureManager, fontManager, settingsManager, checker);
+                std::pair<std::string, int> ipPort = ipPortMenu.init(m_Window, textureManager, fontManager, settingsManager, audioManager, checker);
 
                 if (checker == SkyfallUtils::WindowsReturnValues::DONE) {
                     /* start the connection thread */
@@ -148,6 +150,7 @@ void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManag
         }
         /* SETTINGS MENU */
         else if (m_settingsText.isInside(position) && !m_inMatchmaking.load()) {
+            audioManager.getButtonClickSound().play();
             OptionsMainMenu optionsMainMenu;
             SkyfallUtils::WindowsReturnValues checker{};
 
@@ -155,10 +158,11 @@ void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManag
         }
         /* EXIT MENU */
         else if (m_quitText.isInside(position)) {
+            audioManager.getButtonClickSound().play();
             MenuConfirmationExit menuConfirmationExit;
             SkyfallUtils::WindowsReturnValues checker{};
 
-            menuConfirmationExit.init(m_Window, textureManager, checker);
+            menuConfirmationExit.init(m_Window, textureManager, audioManager, checker);
             if (checker == SkyfallUtils::WindowsReturnValues::EXIT) {
                 undoMatchmaking();
                 m_exitRequested = true;
@@ -269,11 +273,11 @@ void MainMenu::undoMatchmaking() {
     m_Client->close();
 }
 
-void MainMenu::exitMenu(TextureManager& textureManager) {
+void MainMenu::exitMenu(TextureManager& textureManager, AudioManager& audioManager) {
     MenuConfirmationExit menuConfirmationExit;
     SkyfallUtils::WindowsReturnValues checker{};
 
-    menuConfirmationExit.init(m_Window, textureManager, checker);
+    menuConfirmationExit.init(m_Window, textureManager, audioManager, checker);
     if (checker == SkyfallUtils::WindowsReturnValues::EXIT) {
         /* if is in matchmaking */
         if (m_inMatchmaking.load()) {

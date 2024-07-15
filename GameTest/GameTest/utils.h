@@ -14,7 +14,9 @@ namespace SkyfallUtils {
 	}
 	namespace Audio {
 		const std::string BACKGROUND_MUSIC_PATH = "assets/Music-Sound/background_menu_music.ogg";
-	
+		
+		const std::string BUTTON_CLICK_SOUND = "assets/Music-Sound/button_click.ogg";
+
 		const std::string MATCHMAKING_SOUND = "assets/Music-Sound/matchmaking.ogg";
 	}
 

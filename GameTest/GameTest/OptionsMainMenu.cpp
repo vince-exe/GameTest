@@ -46,6 +46,7 @@ void OptionsMainMenu::handleMouseButtons(sf::Event& event, bool& requestExit, Se
         checkVolumeLevel(settingsManager, audioManager, position);
 
         if (m_backBtn.isInside(position)) {
+            audioManager.getButtonClickSound().play();
             requestExit = true;
             checker = SkyfallUtils::WindowsReturnValues::BACK;
             return;

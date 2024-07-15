@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "TextureManager.h"
 #include "FontManager.h"
+#include "AudioManager.h"
 
 class NicknameMenu {
 private:
@@ -21,7 +22,7 @@ private:
 	Entity m_doneBtn, m_cancelBtn;
 
 public:
-	std::string init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SkyfallUtils::WindowsReturnValues& checker);
+	std::string init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker);
 
 private:
 	void draw();
@@ -32,6 +33,6 @@ private:
 
 	void handleTextEntered(sf::Event& event);
 	
-	void handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested);
+	void handleMouseButtons(sf::Event& event, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested);
 };
 
