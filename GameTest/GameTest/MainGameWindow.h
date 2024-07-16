@@ -15,6 +15,7 @@
 #include "GameSettingsMenu.h"
 #include "EndGameWindow.h"
 #include "SettingsManager.h"
+#include "AudioManager.h"
 
 class MainGameWindow {
 private:
@@ -42,7 +43,9 @@ private:
 	std::vector<std::vector<sf::CircleShape>> m_damageAreasVector;
 
 private:
-	void update(sf::Time deltaTime);
+	void setMusicAndSound(AudioManager& audioManager, SettingsManager& settingsManager);
+
+	void update(sf::Time deltaTime, AudioManager& audioManager);
 
 	void draw();
 
@@ -52,7 +55,7 @@ private:
 
 	void handleMouseClick(sf::Event& event);
 
-	void quitGame();
+	void quitGame(AudioManager& audioManager);
 
 	void updateRechargeBar();
 
@@ -62,10 +65,10 @@ private:
 
 	bool handleEnemyNickname();
 
-	void handleMessages();
+	void handleMessages(AudioManager& audioManager);
 
 	bool initPlayerAndEnemyPosition();
 
 public:
-	void init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager);
+	void init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager);
 };

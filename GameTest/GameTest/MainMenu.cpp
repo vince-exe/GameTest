@@ -24,10 +24,13 @@ bool MainMenu::init(TextureManager& textureManager, FontManager& fontManager, Se
     while (m_Window.isOpen() && !m_exitRequested) {
         if (m_displayGameWindow) {
             m_Window.setVisible(false);
-            
-            MainGameWindow mainGameWindow;
-            mainGameWindow.init(m_Nickname, m_Client, textureManager, fontManager, settingsManager);
+            audioManager.getBackgroundMusic().stop();
 
+            MainGameWindow mainGameWindow;
+            mainGameWindow.init(m_Nickname, m_Client, textureManager, fontManager, settingsManager, audioManager);
+
+            audioManager.getBackgroundMusic().play();
+            audioManager.getBackgroundMusic().loop(true);
             m_displayGameWindow = false;
             m_displayText = false;
             m_Window.setVisible(true);

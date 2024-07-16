@@ -17,11 +17,15 @@ namespace SkyfallUtils {
 		const std::string DEBUG_MODE = "DebugMode";
 	}
 	namespace Audio {
-		const std::string BACKGROUND_MUSIC_PATH = "assets/Music-Sound/background_menu_music.ogg";
+		const std::string BACKGROUND_MUSIC = "assets/Music-Sound/background_menu_music.ogg";
 		
 		const std::string BUTTON_CLICK_SOUND = "assets/Music-Sound/button_click.ogg";
 
 		const std::string MATCHMAKING_SOUND = "assets/Music-Sound/matchmaking.ogg";
+
+		const std::string BATTLE_MUSIC = "assets/Music-Sound/battle_music.ogg";
+
+		const std::string COUNTDOWN_SOUND = "assets/Music-Sound/countdown.ogg";
 
 		const std::string ERROR_SOUND = "assets/Music-Sound/error_sound.ogg";
 	}

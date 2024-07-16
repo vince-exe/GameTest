@@ -23,3 +23,7 @@ float Sound::getVolume() {
 void Sound::play() {
     m_sound.play();
 }
+
+void Sound::stop() {
+    m_sound.stop();
+}

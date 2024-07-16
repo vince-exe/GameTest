@@ -9,6 +9,7 @@
 
 #include "Player.h"
 #include "FontManager.h"
+#include "Sound.h"
 
 class Game {
 public:
@@ -79,7 +80,7 @@ public:
 	bool hasEnemyQuit();
 
 	/* starts an internal thread that waits for 3 secs ( all the player operations are meanwhile blocked )*/
-	void waitRound(sf::Text& text);
+	void waitRound(sf::Text& text, Sound& soundToPlay);
 	
 	/* the entity represents the player that the game has to decrease the life */
 	void handleNewRound(GameEntities entity);

@@ -1,6 +1,7 @@
 #include "MainGameWindow.h"
 
-void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager) {
+void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager) {
+    setMusicAndSound(audioManager, settingsManager);
     m_Client = client;
 
     m_Window.create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
@@ -9,24 +10,23 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     m_closeSettingsWindowFlag.store(false);
     m_inGameSettings = false;
     m_Game.setBlockActions(true);
-
+    
     /* get the enemy nickname */
     if (!handleEnemyNickname()) {
-        quitGame();
+        quitGame(audioManager);
         return;
     }
     m_myNickname.setString(nickname);
-
     initSprites(fontManager, settingsManager);
 
     /* try to get the default position of the player and enemy player*/
     if (!initPlayerAndEnemyPosition()) {
-        quitGame();
+        quitGame(audioManager);
         return;
     }
 
     /* start the thread to listen for game messages */
-    std::thread t(&MainGameWindow::handleMessages, this);
+    std::thread t(&MainGameWindow::handleMessages, this, std::ref(audioManager));
     t.detach();
 
     sf::Event event;
@@ -34,12 +34,11 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     sf::Clock sprintClock;
 
     resolvePlayerSprint();
-    //DEBUG
-    std::cout << "\nPlayer: " << nickname;
+    std::cout << "\nPlayer: " << nickname;  //DEBUG
     while (m_displayWindow) {
         while (m_Window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
-                quitGame();
+                quitGame(audioManager);
                 return;
             }
             else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
@@ -53,9 +52,10 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
             handleKeyBoards(event);
         }
         if (m_Game.getGameState() == Game::GameStates::RUNNING) {
-            update(sprintClock.restart());
+            update(sprintClock.restart(), audioManager);
         }
         else if (m_Game.getGameState() == Game::GameStates::END) {
+            audioManager.getCountdownSound().stop();
             if (!m_Game.hasEnemyQuit()) {
                 NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
             }
@@ -63,6 +63,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
 
             m_endGameWindow.init(m_Window, m_Game, textureManager, fontManager, m_myNickname, m_vsText, m_enemyNickname);
             m_Window.close();
+            audioManager.getBattleMusic().stop();
             return;
         }
         draw();
@@ -87,7 +88,7 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
     return false;
 }
 
-void MainGameWindow::handleMessages() {
+void MainGameWindow::handleMessages(AudioManager& audioManager) {
     NetPacket packet;
     while (true) {
         try {
@@ -113,7 +114,7 @@ void MainGameWindow::handleMessages() {
                 break;
 
             case NetPacket::NetMessages::GAME_STARTED:
-                m_Game.waitRound(m_waitRoundText);
+                m_Game.waitRound(m_waitRoundText, audioManager.getCountdownSound());
                 m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet));
                 /* set the vector of damages areas */
                 m_Game.startGame(m_damageAreasVector);
@@ -122,11 +123,12 @@ void MainGameWindow::handleMessages() {
 
             case NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA:
                 m_youPlayer->stopMove();
-                m_Game.waitRound(m_waitRoundText);
                 m_Game.handleNewRound(Game::GameEntities::ENEMY);
+                m_Game.waitRound(m_waitRoundText, audioManager.getCountdownSound());
 
                 /* set the player to the start position and send the position to the enemy */
                 m_youPlayer->setPosition(m_Game.getStartPlayerPosition());
+
                 float p[] = { m_youPlayer->getPosition().x, m_youPlayer->getPosition().y };
                 NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
                 break;
@@ -200,8 +202,10 @@ void MainGameWindow::handleKeyBoards(sf::Event event) {
     }
 }
 
-void MainGameWindow::quitGame() {
+void MainGameWindow::quitGame(AudioManager& audioManager) {
     m_Client->close();
+    audioManager.getBattleMusic().stop();
+    audioManager.getCountdownSound().stop();
     m_displayWindow = false;
 
     if (m_inGameSettings) {
@@ -209,7 +213,13 @@ void MainGameWindow::quitGame() {
     }
 }
 
-void MainGameWindow::update(sf::Time deltaTime) {
+void MainGameWindow::setMusicAndSound(AudioManager& audioManager, SettingsManager& settingsManager) {
+    audioManager.getBattleMusic().setVolume(settingsManager.getValue(SkyfallUtils::Settings::MUSIC_VOLUME).GetInt());
+    audioManager.getBattleMusic().play();
+    audioManager.getBattleMusic().loop(true);
+}
+
+void MainGameWindow::update(sf::Time deltaTime, AudioManager& audioManager) {
     m_youPlayer->update(deltaTime, m_enemyPlayer->getRect());
 
     updateRechargeBar();
@@ -219,7 +229,7 @@ void MainGameWindow::update(sf::Time deltaTime) {
         /* send the position */
         float p[2] = { m_youPlayer->getPosition().x, m_youPlayer->getPosition().y };
         NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
-
+        
         if (m_youPlayer->isSprinting() && m_youPlayer->isEnemyHit()) {
             Player::CollisionSide cL = m_youPlayer->getCollidedSide();
 
@@ -231,9 +241,8 @@ void MainGameWindow::update(sf::Time deltaTime) {
         /* check if the player collided with a damage area */
         if (m_Game.checkCollision(m_damageAreasVector.at(m_Game.getCurrentRound()), *m_youPlayer)) {
             m_youPlayer->stopMove();
-            m_Game.waitRound(m_waitRoundText);
+            m_Game.waitRound(m_waitRoundText, audioManager.getCountdownSound());
             m_Game.handleNewRound(Game::GameEntities::PLAYER);
-
             NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA, nullptr, 0));
 
             m_youPlayer->setPosition(m_Game.getStartPlayerPosition());

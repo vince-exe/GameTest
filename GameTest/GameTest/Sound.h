@@ -19,4 +19,6 @@ public:
 	float getVolume();
 
 	void play();
+
+	void stop();
 };

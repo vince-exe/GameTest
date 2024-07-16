@@ -39,12 +39,12 @@ bool Game::areActionsBlocked() {
 	return m_blockActions.load();
 }
 
-void Game::waitRound(sf::Text& text) {
+void Game::waitRound(sf::Text& text, Sound& soundToPlay) {
 	setBlockActions(true);
-	std::thread t([this, &text] {
+	std::thread t([this, &text, &soundToPlay] {
 		int i = 0;
 		using namespace std::chrono_literals;
-
+		soundToPlay.play();
 		while (i < m_waitTimeRound) {
 			text.setString(std::to_string(m_waitTimeRound - i));
 			std::this_thread::sleep_for(1s);

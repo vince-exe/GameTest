@@ -90,7 +90,7 @@ void OptionsMainMenu::setMusicLevel(SettingsManager& settingsManager, AudioManag
             audioManager.getBackgroundMusic().setVolume(volumeLevel);
             settingsManager.setInt_(SkyfallUtils::Settings::MUSIC_VOLUME, volumeLevel);
         } 
-        volumeLevel += 10;
+        volumeLevel += 5;
     }
 }
 
@@ -139,8 +139,8 @@ void OptionsMainMenu::initSprites(FontManager& fontManager, AudioManager& audioM
         m_oldMusicVolumeIndex = 0;
     }
     else {
-        m_musicCheckPoints[musicVolume / 10].setFillColor(m_selectedCheckpointColor);
-        m_oldMusicVolumeIndex = musicVolume / 10;
+        m_musicCheckPoints[musicVolume / 5].setFillColor(m_selectedCheckpointColor);
+        m_oldMusicVolumeIndex = musicVolume / 5;
     }
 
     m_soundEffectsText.setFont(fontManager.getFredokaOne());
