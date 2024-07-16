@@ -30,16 +30,11 @@ private:
     /* this is used to have a more precise player movement */
     std::shared_ptr<sf::VertexArray> m_vertexLine;
 
-    float m_sprintTimeout;
-    float m_distanceAbove;
+    float m_sprintTimeout, m_distanceAbove, m_sprintPower;
     float m_Speed;
-    bool m_targetReached;
-    bool m_Moving;
+    bool m_targetReached, m_Moving, m_isSprinting, m_enemyHit, m_hitByEnemy;
     float m_indicatorBaseHalf = 10.f;
     float m_indicatorHeight = 15.f;
-    float m_sprintPower;
-    bool m_isSprinting;
-    bool m_enemyHit;
     CollisionSide m_collidedSide;
 
 private:
@@ -99,4 +94,6 @@ public:
     bool isEnemyHit();
 
     void resetEnemyHit();
+
+    void setHitByEnemy(bool flag);
 };

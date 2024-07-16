@@ -108,6 +108,7 @@ void MainGameWindow::handleMessages() {
                 break;
 
             case NetPacket::NetMessages::ENEMY_COLLISION:
+                m_youPlayer->setHitByEnemy(true);
                 m_youPlayer->handleEnemyCollision((Player::CollisionSide)packet.getData()[0]);
                 break;
 

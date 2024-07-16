@@ -163,7 +163,7 @@ void Player::update(sf::Time deltaTime, const sf::RectangleShape& other) {
                 stopMove();
             }
             else {
-                if (SkyfallUtils::doesRectangleIntersectLine(m_Rectangle, *m_vertexLine)) {
+                if (!m_hitByEnemy && SkyfallUtils::doesRectangleIntersectLine(m_Rectangle, *m_vertexLine)) {
                     stopMove();
                 }
                 else {
@@ -256,6 +256,7 @@ bool Player::isMoving() const {
 void Player::stopMove() {
     m_targetReached = true;
     m_Moving = false;
+    m_hitByEnemy = false;
 
     if (m_isSprinting) {
         stopSprint();
@@ -315,6 +316,10 @@ bool Player::isEnemyHit() {
 
 void Player::resetEnemyHit() {
     m_enemyHit = false;
+}
+
+void Player::setHitByEnemy(bool flag) {
+    m_hitByEnemy = flag;
 }
 
 void Player::setDebugMode(bool flag) {
