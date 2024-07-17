@@ -1,6 +1,3 @@
-*BUG DA RISOLVERE*
--mentre si è nella finestra dei settings, la main window deve continuare a svolgere le proprie azioni ( ora non lo fa si frizza ).
-
 PRINCIPALE:
 -Introdurre effetti sonori per quando si usa lo sprint
 -Introdurre effetti sonori per quando si viene colpiti con lo sprint, quando lo sprint si ricarica etc..
@@ -8,7 +5,7 @@ PRINCIPALE:
 
 
 REFACTORING-SECONDARIO:
-trasformare Player da shared_ptr a instanza normale ( MainGameWindow )
+-trasformare Player da shared_ptr a instanza normale ( MainGameWindow )
 
 
 DA FARE SECONDARIE ( rispettare l'ordine per una maggiore chiarezza ):

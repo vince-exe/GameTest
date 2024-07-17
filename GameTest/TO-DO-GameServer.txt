@@ -1,3 +1,5 @@
+-fare dei test per vedere se i tempi per la tempThreadList vengono rispettati.
+
 Creare un interfaccia grafica per il GameServer così l'operatore può vedere & gestire in realt time:
 -sessioni di gioco
 -player presenti

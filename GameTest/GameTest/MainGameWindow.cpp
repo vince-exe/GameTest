@@ -10,7 +10,10 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     m_closeSettingsWindowFlag.store(false);
     m_inGameSettings = false;
     m_Game.setBlockActions(true);
-    
+    // the game settings menu will be handled in this thread because i have to keep the update method alive
+    m_gameSettingsMenu.setTextures(textureManager);
+    m_gameSettingsMenu.setSprites(m_Window);
+
     /* get the enemy nickname */
     if (!handleEnemyNickname()) {
         quitGame(audioManager);
@@ -37,16 +40,15 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     std::cout << "\nPlayer: " << nickname;  //DEBUG
     while (m_displayWindow) {
         while (m_Window.pollEvent(event)) {
+            if (m_inGameSettings) {
+                m_gameSettingsMenu.handleMouseButtonPressed(event, m_Window, m_inGameSettings);
+            }
             if (event.type == sf::Event::Closed) {
                 quitGame(audioManager);
                 return;
             }
             else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                m_inGameSettings = true;
-                if (m_gameSettingsMenu.init(m_Window, textureManager, &m_closeSettingsWindowFlag)) {
-                    return;
-                }
-                m_inGameSettings = false;
+                m_inGameSettings = !m_inGameSettings;
             }
             handleMouseClick(event);
             handleKeyBoards(event);
@@ -66,7 +68,12 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
             audioManager.getBattleMusic().stop();
             return;
         }
-        draw();
+        if (m_inGameSettings) {
+            m_gameSettingsMenu.draw(m_Window);
+        }
+        else {
+            draw();
+        }
     }
 }
 
