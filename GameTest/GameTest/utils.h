@@ -29,6 +29,9 @@ namespace SkyfallUtils {
 
 		const std::string ERROR_SOUND = "assets/Music-Sound/error_sound.ogg";
 	}
+	namespace Font {
+		const std::string FREDOKA_ONE = "assets/Fonts/FredokaOne-Regular.ttf";
+	}
 
 	/*
 		the 3 value a window can return 

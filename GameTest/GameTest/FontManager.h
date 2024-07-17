@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "utils.h"
+
 class FontManager {
 private:
 	FontManager() = default;

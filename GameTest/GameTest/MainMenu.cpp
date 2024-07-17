@@ -143,6 +143,7 @@ void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManag
                 /* OPEN THE CONNECT MENU */
                 IpPortMenu ipPortMenu;
                 std::pair<std::string, int> ipPort = ipPortMenu.init(m_Window, textureManager, fontManager, settingsManager, audioManager, checker);
+                std::cout << "\nIp: " << ipPort.first << "   Port: " << ipPort.second; // debug
 
                 if (checker == SkyfallUtils::WindowsReturnValues::DONE) {
                     /* start the connection thread */

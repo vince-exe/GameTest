@@ -1,7 +1,7 @@
 #include "FontManager.h"
 
 bool FontManager::init() {
-    return m_fredokaOne.loadFromFile("assets/Fonts/FredokaOne-Regular.ttf");
+    return m_fredokaOne.loadFromFile(SkyfallUtils::Font::FREDOKA_ONE);
 }
 
 const sf::Font& FontManager::getFredokaOne() const {

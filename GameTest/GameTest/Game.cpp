@@ -7,7 +7,7 @@ Game::Game() {
 	m_playerLife = 3;
 	m_enemyLife = 3;
 	m_waitTimeRound = 3;
-	m_gameMaxTime = 0;
+	m_gameMaxTime = 3;
 	m_enemyQuit = false;
 }
 

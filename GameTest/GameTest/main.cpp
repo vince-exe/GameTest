@@ -13,19 +13,23 @@ int main() {
     AudioManager& aSingleton = AudioManager::getInstance();
 
     if (!sSingleton.init(SkyfallUtils::Settings::SETTINGS_PATH)) {
-        std::cerr << "\n[ ERROR ]: Failed to load game's settings";
+        std::cerr << "\n[ ERROR ]: Failed to load game's settings\n";
+        system("pause");
         return 1;
     }
     if (!fSinfleton.init()) {
-        std::cerr << "\n [ ERROR ]: Failed to load game's fonts";
+        std::cerr << "\n [ ERROR ]: Failed to load game's fonts\n";
+        system("pause");
         return 1;
     }
     if (!tSingleton.init()) {
-        std::cerr << "\n[ ERROR ]: Failed to load game's textures";
+        std::cerr << "\n[ ERROR ]: Failed to load game's textures\n";
+        system("pause");
         return 1;
     }
     if (!aSingleton.init()) {
-        std::cerr << "\n[ ERROR ]: Failed to load game's audio";
+        std::cerr << "\n[ ERROR ]: Failed to load game's audio\n";
+        system("pause");
         return 1;
     }
 

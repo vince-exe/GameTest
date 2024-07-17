@@ -89,7 +89,7 @@ void IpPortMenu::draw() {
 
 void IpPortMenu::handleTextEntered(sf::Event& event) {
     if (event.type == sf::Event::TextEntered) {
-        /* check the size of the nickname */
+        /* check the size of the ip */
         if (event.text.unicode < 128) {
             if (event.text.unicode == '\b' && m_Pair.first.size() > 0) {
                 m_Pair.first.pop_back();
