@@ -1,12 +1,14 @@
 PRINCIPALE:
--Introdurre effetti sonori per quando si usa lo sprint
--Introdurre effetti sonori per quando si viene colpiti con lo sprint, quando lo sprint si ricarica etc..
+-Lo sprint si deve ricaricare ogni volta che inizia un nuovo round ( player / nemico )
 -Modificare la OptionsGameWindow e metterci le stesse cose della OptionsMainMenu
 
 
-REFACTORING-SECONDARIO:
+REFACTORING-PRINCIPALE:
 -trasformare Player da shared_ptr a instanza normale ( MainGameWindow )
+-creare un nuovo progetto "Common-Libraries" che conterrà il NetPacket e una classe JsonManager.
+-cercare di risolvere quel fatto della finestra che aspetta un secondo per caricarsi ( MainGameWindow )
 
+-implementare entrambi protocolli TCP / UDP per il gioco, TCP = informazioni che non possono essere perse, UDP: informazioni che possono essere perse
 
 DA FARE SECONDARIE ( rispettare l'ordine per una maggiore chiarezza ):
 1)continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )
