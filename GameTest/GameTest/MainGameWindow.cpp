@@ -1,8 +1,8 @@
 #include "MainGameWindow.h"
 
-void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager) {
+void MainGameWindow::init(const std::string nickname, Client& client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager) {
     setMusicAndSound(audioManager, settingsManager);
-    m_Client = client;
+    m_Client = &client;
 
     m_Window.create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
     m_Window.setFramerateLimit(60);
@@ -10,6 +10,7 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     m_closeSettingsWindowFlag.store(false);
     m_inGameSettings = false;
     m_Game.setBlockActions(true);
+
     // the game settings menu will be handled in this thread because i have to keep the update method alive
     m_gameSettingsMenu.setTextures(textureManager);
     m_gameSettingsMenu.setSprites(m_Window);
@@ -28,6 +29,8 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
         return;
     }
 
+    //resolvePlayerSprint();
+
     /* start the thread to listen for game messages */
     std::thread t(&MainGameWindow::handleMessages, this, std::ref(audioManager));
     t.detach();
@@ -36,7 +39,6 @@ void MainGameWindow::init(const std::string nickname, std::shared_ptr<Client> cl
     m_displayWindow = true;
     sf::Clock sprintClock;
 
-    resolvePlayerSprint();
     std::cout << "\nPlayer: " << nickname;  //DEBUG
     while (m_displayWindow) {
         while (m_Window.pollEvent(event)) {
@@ -83,12 +85,12 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
         sf::Vector2f pos = NetGameUtils::getSfvector2f(packet);
 
         m_Game.setPlayerStartPosition(pos);
-        m_youPlayer->setPosition(pos);
+        m_youPlayer.setPosition(pos);
     }
 
     packet = NetUtils::read_(*m_Client->getSocket());
     if (packet.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
-        m_enemyPlayer->setPosition(NetGameUtils::getSfvector2f(packet));
+        m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet));
 
         return true;
     }
@@ -112,14 +114,14 @@ void MainGameWindow::handleMessages(AudioManager& audioManager) {
                 return;
 
             case NetPacket::NetMessages::PLAYER_POSITION:
-                m_enemyPlayer->setPosition(NetGameUtils::getSfvector2f(packet));
+                m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet));
                 break;
 
             case NetPacket::NetMessages::ENEMY_COLLISION:
-                m_youPlayer->setHitByEnemy(true);
-                m_youPlayer->handleEnemyCollision((Player::CollisionSide)packet.getData()[0]);
+                m_youPlayer.setHitByEnemy(true);
+                m_youPlayer.handleEnemyCollision((Player::CollisionSide)packet.getData()[0]);
                 break;
-
+            
             case NetPacket::NetMessages::GAME_STARTED:
                 m_Game.waitRound(m_waitRoundText, audioManager.getCountdownSound());
                 m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet));
@@ -129,14 +131,15 @@ void MainGameWindow::handleMessages(AudioManager& audioManager) {
                 break;
 
             case NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA:
-                m_youPlayer->stopMove();
+                m_youPlayer.stopMove();
+                m_youPlayer.resetSprint();
                 m_Game.handleNewRound(Game::GameEntities::ENEMY);
                 m_Game.waitRound(m_waitRoundText, audioManager.getCountdownSound());
 
                 /* set the player to the start position and send the position to the enemy */
-                m_youPlayer->setPosition(m_Game.getStartPlayerPosition());
-
-                float p[] = { m_youPlayer->getPosition().x, m_youPlayer->getPosition().y };
+                m_youPlayer.setPosition(m_Game.getStartPlayerPosition());
+               
+                float p[] = { m_youPlayer.getPosition().x, m_youPlayer.getPosition().y };
                 NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
                 break;
             }
@@ -149,7 +152,7 @@ void MainGameWindow::handleMessages(AudioManager& audioManager) {
 }
 
 void MainGameWindow::updateRechargeBar() {
-    m_rechargeBarProgress = m_youPlayer->getClock().getElapsedTime().asSeconds() / m_youPlayer->getSprintTimeout();
+    m_rechargeBarProgress = m_youPlayer.getClock().getElapsedTime().asSeconds() / m_youPlayer.getSprintTimeout();
 
     if (m_rechargeBarProgress > 1.0f) {
         m_rechargeBarProgress = 1.0f;
@@ -162,41 +165,41 @@ void MainGameWindow::resolvePlayerSprint() {
        this piece of code ensure that when the player will sprint for the first time, it will all works fine
        without this the first sprint of the player won't work as aspected ( i can't figure out why. )
     */
-    sf::Vector2f pos = m_youPlayer->getPosition();
-    m_youPlayer->setTarget(sf::Vector2f(1000, 1000));
-    m_youPlayer->startSprint(false);
-    m_youPlayer->setPosition(pos);
+    sf::Vector2f pos = m_youPlayer.getPosition();
+    m_youPlayer.setTarget(sf::Vector2f(1000, 1000));
+    m_youPlayer.startSprint(false);
+    m_youPlayer.setPosition(pos);
 }
 
 void MainGameWindow::checkPlayerWindowBorders() {
-    sf::FloatRect playerBounds = m_youPlayer->getGlobalBounds();
-    sf::Vector2f position = m_youPlayer->getPosition();
+    sf::FloatRect playerBounds = m_youPlayer.getGlobalBounds();
+    sf::Vector2f position = m_youPlayer.getPosition();
 
     if (playerBounds.left < 0.f) {
-        m_youPlayer->setPosition(playerBounds.width / 2, position.y);
-        m_youPlayer->stopMove();
+        m_youPlayer.setPosition(playerBounds.width / 2, position.y);
+        m_youPlayer.stopMove();
     }
     else if ((playerBounds.left + playerBounds.width) > 1200.f) {
-        m_youPlayer->setPosition(1200.f - playerBounds.width, position.y);
-        m_youPlayer->stopMove();
+        m_youPlayer.setPosition(1200.f - playerBounds.width, position.y);
+        m_youPlayer.stopMove();
     }
     else if (playerBounds.top < 110.f) {
-        m_youPlayer->setPosition(position.x, 110);
-        m_youPlayer->stopMove();
+        m_youPlayer.setPosition(position.x, 110);
+        m_youPlayer.stopMove();
     }
     else if ((playerBounds.top + playerBounds.height) > 800.f) {
-        m_youPlayer->setPosition(position.x, 800.f - playerBounds.height);
-        m_youPlayer->stopMove();
+        m_youPlayer.setPosition(position.x, 800.f - playerBounds.height);
+        m_youPlayer.stopMove();
     }
 }
 
 void MainGameWindow::handleMouseClick(sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) {
-            m_Game.handlePlayerMovement(*m_youPlayer, m_Window, false);
+            m_youPlayer.handlePlayerMovement(m_Game.areActionsBlocked(), m_Window, false);
         }
         else if (event.mouseButton.button == sf::Mouse::Right) {
-            m_Game.handlePlayerMovement(*m_youPlayer, m_Window, true);
+            m_youPlayer.handlePlayerMovement(m_Game.areActionsBlocked(), m_Window, true);
         }
     }
 }
@@ -204,7 +207,9 @@ void MainGameWindow::handleMouseClick(sf::Event& event) {
 void MainGameWindow::handleKeyBoards(sf::Event event) {
     if (event.type == sf::Event::KeyPressed) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-            m_youPlayer->stopMove();
+            if (!m_youPlayer.isEnemyHit()) {
+                m_youPlayer.stopMove();
+            }
         }
     }
 }
@@ -227,33 +232,34 @@ void MainGameWindow::setMusicAndSound(AudioManager& audioManager, SettingsManage
 }
 
 void MainGameWindow::update(sf::Time deltaTime, AudioManager& audioManager) {
-    m_youPlayer->update(deltaTime, m_enemyPlayer->getRect());
+    m_youPlayer.update(deltaTime, m_enemyPlayer.getRect());
 
     updateRechargeBar();
 
-    if (m_youPlayer->isMoving()) {
+    if (m_youPlayer.isMoving()) {
         checkPlayerWindowBorders();
         /* send the position */
-        float p[2] = { m_youPlayer->getPosition().x, m_youPlayer->getPosition().y };
+        float p[2] = { m_youPlayer.getPosition().x, m_youPlayer.getPosition().y };
         NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
         
-        if (m_youPlayer->isSprinting() && m_youPlayer->isEnemyHit()) {
-            Player::CollisionSide cL = m_youPlayer->getCollidedSide();
+        if (m_youPlayer.isSprinting() && m_youPlayer.isEnemyHit()) {
+            Player::CollisionSide cL = m_youPlayer.getCollidedSide();
 
             NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION, (uint8_t*)&cL, sizeof(cL)));
-            m_youPlayer->stopMove();
-            m_youPlayer->resetEnemyHit();
+            m_youPlayer.stopMove();
+            m_youPlayer.resetEnemyHit();
         }
 
         /* check if the player collided with a damage area */
-        if (m_Game.checkCollision(m_damageAreasVector.at(m_Game.getCurrentRound()), *m_youPlayer)) {
-            m_youPlayer->stopMove();
+        if (m_Game.checkCollision(m_damageAreasVector.at(m_Game.getCurrentRound()), m_youPlayer)) {
+            m_youPlayer.resetSprint();
+            m_youPlayer.stopMove();
             m_Game.waitRound(m_waitRoundText, audioManager.getCountdownSound());
             m_Game.handleNewRound(Game::GameEntities::PLAYER);
             NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA, nullptr, 0));
 
-            m_youPlayer->setPosition(m_Game.getStartPlayerPosition());
-            float p[] = { m_youPlayer->getPosition().x, m_youPlayer->getPosition().y };
+            m_youPlayer.setPosition(m_Game.getStartPlayerPosition());
+            float p[] = { m_youPlayer.getPosition().x, m_youPlayer.getPosition().y };
 
             NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
         }
@@ -265,8 +271,8 @@ void MainGameWindow::draw() {
 
     m_Window.draw(m_myNickname);
     m_Window.draw(m_enemyNickname);
-    m_Window.draw(*m_youPlayer);
-    m_Window.draw(*m_enemyPlayer);
+    m_Window.draw(m_youPlayer);
+    m_Window.draw(m_enemyPlayer);
     m_Window.draw(m_rechargeBarBorder);
     m_Window.draw(m_rechargeBar);
     m_Window.draw(m_vsText);
@@ -328,9 +334,18 @@ void MainGameWindow::initSprites(FontManager& fontManager, SettingsManager& sett
     m_waitRoundText.setFillColor(sf::Color(255, 255, 255));
     m_waitRoundText.setPosition((m_Window.getSize().x / 2.f) - (m_waitRoundText.getGlobalBounds().width / 2.f), (m_Window.getSize().y / 3.f) - (m_waitRoundText.getGlobalBounds().height / 2.f));
 
-    m_youPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(31, 110, 2), 8.0f, 200.f, 1000.f, 4.f);
-    m_enemyPlayer = std::make_shared<Player>(sf::Vector2f(70.f, 70.f), sf::Color(2, 35, 89), sf::Color(110, 6, 2), 8.0f, 200.f, 1000.f, 4.f);
-    m_youPlayer->setDebugMode(std::strcmp(settingsManager.getValue(SkyfallUtils::Settings::DEBUG_MODE).GetString(), "ON") == 0);
+    m_youPlayer.setSize(sf::Vector2f(70.f, 70.f));
+    m_youPlayer.setColor(sf::Color(2, 35, 89));
+    m_youPlayer.setIndicator(sf::Color(31, 110, 2), 8.0f);
+    m_youPlayer.setSpeed(200.f);
+    m_youPlayer.setSprint(1000.f, 5.f);
+    m_youPlayer.setDebugMode(std::strcmp(settingsManager.getValue(SkyfallUtils::Settings::DEBUG_MODE).GetString(), "ON") == 0);
+
+    m_enemyPlayer.setSize(sf::Vector2f(70.f, 70.f));
+    m_enemyPlayer.setColor(sf::Color(2, 35, 89));
+    m_enemyPlayer.setIndicator(sf::Color(110, 6, 2), 8.0f);
+    m_enemyPlayer.setSpeed(200.f);
+    m_enemyPlayer.setSprint(1000.f, 5.f);
     
     float youHealthPosX = 850.f;
     float enemyHealthPosX = 720.f;

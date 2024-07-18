@@ -93,25 +93,6 @@ bool Game::checkCollision(std::vector<sf::CircleShape> vec, Player& player) {
 	return false;
 }
 
-void Game::handlePlayerMovement(Player& player, sf::RenderWindow& window, bool wantSprint) {
-	if (!m_blockActions.load()) {
-		const sf::Vector2i mousePosition{ sf::Mouse::getPosition(window) };
-		const sf::Vector2f mouseCoord{ window.mapPixelToCoords(mousePosition) };
-
-		if (wantSprint && !player.isSprinting()) {
-			if (player.canSprint()) {
-				player.setTarget(mouseCoord);
-				player.startSprint(true);
-				player.calcPlayerTrend(mouseCoord);
-			}
-		}
-		else if(!player.isSprinting()) {
-			player.setTarget(mouseCoord);
-			player.calcPlayerTrend(mouseCoord);
-		}
-	}
-}
-
 void Game::startTimer(sf::Text& text) {
 	using namespace std::chrono_literals;
 

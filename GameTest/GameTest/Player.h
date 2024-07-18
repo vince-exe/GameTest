@@ -24,7 +24,6 @@ private:
     sf::Vector2f m_targetPosition;
     sf::ConvexShape m_Indicator;
     sf::Clock m_sprintClock;
-    sf::RectangleShape m_targetToReach;
 
     bool m_drawVertexLine;
     /* this is used to have a more precise player movement */
@@ -44,18 +43,30 @@ private:
 
     void updateIndicatorPos();
 
-    void resetSprint();
+    void calcPlayerTrend(const sf::Vector2f& newPos);
 
 public:
-    Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout);
+    Player();
 
     CollisionSide& getCollidedSide();
+
+    void resetSprint();
+
+    void handlePlayerMovement(std::atomic<bool> actionsBlocked, sf::RenderWindow& window, bool wantSprint);
+
+    void setSize(sf::Vector2f size);
+
+    void setColor(sf::Color color);
+
+    void setIndicator(sf::Color color, float distance);
+
+    void setSpeed(float speed);
+
+    void setSprint(float power, float timeout);
 
     void setDebugMode(bool flag);
 
     void handleEnemyCollision(const CollisionSide collidionSide);
-
-    void calcPlayerTrend(const sf::Vector2f& newPos);
 
     void update(sf::Time deltaTime, const sf::RectangleShape& other);
 

@@ -34,7 +34,7 @@ private:
 	bool m_displayGameWindow;
 	std::atomic<bool> m_inMatchmaking;
 
-	std::shared_ptr<Client> m_Client;
+	Client m_Client;
 	std::string m_Nickname;
 
 private:

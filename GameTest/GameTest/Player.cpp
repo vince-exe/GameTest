@@ -1,28 +1,58 @@
 #include "Player.h"
 
-Player::Player(sf::Vector2f rectSize, sf::Color rectColor, sf::Color indicatorColor, float distanceAbove, float speed, float sprintPower, float sprintTimeout) {
-    m_Rectangle.setSize(rectSize);
-    m_targetToReach.setSize(sf::Vector2f(2.f, 2.f));
-
-    m_Rectangle.setFillColor(rectColor);
-
+Player::Player() {
     m_Indicator.setPointCount(3);
-    m_Indicator.setFillColor(indicatorColor);
-
-    m_distanceAbove = distanceAbove;
-    m_Speed = speed;
 
     m_Indicator.setPoint(0, sf::Vector2f(-m_indicatorBaseHalf, 0.f));
     m_Indicator.setPoint(1, sf::Vector2f(m_indicatorBaseHalf, 0.f));
     m_Indicator.setPoint(2, sf::Vector2f(0.f, m_indicatorHeight));
 
-    m_sprintTimeout = sprintTimeout;
-    m_sprintPower = sprintPower;
     m_isSprinting = false;
     m_targetReached = true;
     m_Moving = false;
     m_vertexLine = std::make_shared<sf::VertexArray>(sf::Lines, 2);
     m_drawVertexLine = false;
+}
+
+void Player::setSize(sf::Vector2f vec) {
+    m_Rectangle.setSize(vec);
+}
+
+void Player::setColor(sf::Color color) {
+    m_Rectangle.setFillColor(color);
+}
+
+void Player::setIndicator(sf::Color color, float distance) {
+    m_Indicator.setFillColor(color);
+    m_distanceAbove = distance;
+}
+
+void Player::handlePlayerMovement(std::atomic<bool> actionsBlocked, sf::RenderWindow& window, bool wantSprint) {
+    if (!actionsBlocked.load()) {
+        const sf::Vector2i mousePosition{ sf::Mouse::getPosition(window) };
+        const sf::Vector2f mouseCoord{ window.mapPixelToCoords(mousePosition) };
+
+        if (wantSprint && !isSprinting()) {
+            if (canSprint()) {
+                setTarget(mouseCoord);
+                startSprint(true);
+                calcPlayerTrend(mouseCoord);
+            }
+        }
+        else if (!isSprinting()) {
+            setTarget(mouseCoord);
+            calcPlayerTrend(mouseCoord);
+        }
+    }
+}
+
+void Player::setSpeed(float speed) {
+    m_Speed = speed;
+}
+
+void Player::setSprint(float power, float timeout) {
+    m_sprintPower = power;
+    m_sprintTimeout = timeout;
 }
 
 Player::CollisionSide& Player::getCollidedSide() {

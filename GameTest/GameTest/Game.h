@@ -71,8 +71,6 @@ public:
 
 	bool checkCollision(std::vector<sf::CircleShape> vec, Player& player);
 
-	void handlePlayerMovement(Player& player, sf::RenderWindow& window, bool wantSprint);
-
 	void startTimer(sf::Text& text);
 
 	void handleEnemyQuit();

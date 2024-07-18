@@ -1,14 +1,15 @@
+TESTING:
+-per verificare cose come (latenza di gioco etc..) entrare con ip pubblico nel server
+
 PRINCIPALE:
--Lo sprint si deve ricaricare ogni volta che inizia un nuovo round ( player / nemico )
 -Modificare la OptionsGameWindow e metterci le stesse cose della OptionsMainMenu
+-implementare entrambi protocolli TCP / UDP per il gioco, TCP = informazioni che non possono essere perse, UDP: informazioni che possono essere perse
 
 
 REFACTORING-PRINCIPALE:
--trasformare Player da shared_ptr a instanza normale ( MainGameWindow )
 -creare un nuovo progetto "Common-Libraries" che conterrà il NetPacket e una classe JsonManager.
 -cercare di risolvere quel fatto della finestra che aspetta un secondo per caricarsi ( MainGameWindow )
 
--implementare entrambi protocolli TCP / UDP per il gioco, TCP = informazioni che non possono essere perse, UDP: informazioni che possono essere perse
 
 DA FARE SECONDARIE ( rispettare l'ordine per una maggiore chiarezza ):
 1)continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )
@@ -17,7 +18,10 @@ DA FARE SECONDARIE ( rispettare l'ordine per una maggiore chiarezza ):
 4)(Introdurre una chat con un sistema di amiciza / di scambio messaggi etc..
 
 
-IDEA-GIOCO:
+GIOCO:
 delle "aree di danno" vengono generate nella mappa e l'intento del player è quello di buttare il nemico in quelle aree
 per fargli prendere danno e vincere la partita.
 
+E: fa fermare il giocatore, anche mentre sprinta, può essere utilizzato per fare delle finte.
+Click-Sinistro: fa muovere il player.
+Click-Destro: fa sprintare il player.

@@ -20,7 +20,7 @@
 class MainGameWindow {
 private:
 	sf::RenderWindow m_Window;
-	std::shared_ptr<Client> m_Client;
+	Client* m_Client;
 	Game m_Game;
 
 	sf::Text m_myNickname, m_enemyNickname, m_vsText, m_waitRoundText, m_gameTimer;
@@ -32,7 +32,7 @@ private:
 	sf::RectangleShape m_youHealth[3];
 	sf::RectangleShape m_enemyHealth[3];
 
-	std::shared_ptr<Player> m_youPlayer, m_enemyPlayer;
+	Player m_youPlayer, m_enemyPlayer;
 
 	bool m_displayWindow, m_inGameSettings;
 	std::atomic<bool> m_closeSettingsWindowFlag;
@@ -70,5 +70,5 @@ private:
 	bool initPlayerAndEnemyPosition();
 
 public:
-	void init(const std::string nickname, std::shared_ptr<Client> client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager);
+	void init(const std::string nickname, Client& client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager);
 };

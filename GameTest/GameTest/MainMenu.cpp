@@ -15,8 +15,6 @@ bool MainMenu::init(TextureManager& textureManager, FontManager& fontManager, Se
     /* for matchmaking */
     m_inMatchmaking.store(false);
 
-    m_Client = std::make_shared<Client>();
-
     setTextures(textureManager);
     initSprites();
     sf::Event event;
@@ -177,12 +175,12 @@ void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManag
 
 void MainMenu::handleClientConnection(std::string nick, std::string ip, int port, AudioManager& audioManager) {
     try {
-        if (!m_Client->connect(ip, port)) {
+        if (!m_Client.connect(ip, port)) {
             audioManager.getErrorSound().play();    
             displayTextThread(m_menuMsgs[0], 7); // "Server Down" message.
         } 
         else {
-            NetPacket::NetMessages msg = NetUtils::read_(*m_Client->getSocket()).getMsgType();
+            NetPacket::NetMessages msg = NetUtils::read_(*m_Client.getSocket()).getMsgType();
 
             if (msg == NetPacket::NetMessages::SERVER_FULL) {
                 audioManager.getErrorSound().play();
@@ -190,19 +188,19 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
             }
             else {
                 /* send the m_Nickname */
-                NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
+                NetUtils::write_(*m_Client.getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
 
                 /* check the m_Nickname */
-                if (NetUtils::read_(*m_Client->getSocket()).getMsgType() == NetPacket::NetMessages::NICK_EXITS) {
+                if (NetUtils::read_(*m_Client.getSocket()).getMsgType() == NetPacket::NetMessages::NICK_EXITS) {
                     audioManager.getErrorSound().play();
-                    m_Client->getSocket()->close();
+                    m_Client.getSocket()->close();
                     displayTextThread(m_menuMsgs[1], 7); // Nick exists text
                     
                 }
                 /* send the matchmaking request */
                 else {
-                    NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
-                    handleMatchmakingClient(NetUtils::read_(*m_Client->getSocket()).getMsgType(), audioManager, nick);
+                    NetUtils::write_(*m_Client.getSocket(), NetPacket(NetPacket::NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
+                    handleMatchmakingClient(NetUtils::read_(*m_Client.getSocket()).getMsgType(), audioManager, nick);
                 }
             }
         }
@@ -235,17 +233,17 @@ void MainMenu::listenForMatchmaking(std::string m_Nickname) {
     NetPacket p;
     m_inMatchmaking.store(true);
    
-    m_Client->getSocket()->non_blocking(true);
+    m_Client.getSocket()->non_blocking(true);
 
     while (m_inMatchmaking.load()) {
         try {
             std::this_thread::sleep_for(500ms);            
-            p = NetUtils::read_(*m_Client->getSocket());
+            p = NetUtils::read_(*m_Client.getSocket());
 
             if (p.getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
-                NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
+                NetUtils::write_(*m_Client.getSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 
-                m_Client->getSocket()->non_blocking(false);
+                m_Client.getSocket()->non_blocking(false);
                 matchFound(m_Nickname);
                 return;
             }
@@ -254,7 +252,7 @@ void MainMenu::listenForMatchmaking(std::string m_Nickname) {
             if (e.code() != boost::asio::error::would_block) {
                 std::cerr << "\nCatch in listen for matchmaking: " << e.what() << std::endl;
 
-                m_Client->getSocket()->close();
+                m_Client.getSocket()->close();
                 m_inMatchmaking.store(false);
                 m_displayText = false;
             }
@@ -266,13 +264,13 @@ void MainMenu::undoMatchmaking() {
     std::cout << "\nundo matchmaking.\n";
     try {
         m_inMatchmaking.store(false);
-        NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::UNDO_MATCHMAKING, nullptr, 0));
+        NetUtils::write_(*m_Client.getSocket(), NetPacket(NetPacket::NetMessages::UNDO_MATCHMAKING, nullptr, 0));
     }
     catch (const boost::system::system_error& e) {
         std::cerr << "\nError in undo matchmaking " << e.what() << std::endl;
         
     }
-    m_Client->close();
+    m_Client.close();
 }
 
 void MainMenu::exitMenu(TextureManager& textureManager, AudioManager& audioManager) {
