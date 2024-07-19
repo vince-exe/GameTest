@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ExternalIncludePath>D:\C++Libs\boost_1_82_0;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>D:\C++Libs\rapidjson-1.1.0\include;D:\C++Libs\boost_1_82_0;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -107,7 +107,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\C++Libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\C++Libs\rapidjson-1.1.0\include;D:\C++Libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +138,7 @@
     <ClCompile Include="NetPacket.cpp" />
     <ClCompile Include="network_utilities.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="ServerSettings.cpp" />
     <ClCompile Include="TemporaryThread.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
@@ -147,6 +148,7 @@
     <ClInclude Include="NetPacket.h" />
     <ClInclude Include="network_utilities.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="ServerSettings.h" />
     <ClInclude Include="TemporaryThread.h" />
     <ClInclude Include="User.h" />
   </ItemGroup>

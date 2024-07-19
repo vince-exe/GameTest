@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="File di origine">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="File di intestazione">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="File di risorse">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="File di intestazione\Game">
+      <UniqueIdentifier>{29eed832-b403-4bae-8907-f45726b09dec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di intestazione\Menu">
+      <UniqueIdentifier>{d3f0379d-c441-4199-a559-37821500cb92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di intestazione\Network">
+      <UniqueIdentifier>{a29b7008-1873-40e2-bb01-3f395382e11c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di intestazione\Utils">
+      <UniqueIdentifier>{846d614d-5788-4a77-bfd3-e37c553a39b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di origine\Game">
+      <UniqueIdentifier>{7acf41f4-9a10-40ca-8ecf-2c8fff8cc03e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di origine\Menu">
+      <UniqueIdentifier>{9562ea54-a9e2-48ab-8e61-5fbcc6cad7b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di origine\Network">
+      <UniqueIdentifier>{b4220ef4-d84f-4837-af7a-4538602f5977}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di origine\Utils">
+      <UniqueIdentifier>{76ae4e18-e755-4907-8b71-58e67f609b2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di intestazione\Game\GameMenus">
+      <UniqueIdentifier>{5590cb0b-9b8d-4980-9116-fa3e23cf21d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File di origine\Game\GameMenus">
+      <UniqueIdentifier>{087f37da-43ca-426a-a879-866d255d46b7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="FontManager.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsManager.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>File di origine\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="network_game_utilities.cpp">
+      <Filter>File di origine\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>File di origine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>File di origine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGameWindow.cpp">
+      <Filter>File di origine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Music.cpp">
+      <Filter>File di origine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>File di origine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>File di origine\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="EndGameWindow.cpp">
+      <Filter>File di origine\Game\GameMenus</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSettingsMenu.cpp">
+      <Filter>File di origine\Game\GameMenus</Filter>
+    </ClCompile>
+    <ClCompile Include="IpPortMenu.cpp">
+      <Filter>File di origine\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsMainMenu.cpp">
+      <Filter>File di origine\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="NicknameMenu.cpp">
+      <Filter>File di origine\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>File di origine\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuConfirmationExit.cpp">
+      <Filter>File di origine\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameServer\NetPacket.cpp">
+      <Filter>File di origine\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameServer\network_utilities.cpp">
+      <Filter>File di origine\Network</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AudioManager.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsManager.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>File di intestazione\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="network_game_utilities.h">
+      <Filter>File di intestazione\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGameWindow.h">
+      <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Music.h">
+      <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>File di intestazione\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="EndGameWindow.h">
+      <Filter>File di intestazione\Game\GameMenus</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSettingsMenu.h">
+      <Filter>File di intestazione\Game\GameMenus</Filter>
+    </ClInclude>
+    <ClInclude Include="IpPortMenu.h">
+      <Filter>File di intestazione\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsMainMenu.h">
+      <Filter>File di intestazione\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="NicknameMenu.h">
+      <Filter>File di intestazione\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>File di intestazione\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuConfirmationExit.h">
+      <Filter>File di intestazione\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameServer\network_utilities.h">
+      <Filter>File di intestazione\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameServer\NetPacket.h">
+      <Filter>File di intestazione\Network</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

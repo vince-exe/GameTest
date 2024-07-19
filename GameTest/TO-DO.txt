@@ -3,11 +3,11 @@ TESTING:
 
 PRINCIPALE:
 -Modificare la OptionsGameWindow e metterci le stesse cose della OptionsMainMenu
+-Fare che la connessione tra i client è diretta e non deve passare per la GameSession.
 -implementare entrambi protocolli TCP / UDP per il gioco, TCP = informazioni che non possono essere perse, UDP: informazioni che possono essere perse
 
 
 REFACTORING-PRINCIPALE:
--creare un nuovo progetto "Common-Libraries" che conterrà il NetPacket e una classe JsonManager.
 -cercare di risolvere quel fatto della finestra che aspetta un secondo per caricarsi ( MainGameWindow )
 
 
