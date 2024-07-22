@@ -6,10 +6,17 @@
 #include "NetPacket.h"
 
 using boost::asio::ip::tcp;
+using boost::asio::ip::udp;
 
-namespace NetUtils {        
-    NetPacket read_(tcp::socket& socket);
+namespace NetUtils {
+    namespace Tcp {
+        NetPacket read_(tcp::socket& socket);
 
-    bool write_(tcp::socket& socket, const NetPacket& packet);
+        void write_(tcp::socket& socket, const NetPacket& packet);
+    }
+    namespace Udp {
+        NetPacket read_(udp::socket& socket, udp::endpoint& endpoint);
+
+        void write_(udp::socket& socket, const udp::endpoint& endpoint, const NetPacket& packet);
+    }
 }
-

@@ -34,19 +34,19 @@ void GameSession::start() {
 }
 
 void GameSession::sendNicknames() {
-	NetUtils::write_(*m_user1->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(m_user2->getNick().c_str()), m_user2->getNick().size()));
-	NetUtils::write_(*m_user2->getSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(m_user1->getNick().c_str()), m_user1->getNick().size()));
+	NetUtils::Tcp::write_(*m_user1->getTCPSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(m_user2->getNick().c_str()), m_user2->getNick().size()));
+	NetUtils::Tcp::write_(*m_user2->getTCPSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(m_user1->getNick().c_str()), m_user1->getNick().size()));
 }
 
 void GameSession::sendDefaultPositions() {
 	float player1Position[] = { 530.f, 470.f };
 	float player2Position[] = { 670.f, 470.f };
 
-	NetUtils::write_(*m_user1->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
-	NetUtils::write_(*m_user2->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
+	NetUtils::Tcp::write_(*m_user1->getTCPSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
+	NetUtils::Tcp::write_(*m_user2->getTCPSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
 
-	NetUtils::write_(*m_user1->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
-	NetUtils::write_(*m_user2->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
+	NetUtils::Tcp::write_(*m_user1->getTCPSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
+	NetUtils::Tcp::write_(*m_user2->getTCPSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
 }
 
 void GameSession::setDamageAreasCoordinates() {
@@ -105,16 +105,16 @@ void GameSession::sendDamageAreasConrdinates() {
 	std::vector<uint8_t> byteArray = GameSessionUtils::convertCoordinatesToBytes(m_damageAreasCoordinates);
 	NetPacket packet(NetPacket::NetMessages::GAME_STARTED, byteArray.data(), byteArray.size());
 
-	NetUtils::write_(*m_user1->getSocket(), packet);
-	NetUtils::write_(*m_user2->getSocket(), packet);
+	NetUtils::Tcp::write_(*m_user1->getTCPSocket(), packet);
+	NetUtils::Tcp::write_(*m_user2->getTCPSocket(), packet);
 }
 
 void GameSession::handleGameEnd() {
-	NetUtils::write_(*m_user1->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
-	NetUtils::write_(*m_user2->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
+	NetUtils::Tcp::write_(*m_user1->getTCPSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
+	NetUtils::Tcp::write_(*m_user2->getTCPSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
 
-	m_user1->getSocket()->close();
-	m_user2->getSocket()->close();
+	m_user1->getTCPSocket()->close();
+	m_user2->getTCPSocket()->close();
 	m_usersMap->erase(m_usersMap->find(m_user1->getNick()));
 	m_usersMap->erase(m_usersMap->find(m_user2->getNick()));
 }
@@ -124,21 +124,21 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 
 	while (true) {
 		try {
-			packet = NetUtils::read_(*client->getSocket());
+			packet = NetUtils::Tcp::read_(*client->getTCPSocket());
 
 			if (packet.getMsgType() == NetPacket::NetMessages::GAME_END) {
 				m_gameEnd = true;;
 				return;
 			}
 
-			NetUtils::write_(*otherClient->getSocket(), packet);
+			NetUtils::Tcp::write_(*otherClient->getTCPSocket(), packet);
 		}
 		catch (const boost::system::system_error& ex) {
-			if (otherClient->getSocket()->is_open()) {
-				NetUtils::write_(*otherClient->getSocket(), NetPacket(NetPacket::NetMessages::QUIT_GAME, nullptr, 0));
+			if (otherClient->getTCPSocket()->is_open()) {
+				NetUtils::Tcp::write_(*otherClient->getTCPSocket(), NetPacket(NetPacket::NetMessages::QUIT_GAME, nullptr, 0));
 			}
 
-			client->getSocket()->close();
+			client->getTCPSocket()->close();
 			m_usersMap->erase(m_usersMap->find(client->getNick()));
 			return;
 		}

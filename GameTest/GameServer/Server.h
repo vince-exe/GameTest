@@ -15,15 +15,17 @@
 #include "TemporaryThread.h"
 
 using boost::asio::ip::tcp;
+using boost::asio::ip::udp;
 
 class Server {
 public:
-	Server(int port, int maxConnections, int clearUselessThreadsTime);
+	Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConnections, unsigned int clearUselessThreadsTime);
 
 	void accept();
 
 	void startRoutines();
 
+	// refactoring: why it's public?
 	std::unordered_map<std::string, std::shared_ptr<User>> getUsersMap();
 
 private:
@@ -33,29 +35,37 @@ private:
 
 	bool handleUserNickname(std::shared_ptr<tcp::socket> socket, const std::string& nick);
 
-	/* return true if a match has been found */
+	// return true if a match has been found
 	bool handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick);
 
 	void handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick);
-	
+
 	void gameSessionThread(const std::string nick);
 
 	void addUselessThread();
 
 	void clearUselessThreads();
 
-private:
-	boost::asio::io_service m_ioServicePtr;
-	std::unique_ptr<tcp::acceptor> m_acceptorPtr;
+	void listenUDPConnections();
 
-	int m_maxConnections, m_clearUselessThreadsTime;
+	bool waitUDPConnection(std::string& nick);
+
+private:
+	boost::asio::io_service m_ioService;
+	std::unique_ptr<tcp::acceptor> m_acceptorPtr;
+	std::unique_ptr<udp::socket> m_udpServerSocket;
+
+	unsigned int m_maxConnections, m_clearUselessThreadsTime, m_udpPort;
 	bool m_doRoutines;
 
 	std::unordered_map<std::string, std::shared_ptr<User>> m_usersMap;
+
+	std::unordered_map<std::string, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>> m_udpConnectionsMap;
+	std::condition_variable m_udpConnectionsCv;
+	std::mutex m_udpConnectionMtx;
 
 	std::queue<std::shared_ptr<User>> m_matchmakingQueue;
 	std::list<TemporaryThread> m_tempThreadsList;
 
 	std::mutex m_mtx;
-	std::shared_ptr<std::thread> m_clearThread;
 };

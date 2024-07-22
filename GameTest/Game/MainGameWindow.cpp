@@ -61,7 +61,7 @@ void MainGameWindow::init(const std::string nickname, Client& client, TextureMan
         else if (m_Game.getGameState() == Game::GameStates::END) {
             audioManager.getCountdownSound().stop();
             if (!m_Game.hasEnemyQuit()) {
-                NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
+                NetUtils::Tcp::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::GAME_END, nullptr, 0));
             }
             m_closeSettingsWindowFlag.store(true);
 
@@ -80,7 +80,7 @@ void MainGameWindow::init(const std::string nickname, Client& client, TextureMan
 }
 
 bool MainGameWindow::initPlayerAndEnemyPosition() {
-    NetPacket packet = NetUtils::read_(*m_Client->getSocket());
+    NetPacket packet = NetUtils::Tcp::read_(*m_Client->getSocket());
     if (packet.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
         sf::Vector2f pos = NetGameUtils::getSfvector2f(packet);
 
@@ -88,7 +88,7 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
         m_youPlayer.setPosition(pos);
     }
 
-    packet = NetUtils::read_(*m_Client->getSocket());
+    packet = NetUtils::Tcp::read_(*m_Client->getSocket());
     if (packet.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
         m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet));
 
@@ -101,7 +101,7 @@ void MainGameWindow::handleMessages(AudioManager& audioManager) {
     NetPacket packet;
     while (true) {
         try {
-            packet = NetUtils::read_(*m_Client->getSocket());
+            packet = NetUtils::Tcp::read_(*m_Client->getSocket());
 
             switch (packet.getMsgType()) {
             case NetPacket::NetMessages::GAME_END:
@@ -140,7 +140,7 @@ void MainGameWindow::handleMessages(AudioManager& audioManager) {
                 m_youPlayer.setPosition(m_Game.getStartPlayerPosition());
                
                 float p[] = { m_youPlayer.getPosition().x, m_youPlayer.getPosition().y };
-                NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
+                NetUtils::Tcp::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
                 break;
             }
         }
@@ -240,12 +240,12 @@ void MainGameWindow::update(sf::Time deltaTime, AudioManager& audioManager) {
         checkPlayerWindowBorders();
         /* send the position */
         float p[2] = { m_youPlayer.getPosition().x, m_youPlayer.getPosition().y };
-        NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
+        NetUtils::Tcp::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
         
         if (m_youPlayer.isSprinting() && m_youPlayer.isEnemyHit()) {
             Player::CollisionSide cL = m_youPlayer.getCollidedSide();
 
-            NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION, (uint8_t*)&cL, sizeof(cL)));
+            NetUtils::Tcp::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION, (uint8_t*)&cL, sizeof(cL)));
             m_youPlayer.stopMove();
             m_youPlayer.resetEnemyHit();
         }
@@ -256,12 +256,12 @@ void MainGameWindow::update(sf::Time deltaTime, AudioManager& audioManager) {
             m_youPlayer.stopMove();
             m_Game.waitRound(m_waitRoundText, audioManager.getCountdownSound());
             m_Game.handleNewRound(Game::GameEntities::PLAYER);
-            NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA, nullptr, 0));
+            NetUtils::Tcp::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA, nullptr, 0));
 
             m_youPlayer.setPosition(m_Game.getStartPlayerPosition());
             float p[] = { m_youPlayer.getPosition().x, m_youPlayer.getPosition().y };
 
-            NetUtils::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
+            NetUtils::Tcp::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
         }
     }
 }
@@ -379,7 +379,7 @@ void MainGameWindow::initSprites(FontManager& fontManager, SettingsManager& sett
 
 bool MainGameWindow::handleEnemyNickname() {
     try {
-        NetPacket p = NetUtils::read_(*m_Client->getSocket());
+        NetPacket p = NetUtils::Tcp::read_(*m_Client->getSocket());
         m_enemyNickname.setString(NetGameUtils::getString(p));
         return true;
     }

@@ -1,6 +1,21 @@
--fare dei test per vedere se i tempi per la tempThreadList vengono rispettati.
+PRINCIPALE:
+-creare una ThreadSafeUnorderedMap class per gestire le unordered_map come quella della udp tra più threads.
+-creare una ThreadSafeQueue class per gestire le code come quella del matchmaking.
+
+ continuare lo sviluppo della UDP, request:
+-ricordarsi che quando un client chiude la connessione deve essere liberata anche la mappa che tiene traccia della UDP-CONNECTION con relativo ENDPOINT.
+
+-Fare che c'è un logger del GameServer che logga in dei file cose come: clearUselessThread etc..
+
 
 Creare un interfaccia grafica per il GameServer così l'operatore può vedere & gestire in realt time:
 -sessioni di gioco
 -player presenti
 -altre cose..
+
+REFACTORING:
+-cercare di trovare una soluzione più ottimale per il design della handle-undo-matchmaking.
+
+SECONDARIE:
+-il tempo di attesa per una UDP-CONNECTION può essere gestito con file .json 
+( ovviamente questo implicà che il client dovrà conoscere questo tempo di attesa affinché possa gestire il timeout anche lui internamente ).

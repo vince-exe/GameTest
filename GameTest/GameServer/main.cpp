@@ -10,17 +10,24 @@ int main() {
 		return 1;
 	}
 
-	int maxConnections;
+	unsigned int maxConnections;
 	std::cout << "\nMax Connections: ";
 	std::cin >> maxConnections;
 	 
-	Server server(8888, maxConnections, sSingleton.getValue(SettingsFileUtils::CLEAR_USELESS_THREADS_EACH).GetInt());
+	unsigned int tcpPort, udpPort;
+	std::cout << "\nTCP Port: ";
+	std::cin >> tcpPort;
+
+	std::cout << "\nUDP Port: ";
+	std::cin >> udpPort;
+
+	Server server(tcpPort, udpPort, maxConnections, sSingleton.getValue(SettingsFileUtils::CLEAR_USELESS_THREADS_EACH).GetInt());
 	std::cout << "\nServer Started";
 
 	server.startRoutines();
 	std::cout << "\nSuccessfully started the server routines";
 
 	server.accept();
-
+	
 	return 0;
 }
