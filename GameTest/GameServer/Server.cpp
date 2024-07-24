@@ -19,25 +19,21 @@ void Server::listenUDPConnections() {
 	
 		packet = NetUtils::Udp::read_(*m_udpServerSocket, *remoteEndpoint);
 		std::string nick(reinterpret_cast<const char*>(&packet.getData()[0]), packet.getDataSize());
-		
-		{
-			std::lock_guard<std::mutex> lock(m_udpConnectionMtx);
-			m_udpConnectionsMap[nick] = std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(true, remoteEndpoint);
-			// notify all the threads that are waiting that a user does a udp-connection
-			m_udpConnectionsCv.notify_all();
-		}
+
+		m_udpConnectionsMap.insert(nick, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(true, remoteEndpoint));
+		m_udpConnectionsCv.notify_all();
 	}
 }
 
 bool Server::waitUDPConnection(std::string& nick) {
 	std::cout << "\nAspettando una UDP-CONNECTION sul nickname: " << nick;
 	bool success;
-
+	
 	std::thread waitThread([this, &nick, &success] {
 		while (true) {
 			std::unique_lock<std::mutex> lock(m_udpConnectionMtx);
-
-			if (m_udpConnectionsCv.wait_for(lock, std::chrono::seconds(20), [this, &nick] { return m_udpConnectionsMap[nick].first; })) {
+			
+			if (m_udpConnectionsCv.wait_for(lock, std::chrono::seconds(20), [this, &nick] { return m_udpConnectionsMap.get(nick).first; })) {
 				success = true;
 				return;
 			}
@@ -84,7 +80,7 @@ bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, const std::
 		}
 		else {
 			// creates the User
-			m_usersMap[nick] = std::make_shared<User>(nick, socket);
+			m_usersMap.insert(nick, std::make_shared<User>(nick, socket));
 			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << "[ " << nick << " ] " << nick << " | accepted.";
 			//after this message the client will send the UDP_CONNECTION request
 			NetUtils::Tcp::write_(*socket, NetPacket(NetPacket::NetMessages::CLIENT_ACCEPTED, nullptr, 0));
@@ -94,7 +90,7 @@ bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, const std::
 	catch (const boost::system::system_error& ex) {
 		// temporary catch solution debug 
 		std::cout << "\nCatch in handle client... (handleNickname func)";
-		m_usersMap.erase(m_usersMap.find(nick));
+		m_usersMap.erase(nick);
 
 		return false;
 	}
@@ -110,18 +106,19 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 		socket->close();
 		return;
 	}
-
-	{
-		std::lock_guard<std::mutex> lock(m_udpConnectionMtx);
-		// set the client udp-connection flag to false and the endpoint to a nullptr.
-		m_udpConnectionsMap[nick] = std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(false, nullptr);
-	}
+	m_udpConnectionsMap.insert(nick, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(false, nullptr));
+	
 	// (blocking) waits for x seconds or until a udp connection comes from the client
 	if (waitUDPConnection(nick)) {
 		std::cout << "\nConnessione UDP riuscita sul thread: " << nick;
 	}
 	else {
 		std::cout << "\nConnessione UDP non riuscita sul thread: " << nick;
+		socket->close();
+		m_usersMap.erase(nick);
+		m_udpConnectionsMap.erase(nick);
+		
+		return;
 	}
 
 	NetPacket::NetMessages netMsg;
@@ -146,7 +143,9 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 		catch (const boost::system::system_error& ex) {
 			std::cerr << "\nCatch in handle client [ Server.cpp ] |" << ex.what() << "\n";
 			socket->close();
-			m_usersMap.erase(m_usersMap.find(nick));
+			m_usersMap.erase(nick);
+			m_udpConnectionsMap.erase(nick);
+
 			return;
 		}
 	}
@@ -154,7 +153,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 
 bool Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick) {
 	if (m_matchmakingQueue.empty()) {
-		m_matchmakingQueue.push(m_usersMap[nick]);
+		m_matchmakingQueue.push(m_usersMap.get(nick));
 		NetUtils::Tcp::write_(*socket, NetPacket(NetPacket::NetMessages::WAIT_FOR_MATCH, nullptr, 0));
 
 		std::cout << "\nClient [nick]: " << nick << " in queue for a match.";
@@ -166,7 +165,7 @@ bool Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::s
 void Server::gameSessionThread(const std::string nick) {
 	// match this client with the last client who requested the match 
 	std::shared_ptr<User> player1 = m_matchmakingQueue.front();
-	std::shared_ptr<User> player2 = m_usersMap[nick];
+	std::shared_ptr<User> player2 = m_usersMap.get(nick);
 
 	/* send the match found message */
 	NetUtils::Tcp::write_(*player1->getTCPSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
@@ -196,7 +195,8 @@ void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const st
 			p = NetUtils::Tcp::read_(*socket);
 			if (p.getMsgType() == NetPacket::NetMessages::UNDO_MATCHMAKING) {
 				m_matchmakingQueue.pop();
-				m_usersMap.erase(m_usersMap.find(nick));
+				m_usersMap.erase(nick);
+				m_udpConnectionsMap.erase(nick);
 				/* add this thread to the cancellable threads, so it will be deleted */
 				addUselessThread();
 
@@ -216,7 +216,9 @@ void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const st
 				std::cerr << "\nCatch in listen for UndoMatchmaking: " << e.what() << std::endl;
 
 				m_matchmakingQueue.pop();
-				m_usersMap.erase(m_usersMap.find(nick));
+				m_usersMap.erase(nick);
+				m_udpConnectionsMap.erase(nick);
+
 				return;
 			}
 		}
@@ -229,7 +231,7 @@ bool Server::nicknameAlreadyExist(const std::string& nick) {
 	return it != m_usersMap.end();
 }
 
-std::unordered_map<std::string, std::shared_ptr<User>> Server::getUsersMap() {
+ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>>& Server::getUsersMap() {
 	return m_usersMap;
 }
 

@@ -80,5 +80,8 @@
     <ClInclude Include="NetPacket.h">
       <Filter>File di intestazione\Network</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadSafeUnorderedMap.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

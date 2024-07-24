@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <unordered_map>
 #include <thread>
 #include <boost/asio.hpp>
 #include <list>
@@ -13,6 +12,7 @@
 #include "User.h"
 #include "NetPacket.h"
 #include "TemporaryThread.h"
+#include "ThreadSafeUnorderedMap.h"
 
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
@@ -25,8 +25,7 @@ public:
 
 	void startRoutines();
 
-	// refactoring: why it's public?
-	std::unordered_map<std::string, std::shared_ptr<User>> getUsersMap();
+	ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>>& getUsersMap();
 
 private:
 	void handleClient(std::shared_ptr<tcp::socket> socket);
@@ -58,9 +57,9 @@ private:
 	unsigned int m_maxConnections, m_clearUselessThreadsTime, m_udpPort;
 	bool m_doRoutines;
 
-	std::unordered_map<std::string, std::shared_ptr<User>> m_usersMap;
+	ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>> m_usersMap;
 
-	std::unordered_map<std::string, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>> m_udpConnectionsMap;
+	ThreadSafeUnorderedMap<std::string, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>> m_udpConnectionsMap;
 	std::condition_variable m_udpConnectionsCv;
 	std::mutex m_udpConnectionMtx;
 

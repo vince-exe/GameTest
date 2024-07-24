@@ -10,12 +10,13 @@
 #include "NetPacket.h"
 #include "Server.h"
 #include "game_session_utilities.h"
+#include "ThreadSafeUnorderedMap.h"
 
 using boost::asio::ip::tcp;
 
 class GameSession {
 private:
-	std::unordered_map<std::string, std::shared_ptr<User>>* m_usersMap;
+	ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>>* m_usersMap;
 	std::shared_ptr<User> m_user1;
 	std::shared_ptr<User> m_user2;
 
@@ -35,7 +36,7 @@ private:
 	void handleGameEnd();
 
 public:
-	GameSession(std::unordered_map<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2);
+	GameSession(ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2);
 
 	void start();
 };

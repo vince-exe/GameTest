@@ -1,6 +1,6 @@
 #include "GameSession.h"
 
-GameSession::GameSession(std::unordered_map<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2) {
+GameSession::GameSession(ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2) {
 	m_usersMap = usersMap;
 	m_user1 = user1;
 	m_user2 = user2;
@@ -115,8 +115,8 @@ void GameSession::handleGameEnd() {
 
 	m_user1->getTCPSocket()->close();
 	m_user2->getTCPSocket()->close();
-	m_usersMap->erase(m_usersMap->find(m_user1->getNick()));
-	m_usersMap->erase(m_usersMap->find(m_user2->getNick()));
+	m_usersMap->erase(m_user1->getNick());
+	m_usersMap->erase(m_user2->getNick());
 }
 
 void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient) {
@@ -139,7 +139,7 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 			}
 
 			client->getTCPSocket()->close();
-			m_usersMap->erase(m_usersMap->find(client->getNick()));
+			m_usersMap->erase(client->getNick());
 			return;
 		}
 	}
