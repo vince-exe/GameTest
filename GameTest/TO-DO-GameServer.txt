@@ -1,6 +1,4 @@
 PRINCIPALE:
--Fare che si può decidere dal file il tempo di attesa per una UDP request, la porta TCP, quella UDP, le massime connessioni DAL SETTINGS.JSON
-
  continuare lo sviluppo della UDP, request:
 -ricordarsi che quando un client chiude la connessione deve essere liberata anche la mappa che tiene traccia della UDP-CONNECTION con relativo ENDPOINT.
 

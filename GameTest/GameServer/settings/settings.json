@@ -1,1 +1,1 @@
-{"ClearUselessThreadsEach": 120}
+{"Max-Connections":10,"TCP-Port":8888,"UDP-Port":8889,"Clear-Useless-Threads-Each":120}

@@ -7,11 +7,14 @@ ServerSettings& ServerSettings::getInstance() {
 
 bool ServerSettings::init(const std::string& filePath) {
 	m_settingsPath = filePath;
-
     std::ifstream inputFile(filePath);
-    if (!inputFile.is_open()) {
-        std::cerr << "\nNo file found [ Creating a new settings file ]";
-        return createSettingsFile();
+    
+    if (createSettingsFile()) {
+        std::cerr << "\nNo settings file found...[ Created a new settings file ]\n";
+        inputFile.open(filePath);
+    }
+    else {
+        return false;
     }
 
     std::string json((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
@@ -55,9 +58,18 @@ bool ServerSettings::createSettingsFile() {
     rapidjson::Writer<rapidjson::StringBuffer> writer(s);
 
     writer.StartObject();
+    
+    writer.Key(ServerUtils::Settings::MAX_CONNECTIONS.c_str());
+    writer.Int(10);
 
-    writer.Key("ClearUselessThreadsEach");
-    writer.Int(1);
+    writer.Key(ServerUtils::Settings::TCP_PORT.c_str());
+    writer.Int(8888);
+
+    writer.Key(ServerUtils::Settings::UDP_PORT.c_str());
+    writer.Int(8889);
+
+    writer.Key(ServerUtils::Settings::CLEAR_USELESS_THREADS.c_str());
+    writer.Int(120);
 
     writer.EndObject();
 
@@ -66,7 +78,6 @@ bool ServerSettings::createSettingsFile() {
         outputFile << s.GetString();
         outputFile.close();
 
-        std::cout << "\nSuccessfully created the settings.json file in " << m_settingsPath << "\n";
         return true;
     }
 

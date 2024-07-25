@@ -12,7 +12,7 @@ bool SettingsManager::init(const std::string& filePath) {
 
     if (!inputFile.is_open()) {
         std::cerr << "\nNo settings file found...[ Creating a new settings file ]";
-        
+
         if (createSettingsFile()) {
             /* successfully created the settings file*/
             inputFile.open(filePath);

@@ -143,6 +143,7 @@
     <ClCompile Include="TemporaryThread.cpp" />
     <ClCompile Include="TemporaryThreadsManager.cpp" />
     <ClCompile Include="User.cpp" />
+    <ClCompile Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameSession.h" />

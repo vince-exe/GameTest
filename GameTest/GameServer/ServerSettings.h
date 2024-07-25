@@ -7,11 +7,7 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
-namespace SettingsFileUtils {
-	const std::string SETTINGS_PATH = "settings/settings.json";
-
-	const std::string CLEAR_USELESS_THREADS_EACH = "ClearUselessThreadsEach";
-}
+#include "utils.h"
 
 class ServerSettings {
 	ServerSettings() = default;

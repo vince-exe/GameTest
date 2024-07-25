@@ -57,6 +57,9 @@
     <ClCompile Include="TemporaryThreadsManager.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="utils.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameSession.h">
