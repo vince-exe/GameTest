@@ -177,6 +177,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
     try {
         if (!m_Client.connect(ip, port)) {
             audioManager.getErrorSound().play();    
+            m_Client.close();
             displayTextThread(m_menuMsgs[0], 7); // "Server Down" message.
         } 
         else {
@@ -209,6 +210,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
         std::cerr << "\nError in handle m_Client connection: " << e.what() << std::endl;
         /* "Server Down" message */
         displayTextThread(m_menuMsgs[0], 7);
+        m_Client.close();
     }
 }
 

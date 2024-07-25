@@ -82,7 +82,7 @@ bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, const std::
 			// creates the User
 			m_usersMap.insert(nick, std::make_shared<User>(nick, socket));
 			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << "[ " << nick << " ] " << nick << " | accepted.";
-			//after this message the client will send the UDP_CONNECTION request
+			// after this message the client will send the UDP_CONNECTION request
 			NetUtils::Tcp::write_(*socket, NetPacket(NetPacket::NetMessages::CLIENT_ACCEPTED, nullptr, 0));
 			return true;
 		}
@@ -166,7 +166,7 @@ void Server::gameSessionThread(const std::string nick) {
 	// match this client with the last client who requested the match 
 	std::shared_ptr<User> player1 = m_matchmakingQueue.front();
 	std::shared_ptr<User> player2 = m_usersMap.get(nick);
-
+	
 	/* send the match found message */
 	NetUtils::Tcp::write_(*player1->getTCPSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 	NetUtils::Tcp::write_(*player2->getTCPSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
@@ -200,7 +200,7 @@ void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const st
 				/* add this thread to the cancellable threads, so it will be deleted */
 				addUselessThread();
 
-				std::cout << "\nClient [ " << nick << " ]: " << " undo the matchmaking | Current Players in in Match Queue: " << m_matchmakingQueue.size();
+				std::cout << "\nClient [ " << nick << " ]: " << " undo the matchmaking";
 				socket->non_blocking(false);
 				return;
 			}

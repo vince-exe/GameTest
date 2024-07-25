@@ -1,5 +1,4 @@
 PRINCIPALE:
--creare una ThreadSafeQueue class per gestire le code come quella del matchmaking.
 -AddUselessThread deve essere una funzione statica della libreria e quindi non di proprietà di Server, inoltre utilizzare un vector protetto e non una lista.
 
  continuare lo sviluppo della UDP, request:

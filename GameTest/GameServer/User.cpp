@@ -6,14 +6,14 @@ User::User(const std::string& nick, std::shared_ptr<tcp::socket> socketPtr) {
 	m_tcpSocket = socketPtr;
 }
 
-const std::string User::getNick() {
+std::string User::getNick() const {
 	return m_Nick;
 }
 
-const std::string User::getIp() {
+std::string User::getIp() const {
 	return m_Ip;
 }
 
-const std::shared_ptr<tcp::socket> User::getTCPSocket() {
+std::shared_ptr<tcp::socket> User::getTCPSocket() const {
 	return m_tcpSocket;
 }

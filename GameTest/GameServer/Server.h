@@ -4,7 +4,6 @@
 #include <thread>
 #include <boost/asio.hpp>
 #include <list>
-#include <queue>
 #include <mutex>
 
 #include "GameSession.h"
@@ -13,6 +12,7 @@
 #include "NetPacket.h"
 #include "TemporaryThread.h"
 #include "ThreadSafeUnorderedMap.h"
+#include "ThreadSafeQueue.h"
 
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
@@ -63,7 +63,7 @@ private:
 	std::condition_variable m_udpConnectionsCv;
 	std::mutex m_udpConnectionMtx;
 
-	std::queue<std::shared_ptr<User>> m_matchmakingQueue;
+	ThreadSafeQueue<std::shared_ptr<User>> m_matchmakingQueue;
 	std::list<TemporaryThread> m_tempThreadsList;
 
 	std::mutex m_mtx;

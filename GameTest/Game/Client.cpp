@@ -22,5 +22,7 @@ std::shared_ptr<boost::asio::ip::tcp::socket> Client::getSocket() {
 }
 
 void Client::close() {
-    m_Socket->close();
+    if (m_Socket->is_open()) {
+        m_Socket->close();
+    }
 }

@@ -14,9 +14,9 @@ private:
 public:
 	User(const std::string& nick, std::shared_ptr<tcp::socket> socketPtr);
 
-	const std::string getNick();
+	std::string getNick() const;
 	
-	const std::string getIp();
+	std::string getIp() const;
 
-	const std::shared_ptr<tcp::socket> getTCPSocket();
+	std::shared_ptr<tcp::socket> getTCPSocket() const;
 };
