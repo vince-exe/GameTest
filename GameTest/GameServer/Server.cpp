@@ -4,7 +4,6 @@ Server::Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConne
 	m_acceptorPtr = std::make_unique<tcp::acceptor>(m_ioService, tcp::endpoint(tcp::v4(), tcpPort));
 	m_udpServerSocket = std::make_unique<udp::socket>(m_ioService, udp::endpoint(udp::v4(), udpPort));
 
-	TemporaryThread::uselessThreadCounter = 0;
 	m_udpPort = udpPort;
 	m_maxConnections = maxConnections;
 	m_doRoutines = true;
@@ -28,10 +27,11 @@ void Server::listenUDPConnections() {
 bool Server::waitUDPConnection(std::string& nick) {
 	std::cout << "\nAspettando una UDP-CONNECTION sul nickname: " << nick;
 	bool success;
-	
-	std::thread waitThread([this, &nick, &success] {
+	std::mutex mutex;
+
+	std::thread waitThread([this, &nick, &success, &mutex] {
 		while (true) {
-			std::unique_lock<std::mutex> lock(m_udpConnectionMtx);
+			std::unique_lock<std::mutex> lock(mutex);
 			
 			if (m_udpConnectionsCv.wait_for(lock, std::chrono::seconds(20), [this, &nick] { return m_udpConnectionsMap.get(nick).first; })) {
 				success = true;
@@ -108,7 +108,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 	}
 	m_udpConnectionsMap.insert(nick, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(false, nullptr));
 	
-	// (blocking) waits for x seconds or until a udp connection comes from the client
+	// (blocking)waits for x seconds or until a udp connection comes from the client
 	if (waitUDPConnection(nick)) {
 		std::cout << "\nConnessione UDP riuscita sul thread: " << nick;
 	}
@@ -120,7 +120,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 		
 		return;
 	}
-
+	
 	NetPacket::NetMessages netMsg;
 	while (true) {
 		try {
@@ -134,8 +134,8 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 				}
 				else {
 					/* start the thread to listen if the client wants to undo the matchmaking */
-					m_tempThreadsList.push_back(TemporaryThread(std::make_shared<std::thread>(&Server::handleUndoMatchmaking, this, socket, nick), false));
-					m_tempThreadsList.back().getThread()->detach();
+					m_tempThreadsManager.push(TemporaryThread(std::make_shared<std::thread>(&Server::handleUndoMatchmaking, this, socket, nick), false));	
+					m_tempThreadsManager.back().getThread()->detach();
 				}
 				return;
 			}
@@ -172,11 +172,9 @@ void Server::gameSessionThread(const std::string nick) {
 	NetUtils::Tcp::write_(*player2->getTCPSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 
 	/* delete the thread because the match has been found and it's useless to have. */
-	m_mtx.lock();
-	if (m_tempThreadsList.size()) {
-		m_tempThreadsList.pop_back();
+	if (m_tempThreadsManager.size()) {
+		m_tempThreadsManager.pop();
 	}
-	m_mtx.unlock();
 
 	Sleep(1000);
 	GameSession gameSession(&m_usersMap, player1, player2);
@@ -198,7 +196,7 @@ void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const st
 				m_usersMap.erase(nick);
 				m_udpConnectionsMap.erase(nick);
 				/* add this thread to the cancellable threads, so it will be deleted */
-				addUselessThread();
+				m_tempThreadsManager.increaseUselessCounter();
 
 				std::cout << "\nClient [ " << nick << " ]: " << " undo the matchmaking";
 				socket->non_blocking(false);
@@ -235,44 +233,13 @@ ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>>& Server::getUsersMap(
 	return m_usersMap;
 }
 
-void Server::addUselessThread() {
-	m_mtx.lock();
-
-	TemporaryThread::uselessThreadCounter++;
-	int i = 0;
-	std::list<TemporaryThread>::iterator it = m_tempThreadsList.begin();
-
-	while (it != m_tempThreadsList.end() && i < TemporaryThread::uselessThreadCounter) {
-		it->setCancellable();
-		i++;
-		it++;
-	}
-	m_mtx.unlock();
-}
-
 void Server::clearUselessThreads() {
 	while (m_doRoutines) {
 		using namespace std::chrono_literals;
 		std::this_thread::sleep_for(std::chrono::seconds(m_clearUselessThreadsTime));
 		
-		m_mtx.lock();
-		std::list<TemporaryThread>::iterator it = m_tempThreadsList.begin();
-		int i = 0;
-
-		while (it != m_tempThreadsList.end() && i < TemporaryThread::uselessThreadCounter) {
-			if (it->isCancellable()) {
-				it = m_tempThreadsList.erase(it);
-				i++;
-				continue;
-			}
-			it++;
-		}
-		TemporaryThread::uselessThreadCounter -= i;
-		// TO-DO: use a log system
-		if (i > 0) {
-			std::cout << "\n[ LOG ]: Useless Threads Cleared: " << i;
-		}
-		m_mtx.unlock();
+		std::cout << "\n[ LOG ]: Useless Threads Cleared: " << m_tempThreadsManager.clearUselessThreads();
+	
 	}
 	std::cout << "\n[ LOG ]: End ClearUselessThreads routine.";
 }

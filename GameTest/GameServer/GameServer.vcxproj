@@ -141,6 +141,7 @@
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerSettings.cpp" />
     <ClCompile Include="TemporaryThread.cpp" />
+    <ClCompile Include="TemporaryThreadsManager.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +152,7 @@
     <ClInclude Include="Server.h" />
     <ClInclude Include="ServerSettings.h" />
     <ClInclude Include="TemporaryThread.h" />
+    <ClInclude Include="TemporaryThreadsManager.h" />
     <ClInclude Include="ThreadSafeQueue.h" />
     <ClInclude Include="ThreadSafeUnorderedMap.h" />
     <ClInclude Include="User.h" />

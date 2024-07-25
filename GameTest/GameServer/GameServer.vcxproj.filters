@@ -54,6 +54,9 @@
     <ClCompile Include="main.cpp">
       <Filter>File di risorse</Filter>
     </ClCompile>
+    <ClCompile Include="TemporaryThreadsManager.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameSession.h">
@@ -84,6 +87,9 @@
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
     <ClInclude Include="ThreadSafeQueue.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="TemporaryThreadsManager.h">
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>

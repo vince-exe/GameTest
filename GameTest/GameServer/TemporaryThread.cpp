@@ -1,17 +1,15 @@
 #include "TemporaryThread.h"
 
-int TemporaryThread::uselessThreadCounter = 0;
-
 TemporaryThread::TemporaryThread(std::shared_ptr<std::thread> t, bool cancellable) {
 	m_Thread = t;
 	m_Cancellable = cancellable;
 }
 
-std::shared_ptr<std::thread> TemporaryThread::getThread() {
+std::shared_ptr<std::thread> TemporaryThread::getThread() const {
 	return m_Thread;
 }
 
-bool TemporaryThread::isCancellable() {
+bool TemporaryThread::isCancellable() const {
 	return m_Cancellable;
 }
 

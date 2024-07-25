@@ -3,8 +3,6 @@
 #include <iostream>
 #include <thread>
 #include <boost/asio.hpp>
-#include <list>
-#include <mutex>
 
 #include "GameSession.h"
 #include "network_utilities.h"
@@ -13,6 +11,7 @@
 #include "TemporaryThread.h"
 #include "ThreadSafeUnorderedMap.h"
 #include "ThreadSafeQueue.h"
+#include "TemporaryThreadsManager.h"
 
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
@@ -41,8 +40,6 @@ private:
 
 	void gameSessionThread(const std::string nick);
 
-	void addUselessThread();
-
 	void clearUselessThreads();
 
 	void listenUDPConnections();
@@ -61,10 +58,7 @@ private:
 
 	ThreadSafeUnorderedMap<std::string, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>> m_udpConnectionsMap;
 	std::condition_variable m_udpConnectionsCv;
-	std::mutex m_udpConnectionMtx;
 
 	ThreadSafeQueue<std::shared_ptr<User>> m_matchmakingQueue;
-	std::list<TemporaryThread> m_tempThreadsList;
-
-	std::mutex m_mtx;
+	TemporaryThreadsManager m_tempThreadsManager;
 };

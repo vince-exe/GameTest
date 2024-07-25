@@ -1,5 +1,5 @@
 PRINCIPALE:
--AddUselessThread deve essere una funzione statica della libreria e quindi non di proprietà di Server, inoltre utilizzare un vector protetto e non una lista.
+-Fare che si può decidere dal file il tempo di attesa per una UDP request, la porta TCP, quella UDP, le massime connessioni DAL SETTINGS.JSON
 
  continuare lo sviluppo della UDP, request:
 -ricordarsi che quando un client chiude la connessione deve essere liberata anche la mappa che tiene traccia della UDP-CONNECTION con relativo ENDPOINT.
