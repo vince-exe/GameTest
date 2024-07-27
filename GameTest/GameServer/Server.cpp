@@ -16,12 +16,16 @@ void Server::listenUDPConnections() {
 	std::cout << "\nStarted listening for UDP connections\n";
 	while (true) {
 		std::shared_ptr<udp::endpoint> remoteEndpoint = std::make_shared<udp::endpoint>(udp::v4(), m_udpPort);
-	
-		packet = NetUtils::Udp::read_(*m_udpServerSocket, *remoteEndpoint);
-		std::string nick(reinterpret_cast<const char*>(&packet.getData()[0]), packet.getDataSize());
+		try {
+			packet = NetUtils::Udp::read_(*m_udpServerSocket, *remoteEndpoint);
+			std::string nick(reinterpret_cast<const char*>(&packet.getData()[0]), packet.getDataSize());
 
-		m_udpConnectionsMap.insert(nick, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(true, remoteEndpoint));
-		m_udpConnectionsCv.notify_all();
+			m_udpConnectionsMap.insert(nick, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(true, remoteEndpoint));
+			m_udpConnectionsCv.notify_all();
+		}
+		catch (boost::system::system_error& e) {
+			std::cerr << "\nError in listenUDPConnections: " << e.what();
+		}
 	}
 }
 
@@ -109,7 +113,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 	}
 	m_udpConnectionsMap.insert(nick, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(false, nullptr));
 	
-	// (blocking)waits for x seconds or until a udp connection comes from the client
+	/* (blocking)waits for x seconds or until a udp connection comes from the client */
 	if (waitUDPConnection(nick)) {
 		std::cout << "\nConnessione UDP riuscita sul thread: " << nick;
 	}
@@ -118,7 +122,6 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 		socket->close();
 		m_usersMap.erase(nick);
 		m_udpConnectionsMap.erase(nick);
-		
 		return;
 	}
 	
@@ -166,8 +169,12 @@ bool Server::handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::s
 void Server::gameSessionThread(const std::string nick) {
 	// match this client with the last client who requested the match 
 	std::shared_ptr<User> player1 = m_matchmakingQueue.front();
+	player1->setUDPEndpoint(m_udpConnectionsMap.get(player1->getNick()).second);
 	std::shared_ptr<User> player2 = m_usersMap.get(nick);
-	
+	player2->setUDPEndpoint(m_udpConnectionsMap.get(player2->getNick()).second);
+	// remove the client from the matchmaking queue because a match has been found
+	m_matchmakingQueue.pop();
+
 	/* send the match found message */
 	NetUtils::Tcp::write_(*player1->getTCPSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 	NetUtils::Tcp::write_(*player2->getTCPSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
@@ -182,6 +189,7 @@ void Server::gameSessionThread(const std::string nick) {
 	gameSession.start();
 }
 
+//TO-DO: ( REDISIGN ) of this undo-matchmaking-thread
 void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick) {
 	using namespace std::chrono_literals;
 	NetPacket p;
@@ -204,8 +212,6 @@ void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const st
 				return;
 			}
 			else if (p.getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
-				m_matchmakingQueue.pop();
-
 				socket->non_blocking(false);
 				return;
 			}

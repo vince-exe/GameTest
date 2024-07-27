@@ -45,8 +45,7 @@ int main() {
                 else {
                     std::cout << "Message sent to " << endpoints.begin()->endpoint().address().to_string() << ":" << endpoints.begin()->endpoint().port() << std::endl;
                 }
-            }
-      
+            }      
         }
     }
 

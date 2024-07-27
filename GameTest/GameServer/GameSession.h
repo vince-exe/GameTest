@@ -25,6 +25,8 @@ private:
 private:
 	void handleClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient);
 	
+	void handleUDPClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient);
+
 	void sendNicknames();
 
 	void sendDefaultPositions();

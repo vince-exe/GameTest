@@ -125,7 +125,7 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 	while (true) {
 		try {
 			packet = NetUtils::Tcp::read_(*client->getTCPSocket());
-
+			
 			if (packet.getMsgType() == NetPacket::NetMessages::GAME_END) {
 				m_gameEnd = true;;
 				return;
@@ -143,4 +143,8 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 			return;
 		}
 	}
+}
+
+void GameSession::handleUDPClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient) {
+
 }
