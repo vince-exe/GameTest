@@ -12,6 +12,8 @@ namespace ServerUtils {
 
 		const std::string CLEAR_USELESS_THREADS = "Clear-Useless-Threads-Each";
 
+		const std::string UDP_REQUEST_TIMEOUT = "UDP-Request-Timeout";
+
 		const std::string SETTINGS_PATH = "settings/settings.json";
 	}
 }

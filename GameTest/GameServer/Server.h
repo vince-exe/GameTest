@@ -18,7 +18,7 @@ using boost::asio::ip::udp;
 
 class Server {
 public:
-	Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConnections, unsigned int clearUselessThreadsTime);
+	Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConnections, unsigned int clearUselessThreadsTime, unsigned int udpRequestTimeout);
 
 	void accept();
 
@@ -51,7 +51,7 @@ private:
 	std::unique_ptr<tcp::acceptor> m_acceptorPtr;
 	std::unique_ptr<udp::socket> m_udpServerSocket;
 
-	unsigned int m_maxConnections, m_clearUselessThreadsTime, m_udpPort;
+	unsigned int m_maxConnections, m_clearUselessThreadsTime, m_udpPort, m_udpRequestTimeout;
 	bool m_doRoutines;
 
 	ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>> m_usersMap;

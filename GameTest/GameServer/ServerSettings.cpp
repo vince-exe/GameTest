@@ -9,12 +9,14 @@ bool ServerSettings::init(const std::string& filePath) {
 	m_settingsPath = filePath;
     std::ifstream inputFile(filePath);
     
-    if (createSettingsFile()) {
-        std::cerr << "\nNo settings file found...[ Created a new settings file ]\n";
-        inputFile.open(filePath);
-    }
-    else {
-        return false;
+    if (!inputFile.is_open()) {
+        if (createSettingsFile()) {
+            std::cerr << "\nNo settings file found...[ Created a new settings file ]\n";
+            inputFile.open(filePath);
+        }
+        else {
+            return false;
+        }
     }
 
     std::string json((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
@@ -70,6 +72,9 @@ bool ServerSettings::createSettingsFile() {
 
     writer.Key(ServerUtils::Settings::CLEAR_USELESS_THREADS.c_str());
     writer.Int(120);
+
+    writer.Key(ServerUtils::Settings::UDP_REQUEST_TIMEOUT.c_str());
+    writer.Int(5);
 
     writer.EndObject();
 

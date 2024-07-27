@@ -11,7 +11,7 @@ int main() {
 		return 1;
 	}
 
-	Server server(sSingleton.getValue(ServerUtils::Settings::TCP_PORT).GetInt(), sSingleton.getValue(ServerUtils::Settings::UDP_PORT).GetInt(), sSingleton.getValue(ServerUtils::Settings::MAX_CONNECTIONS).GetInt(), sSingleton.getValue(ServerUtils::Settings::CLEAR_USELESS_THREADS).GetInt());
+	Server server(sSingleton.getValue(ServerUtils::Settings::TCP_PORT).GetInt(), sSingleton.getValue(ServerUtils::Settings::UDP_PORT).GetInt(), sSingleton.getValue(ServerUtils::Settings::MAX_CONNECTIONS).GetInt(), sSingleton.getValue(ServerUtils::Settings::CLEAR_USELESS_THREADS).GetInt(), sSingleton.getValue(ServerUtils::Settings::UDP_REQUEST_TIMEOUT).GetInt());
 	std::cout << "\nServer Started";
 
 	server.startRoutines();

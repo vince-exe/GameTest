@@ -1,13 +1,14 @@
 #include "Server.h"
 
-Server::Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConnections, unsigned int clearUselessThreadsTime) {
+Server::Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConnections, unsigned int clearUselessThreadsTime, unsigned int udpRequestTimeout) {
 	m_acceptorPtr = std::make_unique<tcp::acceptor>(m_ioService, tcp::endpoint(tcp::v4(), tcpPort));
 	m_udpServerSocket = std::make_unique<udp::socket>(m_ioService, udp::endpoint(udp::v4(), udpPort));
 
 	m_udpPort = udpPort;
 	m_maxConnections = maxConnections;
 	m_doRoutines = true;
-	m_clearUselessThreadsTime = clearUselessThreadsTime;
+	m_clearUselessThreadsTime = clearUselessThreadsTime; 
+	m_udpRequestTimeout = udpRequestTimeout;
 }
 
 void Server::listenUDPConnections() {
@@ -33,7 +34,7 @@ bool Server::waitUDPConnection(std::string& nick) {
 		while (true) {
 			std::unique_lock<std::mutex> lock(mutex);
 			
-			if (m_udpConnectionsCv.wait_for(lock, std::chrono::seconds(20), [this, &nick] { return m_udpConnectionsMap.get(nick).first; })) {
+			if (m_udpConnectionsCv.wait_for(lock, std::chrono::seconds(m_udpRequestTimeout), [this, &nick] { return m_udpConnectionsMap.get(nick).first; })) {
 				success = true;
 				return;
 			}
