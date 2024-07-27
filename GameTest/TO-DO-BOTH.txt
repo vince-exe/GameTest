@@ -1,0 +1,3 @@
+REFACTORING:
+-std::fylesystem::path per salvare i path delle textures e non const std::string;
+-togliere i singleton ed utilizzare le classe statiche con le global variables ( cliccare link: https://youtu.be/38M-RwHG2hY?t=1258 )
