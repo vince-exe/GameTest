@@ -5,6 +5,7 @@
 #include "../GameServer/network_utilities.h"
 #include "../GameServer/NetPacket.h"
 #include "../Game/network_game_utilities.h"
+#include "../GameServer/udp_message.h"
 
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
@@ -13,9 +14,10 @@ void readThred(udp::socket& socket, udp::endpoint& endpoint) {
     NetPacket p;
     std::thread t([&socket, &p, &endpoint]() {
         p = NetUtils::Udp::read_(socket, endpoint);
-
-        std::string msg(reinterpret_cast<const char*>(&p.getData()[0]), p.getDataSize());
-        std::cout << "\nMessaggio dall'altro: " << msg;
+        /*
+        std::string msgStr(reinterpret_cast<const char*>(&p.getData()[0], p.getDataSize()));
+        std::cout << "\nMessaggio dall'altro: " << msgStr;
+        */
     });
     t.detach();
 }
@@ -62,14 +64,14 @@ int main() {
                 std::cout << "\nStarted listening for matchmaking..\n";
 
                 if (NetUtils::Tcp::read_(socketTCP).getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
-                    std::cout << "\nMatch trovato\n";
+                    NetUtils::Tcp::write_(socketTCP, NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
+                    std::cout << "\nMatch trovato mentre stavo aspettando\n";
                 }
             }
             else if(NetUtils::Tcp::read_(socketTCP).getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
                 std::cout << "\nMatch trovato\n";
             }
 
-            Sleep(1000);
             // 4.) READ THE 3 GAME MESSAGES FROM THE SERVER
             NetUtils::Tcp::read_(socketTCP);
             NetUtils::Tcp::read_(socketTCP);
@@ -81,8 +83,13 @@ int main() {
             while (true) {
                 std::cout << "\nMessaggio: ";
                 std::cin >> msg;
-
-                NetUtils::Udp::write_(socketUDP, endpoint, NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(msg.c_str()), msg.size()));
+                UdpMessage::Message message;
+                // the combination of nicknames ( it's put like that for testing purposes
+                message.m_gameSessionID = "12";
+                message.m_playerUsername = nickname;
+                message.data = std::vector<uint8_t>(msg.begin(), msg.end());
+                std::vector<uint8_t> msgToSend = UdpMessage::serializeUDPMessage(message);
+                NetUtils::Udp::write_(socketUDP, endpoint, NetPacket(NetPacket::NetMessages::GAME_UDP_MESSAGE, msgToSend.data(), msgToSend.size()));
             }
         }
     }
