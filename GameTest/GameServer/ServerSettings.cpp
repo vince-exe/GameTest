@@ -76,6 +76,9 @@ bool ServerSettings::createSettingsFile() {
     writer.Key(ServerUtils::Settings::UDP_REQUEST_TIMEOUT.c_str());
     writer.Int(5);
 
+    writer.Key(ServerUtils::Settings::THREADS_NUMBER.c_str());
+    writer.Int(10);
+
     writer.EndObject();
 
     std::ofstream outputFile(m_settingsPath);

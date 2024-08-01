@@ -18,7 +18,7 @@ using boost::asio::ip::udp;
 
 class Server {
 public:
-	Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConnections, unsigned int clearUselessThreadsTime, unsigned int udpRequestTimeout);
+	Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConnections, unsigned int clearUselessThreadsTime, unsigned int udpRequestTimeout, unsigned int threadsNumber);
 
 	void accept();
 
@@ -46,15 +46,23 @@ private:
 
 	bool waitUDPConnection(std::string& nick);
 
+	void processUDPMessages();
+
 private:
 	boost::asio::io_service m_ioService;
 	std::unique_ptr<tcp::acceptor> m_acceptorPtr;
-	std::unique_ptr<udp::socket> m_udpServerSocket;
-
+	std::shared_ptr<udp::socket> m_udpServerSocket;
+	
 	unsigned int m_maxConnections, m_clearUselessThreadsTime, m_udpPort, m_udpRequestTimeout;
 	bool m_doRoutines;
 
+	std::vector<std::thread> m_threadPool;
+	std::condition_variable m_threadPoolCv;
+	std::mutex m_threadPoolMtx;
+	ThreadSafeQueue<std::shared_ptr<NetPacket>>m_udpMessagesQueue;
+
 	ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>> m_usersMap;
+	ThreadSafeUnorderedMap<std::string, std::shared_ptr<GameSession>> m_gameSessionsMap;
 
 	ThreadSafeUnorderedMap<std::string, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>> m_udpConnectionsMap;
 	std::condition_variable m_udpConnectionsCv;

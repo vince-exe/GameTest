@@ -60,6 +60,9 @@
     <ClCompile Include="utils.h">
       <Filter>File di intestazione\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="udp_message.cpp">
+      <Filter>File di origine\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameSession.h">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="TemporaryThreadsManager.h">
       <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="udp_message.h">
+      <Filter>File di intestazione\Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

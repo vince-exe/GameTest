@@ -14,6 +14,8 @@ namespace ServerUtils {
 
 		const std::string UDP_REQUEST_TIMEOUT = "UDP-Request-Timeout";
 
+		const std::string THREADS_NUMBER = "ThreadsNumber";
+
 		const std::string SETTINGS_PATH = "settings/settings.json";
 	}
 }

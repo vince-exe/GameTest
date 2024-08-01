@@ -1,8 +1,6 @@
 PRINCIPALE:
+-Verificare il funzionamento della UDP-INTEGRATION
 -vedere il file TO-DO-BOTH.txt
--Continuare lo sviluppo dell'UDP INTEGRATION ( vedere lavagna microsoft )
-
-
 
 
 REFACTORING:

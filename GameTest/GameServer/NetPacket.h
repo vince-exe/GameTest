@@ -6,6 +6,8 @@
 class NetPacket  {
 public:
 	enum class NetMessages {
+		GAME_UDP_MESSAGE,
+		CONNECTION_UDP_MESSAGE,
 		SERVER_DOWN,
 		IDLE,
 		STANDARD_MESSAGE,

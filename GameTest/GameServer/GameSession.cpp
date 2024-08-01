@@ -1,10 +1,21 @@
 #include "GameSession.h"
 
-GameSession::GameSession(ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2) {
+GameSession::GameSession(ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2, std::shared_ptr<udp::socket> serverSocket) {
 	m_usersMap = usersMap;
 	m_user1 = user1;
 	m_user2 = user2;
 	m_gameEnd = false;
+	m_udpServerSocket = serverSocket;
+}
+
+void GameSession::handleUDPMessage(UdpMessage::Message& message, std::shared_ptr<NetPacket> packet) {
+	// if the message has been sent by the player 1 send it to the player 2
+	if (message.m_playerUsername == m_user1->getNick()) {
+		NetUtils::Udp::write_(*m_udpServerSocket, *m_user2->getUDPEndpoint(), NetPacket(packet->getMsgType(), message.data.data(), message.data.size()));
+	}
+	else {
+		NetUtils::Udp::write_(*m_udpServerSocket, *m_user1->getUDPEndpoint(), NetPacket(packet->getMsgType(), message.data.data(), message.data.size()));
+	}
 }
 
 void GameSession::start() {
@@ -19,7 +30,7 @@ void GameSession::start() {
 	std::thread thUser1(&GameSession::handleClientMessages, this, m_user1, m_user2);
 	std::thread thUser2(&GameSession::handleClientMessages, this, m_user2, m_user1);
 
-	/* calculate the damage area's coordinates and send it to the clients */
+	/* calculate the damage area's coordinates */
 	setDamageAreasCoordinates();
 	/* send the damage areas coordinates and start the game */
 	sendDamageAreasConrdinates();
@@ -146,5 +157,5 @@ void GameSession::handleClientMessages(std::shared_ptr<User> client, std::shared
 }
 
 void GameSession::handleUDPClientMessages(std::shared_ptr<User> client, std::shared_ptr<User> otherClient) {
-
+		
 }

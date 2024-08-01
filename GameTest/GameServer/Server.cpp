@@ -1,30 +1,57 @@
 #include "Server.h"
 
-Server::Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConnections, unsigned int clearUselessThreadsTime, unsigned int udpRequestTimeout) {
+Server::Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConnections, unsigned int clearUselessThreadsTime, unsigned int udpRequestTimeout, unsigned int threadsNumber) {
 	m_acceptorPtr = std::make_unique<tcp::acceptor>(m_ioService, tcp::endpoint(tcp::v4(), tcpPort));
-	m_udpServerSocket = std::make_unique<udp::socket>(m_ioService, udp::endpoint(udp::v4(), udpPort));
+	m_udpServerSocket = std::make_shared<udp::socket>(m_ioService, udp::endpoint(udp::v4(), udpPort));
 
 	m_udpPort = udpPort;
 	m_maxConnections = maxConnections;
 	m_doRoutines = true;
 	m_clearUselessThreadsTime = clearUselessThreadsTime; 
 	m_udpRequestTimeout = udpRequestTimeout;
+
+	for (int i = 0; i < threadsNumber; ++i) {
+		m_threadPool.emplace_back([this]() {
+			processUDPMessages();
+		});
+	}
+
+	std::cout << "\nSuccessfully created a ThreadPool of: " << threadsNumber;
 }
 
 void Server::listenUDPConnections() {
-	NetPacket packet;
 	std::cout << "\nStarted listening for UDP connections\n";
 	while (true) {
 		std::shared_ptr<udp::endpoint> remoteEndpoint = std::make_shared<udp::endpoint>(udp::v4(), m_udpPort);
 		try {
-			packet = NetUtils::Udp::read_(*m_udpServerSocket, *remoteEndpoint);
-			std::string nick(reinterpret_cast<const char*>(&packet.getData()[0]), packet.getDataSize());
+			NetPacket packet = NetUtils::Udp::read_(*m_udpServerSocket, *remoteEndpoint);
+			if (packet.getMsgType() == NetPacket::NetMessages::CONNECTION_UDP_MESSAGE) {
+				std::string nick(reinterpret_cast<const char*>(&packet.getData()[0]), packet.getDataSize());
 
-			m_udpConnectionsMap.insert(nick, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(true, remoteEndpoint));
-			m_udpConnectionsCv.notify_all();
+				m_udpConnectionsMap.insert(nick, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(true, remoteEndpoint));
+				m_udpConnectionsCv.notify_all();
+			}
+			else if (packet.getMsgType() == NetPacket::NetMessages::GAME_UDP_MESSAGE) {
+				m_udpMessagesQueue.push(std::make_shared<NetPacket>(packet));
+				m_threadPoolCv.notify_all();
+			}
 		}
 		catch (boost::system::system_error& e) {
 			std::cerr << "\nError in listenUDPConnections: " << e.what();
+		}
+	}
+}
+
+void Server::processUDPMessages() {
+	while (true) {
+		std::unique_lock<std::mutex> lock(m_threadPoolMtx);
+		m_threadPoolCv.wait(lock, [this] { return !m_udpMessagesQueue.empty(); });
+		if (!m_udpMessagesQueue.empty()) {
+			std::shared_ptr<NetPacket> packet = m_udpMessagesQueue.front();
+
+			UdpMessage::Message message = UdpMessage::deserializeUDPMessage(packet->getData());
+			m_gameSessionsMap.get(message.m_gameSessionID)->handleUDPMessage(message, packet);
+			m_udpMessagesQueue.pop();
 		}
 	}
 }
@@ -105,7 +132,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 	/* read the nickname */
 	NetPacket packet = NetUtils::Tcp::read_(*socket);
 	std::string nick(reinterpret_cast<const char*>(&packet.getData()[0]), packet.getDataSize());
-	
+	 
 	/* check if there is another user with the same nickname and in case handle it. Otherwise create the user */
 	if (!handleUserNickname(socket, nick)) {
 		socket->close();
@@ -185,8 +212,12 @@ void Server::gameSessionThread(const std::string nick) {
 	}
 
 	Sleep(1000);
-	GameSession gameSession(&m_usersMap, player1, player2);
+	GameSession gameSession(&m_usersMap, player1, player2, m_udpServerSocket);
+	// store a reference to the gameSession object in the game sessions map.
+	m_gameSessionsMap.insert(player1->getNick() + player2->getNick(), std::make_shared<GameSession>(gameSession));
+	// blocking operation.
 	gameSession.start();
+	m_gameSessionsMap.erase(player1->getNick() + player2->getNick());
 }
 
 //TO-DO: ( REDISIGN ) of this undo-matchmaking-thread
