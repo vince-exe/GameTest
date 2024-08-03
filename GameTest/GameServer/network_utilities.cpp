@@ -23,12 +23,11 @@ void NetUtils::Tcp::write_(tcp::socket& socket, const NetPacket& packet) {
 
 NetPacket NetUtils::Udp::read_(udp::socket& socket, udp::endpoint& endpoint) {
     size_t packetSize;
-    
     boost::asio::mutable_buffer size_buffer(&packetSize, sizeof(packetSize));
     socket.receive_from(size_buffer, endpoint);
 
+    // Buffer per i dati ricevuti
     std::vector<uint8_t> receivedData(packetSize);
-
     boost::asio::mutable_buffer data_buffer(receivedData.data(), packetSize);
     socket.receive_from(data_buffer, endpoint);
 
@@ -39,15 +38,15 @@ void NetUtils::Udp::write_(udp::socket& socket, const udp::endpoint& endpoint, c
     std::vector<uint8_t> serializedData = packet.serialize();
     size_t packetSize = serializedData.size();
 
-    // Create a buffer for the size of the packet
+    // Buffer per la dimensione del pacchetto
     std::vector<uint8_t> sizeBuffer(sizeof(packetSize));
     std::memcpy(sizeBuffer.data(), &packetSize, sizeof(packetSize));
 
-    // Send the packet size
-    boost::asio::mutable_buffer size_buffer = boost::asio::buffer(sizeBuffer.data(), sizeBuffer.size());
+    // Invio della dimensione del pacchetto
+    boost::asio::const_buffer size_buffer = boost::asio::buffer(sizeBuffer);
     socket.send_to(size_buffer, endpoint);
 
-    // Send the serialized data
-    boost::asio::mutable_buffer data_buffer = boost::asio::buffer(serializedData.data(), serializedData.size());
+    // Invio dei dati serializzati
+    boost::asio::const_buffer data_buffer = boost::asio::buffer(serializedData);
     socket.send_to(data_buffer, endpoint);
 }

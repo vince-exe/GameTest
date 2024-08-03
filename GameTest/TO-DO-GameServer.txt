@@ -1,5 +1,6 @@
 PRINCIPALE:
--Verificare il funzionamento della UDP-INTEGRATION
+-migliorare la scrittura del codice di UDP-INTEGRATION ( valutare se è meglio creare una nuova classe NetUdpPacket )
+-migliorare i sistemi di sicurezza sulla read e write udp.
 -vedere il file TO-DO-BOTH.txt
 
 

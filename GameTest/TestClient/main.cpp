@@ -11,13 +11,12 @@ using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
 
 void readThred(udp::socket& socket, udp::endpoint& endpoint) {
-    NetPacket p;
-    std::thread t([&socket, &p, &endpoint]() {
-        p = NetUtils::Udp::read_(socket, endpoint);
-        /*
-        std::string msgStr(reinterpret_cast<const char*>(&p.getData()[0], p.getDataSize()));
-        std::cout << "\nMessaggio dall'altro: " << msgStr;
-        */
+    std::thread t([&socket, &endpoint]() {
+        while (true) {
+            NetPacket p = NetUtils::Udp::read_(socket, endpoint);
+            std::string msgStr(p.getData().begin(), p.getData().end());
+            std::cout << "\nMessaggio dall'altro: " << msgStr;
+        }
     });
     t.detach();
 }
@@ -81,7 +80,7 @@ int main() {
             std::string msg;
             // ciclo per mandare
             while (true) {
-                std::cout << "\nMessaggio: ";
+                std::cout << "\n-> ";
                 std::cin >> msg;
                 UdpMessage::Message message;
                 // the combination of nicknames ( it's put like that for testing purposes

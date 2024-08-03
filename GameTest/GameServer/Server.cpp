@@ -32,6 +32,7 @@ void Server::listenUDPConnections() {
 				m_udpConnectionsCv.notify_all();
 			}
 			else if (packet.getMsgType() == NetPacket::NetMessages::GAME_UDP_MESSAGE) {
+				std::cout << "\npreso pacchetto";
 				m_udpMessagesQueue.push(std::make_shared<NetPacket>(packet));
 				m_threadPoolCv.notify_all();
 			}
@@ -47,8 +48,8 @@ void Server::processUDPMessages() {
 		std::unique_lock<std::mutex> lock(m_threadPoolMtx);
 		m_threadPoolCv.wait(lock, [this] { return !m_udpMessagesQueue.empty(); });
 		if (!m_udpMessagesQueue.empty()) {
+			std::cout << "\nprocessato pacchetto";
 			std::shared_ptr<NetPacket> packet = m_udpMessagesQueue.front();
-
 			UdpMessage::Message message = UdpMessage::deserializeUDPMessage(packet->getData());
 			m_gameSessionsMap.get(message.m_gameSessionID)->handleUDPMessage(message, packet);
 			m_udpMessagesQueue.pop();
@@ -131,8 +132,8 @@ bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, const std::
 void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 	/* read the nickname */
 	NetPacket packet = NetUtils::Tcp::read_(*socket);
-	std::string nick(reinterpret_cast<const char*>(&packet.getData()[0]), packet.getDataSize());
-	 
+	std::string nick(packet.getData().begin(), packet.getData().end());
+
 	/* check if there is another user with the same nickname and in case handle it. Otherwise create the user */
 	if (!handleUserNickname(socket, nick)) {
 		socket->close();
