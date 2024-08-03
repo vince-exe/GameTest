@@ -12,6 +12,7 @@ using boost::asio::ip::tcp;
 
 void readThred(udp::socket& socket, udp::endpoint& endpoint) {
     std::thread t([&socket, &endpoint]() {
+        int number = 0;
         while (true) {
             NetPacket p = NetUtils::Udp::read_(socket, endpoint);
             std::string msgStr(p.getData().begin(), p.getData().end());

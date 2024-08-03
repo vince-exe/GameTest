@@ -32,7 +32,6 @@ void Server::listenUDPConnections() {
 				m_udpConnectionsCv.notify_all();
 			}
 			else if (packet.getMsgType() == NetPacket::NetMessages::GAME_UDP_MESSAGE) {
-				std::cout << "\npreso pacchetto";
 				m_udpMessagesQueue.push(std::make_shared<NetPacket>(packet));
 				m_threadPoolCv.notify_all();
 			}
@@ -48,11 +47,10 @@ void Server::processUDPMessages() {
 		std::unique_lock<std::mutex> lock(m_threadPoolMtx);
 		m_threadPoolCv.wait(lock, [this] { return !m_udpMessagesQueue.empty(); });
 		if (!m_udpMessagesQueue.empty()) {
-			std::cout << "\nprocessato pacchetto";
 			std::shared_ptr<NetPacket> packet = m_udpMessagesQueue.front();
+			m_udpMessagesQueue.pop();
 			UdpMessage::Message message = UdpMessage::deserializeUDPMessage(packet->getData());
 			m_gameSessionsMap.get(message.m_gameSessionID)->handleUDPMessage(message, packet);
-			m_udpMessagesQueue.pop();
 		}
 	}
 }
