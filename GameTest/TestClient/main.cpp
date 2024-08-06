@@ -5,7 +5,7 @@
 #include "../GameServer/network_utilities.h"
 #include "../GameServer/NetPacket.h"
 #include "../Game/network_game_utilities.h"
-#include "../GameServer/udp_message.h"
+#include "../GameServer/udp_utilities.h"
 
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
@@ -14,9 +14,14 @@ void readThred(udp::socket& socket, udp::endpoint& endpoint) {
     std::thread t([&socket, &endpoint]() {
         int number = 0;
         while (true) {
-            NetPacket p = NetUtils::Udp::read_(socket, endpoint);
-            std::string msgStr(p.getData().begin(), p.getData().end());
-            std::cout << "\nMessaggio dall'altro: " << msgStr;
+            try {
+                NetPacket p = NetUtils::Udp::read_(socket, endpoint);
+                std::string msgStr(p.getData().begin(), p.getData().end());
+                std::cout << "\nMessaggio dall'altro: " << msgStr;
+            }
+            catch (boost::system::error_code& e) {
+                std::cout << "\nerrore in read: " << e.what();
+            }
         }
     });
     t.detach();
@@ -32,7 +37,15 @@ int main() {
 
     // UDP INITIALIZATION
     udp::resolver resolver(io_service);
-    udp::resolver::results_type endpoints = resolver.resolve(udp::v4(), "127.0.0.1", "8889");
+    udp::resolver::results_type endpoints = resolver.resolve(udp::v4(), "79.32.155.183", "8889");
+    if (endpoints.size() != 0) {
+        auto it = endpoints.begin();
+        while (it != endpoints.end()) {
+            std::cout << "\nendpoint trovato!";
+            std::cout << "\nIndirizzo: " << it->endpoint().address() << "  Porta: " << it->endpoint().port();
+            it++;
+        }
+    }
     udp::endpoint endpoint = endpoints.begin()->endpoint();
 
     udp::socket socketUDP(io_service);
@@ -40,7 +53,7 @@ int main() {
     std::cout << "\nNickname: ";
     std::cin >> nickname;
     // SEND THE TCP CONNECTION
-    socketTCP.connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 8888), ec);
+    socketTCP.connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("79.32.155.183"), 8888), ec);
 
     if (ec) {
         std::cerr << "Errore while connecting (TCP): " << ec.message() << std::endl;
@@ -56,6 +69,13 @@ int main() {
             boost::system::error_code error;
             /* 2.) SEND THE UDP REQUEST */
             NetUtils::Udp::write_(socketUDP, endpoint, NetPacket(NetPacket::NetMessages::CONNECTION_UDP_MESSAGE, reinterpret_cast<const uint8_t*>(nickname.c_str()), nickname.size()));
+
+            /* 2.1) CHECK IF THE UDP REQUEST IS OK */
+            if (NetUtils::Tcp::read_(socketTCP).getMsgType() != NetPacket::NetMessages::UDP_CONNECTION_SUCCESS) {
+                std::cerr << "\nFail della connessione udp";
+                socketTCP.close();
+                return 0;
+            }
 
             /* 3.) SEND THE MATCHMAKING_REQUEST */
             NetUtils::Tcp::write_(socketTCP, NetPacket(NetPacket::NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
@@ -80,15 +100,16 @@ int main() {
             readThred(socketUDP, endpoint);
             std::string msg;
             // ciclo per mandare
+  
             while (true) {
                 std::cout << "\n-> ";
-                std::cin >> msg;
-                UdpMessage::Message message;
+                std::getline(std::cin, msg);
+                UdpUtils::GameMessage message;
                 // the combination of nicknames ( it's put like that for testing purposes
                 message.m_gameSessionID = "12";
                 message.m_playerUsername = nickname;
                 message.data = std::vector<uint8_t>(msg.begin(), msg.end());
-                std::vector<uint8_t> msgToSend = UdpMessage::serializeUDPMessage(message);
+                std::vector<uint8_t> msgToSend = UdpUtils::serializeUDPMessage(message);
                 NetUtils::Udp::write_(socketUDP, endpoint, NetPacket(NetPacket::NetMessages::GAME_UDP_MESSAGE, msgToSend.data(), msgToSend.size()));
             }
         }

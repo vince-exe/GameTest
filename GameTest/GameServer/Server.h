@@ -12,11 +12,19 @@
 #include "ThreadSafeUnorderedMap.h"
 #include "ThreadSafeQueue.h"
 #include "TemporaryThreadsManager.h"
+#include "udp_utilities.h"
 
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
 
 class Server {
+public:
+	enum class MatchmakingRequestStates {
+		FOUND, 
+		WAIT,
+		ERR
+	};
+
 public:
 	Server(unsigned int tcpPort, unsigned int udpPort, unsigned int maxConnections, unsigned int clearUselessThreadsTime, unsigned int udpRequestTimeout, unsigned int threadsNumber);
 
@@ -34,7 +42,7 @@ private:
 	bool handleUserNickname(std::shared_ptr<tcp::socket> socket, const std::string& nick);
 
 	// return true if a match has been found
-	bool handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick);
+	MatchmakingRequestStates handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick);
 
 	void handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick);
 

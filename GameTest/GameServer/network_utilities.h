@@ -4,6 +4,7 @@
 #include <boost/asio.hpp>
 
 #include "NetPacket.h"
+#include "udp_utilities.h"
 
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;

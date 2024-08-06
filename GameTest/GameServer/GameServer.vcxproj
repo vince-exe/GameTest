@@ -142,7 +142,7 @@
     <ClCompile Include="ServerSettings.cpp" />
     <ClCompile Include="TemporaryThread.cpp" />
     <ClCompile Include="TemporaryThreadsManager.cpp" />
-    <ClCompile Include="udp_message.cpp" />
+    <ClCompile Include="udp_utilities.cpp" />
     <ClCompile Include="User.cpp" />
     <ClCompile Include="utils.h" />
   </ItemGroup>
@@ -157,7 +157,7 @@
     <ClInclude Include="TemporaryThreadsManager.h" />
     <ClInclude Include="ThreadSafeQueue.h" />
     <ClInclude Include="ThreadSafeUnorderedMap.h" />
-    <ClInclude Include="udp_message.h" />
+    <ClInclude Include="udp_utilities.h" />
     <ClInclude Include="User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

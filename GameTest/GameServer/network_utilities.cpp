@@ -16,9 +16,9 @@ void NetUtils::Tcp::write_(tcp::socket& socket, const NetPacket& packet) {
     size_t packetSize = serializedData.size();
     
     // send the packet dimension 
-    size_t bytes_sent_size = boost::asio::write(socket, boost::asio::buffer(&packetSize, sizeof(packetSize)));
+    boost::asio::write(socket, boost::asio::buffer(&packetSize, sizeof(packetSize)));
     // send the serialized data
-    size_t bytes_sent_data = boost::asio::write(socket, boost::asio::buffer(serializedData));
+    boost::asio::write(socket, boost::asio::buffer(serializedData));
 }
 
 NetPacket NetUtils::Udp::read_(udp::socket& socket, udp::endpoint& endpoint) {
@@ -31,6 +31,9 @@ NetPacket NetUtils::Udp::read_(udp::socket& socket, udp::endpoint& endpoint) {
     boost::asio::mutable_buffer data_buffer(receivedData.data(), packetSize);
     socket.receive_from(data_buffer, endpoint);
 
+    if (data_buffer.size() != packetSize) {
+        throw UdpUtils::errors::InvalidBytesLength("The read didn't perfomed all the bytes to read");
+    }
     return NetPacket::deserialize(receivedData);
 }
 
@@ -44,6 +47,8 @@ void NetUtils::Udp::write_(udp::socket& socket, const udp::endpoint& endpoint, c
 
     // Invio della dimensione del pacchetto
     boost::asio::const_buffer size_buffer = boost::asio::buffer(sizeBuffer);
+
+    boost::system::error_code error_code;
     socket.send_to(size_buffer, endpoint);
 
     // Invio dei dati serializzati

@@ -1,12 +1,12 @@
-#include "udp_message.h"
+#include "udp_utilities.h"
 
-void UdpMessage::m_serializeString(const std::string& str, std::vector<uint8_t>& buffer) {
+void UdpUtils::m_serializeString(const std::string& str, std::vector<uint8_t>& buffer) {
     size_t size = str.size();
     buffer.insert(buffer.end(), reinterpret_cast<const uint8_t*>(&size), reinterpret_cast<const uint8_t*>(&size) + sizeof(size_t));
     buffer.insert(buffer.end(), str.begin(), str.end());
 }
 
-std::string UdpMessage::m_deserializeString(const std::vector<uint8_t>& buffer, size_t& offset) {
+std::string UdpUtils::m_deserializeString(const std::vector<uint8_t>& buffer, size_t& offset) {
     size_t size;
     std::memcpy(&size, buffer.data() + offset, sizeof(size_t));
     offset += sizeof(size_t);
@@ -17,7 +17,7 @@ std::string UdpMessage::m_deserializeString(const std::vector<uint8_t>& buffer, 
     return str;
 }
 
-std::vector<uint8_t> UdpMessage::serializeUDPMessage(const Message& message) {
+std::vector<uint8_t> UdpUtils::serializeUDPMessage(const GameMessage& message) {
     std::vector<uint8_t> buffer;
 
     m_serializeString(message.m_gameSessionID, buffer);
@@ -30,8 +30,8 @@ std::vector<uint8_t> UdpMessage::serializeUDPMessage(const Message& message) {
     return buffer;
 }
 
-UdpMessage::Message UdpMessage::deserializeUDPMessage(const std::vector<uint8_t>& buffer) {
-    Message message;
+UdpUtils::GameMessage UdpUtils::deserializeUDPMessage(const std::vector<uint8_t>& buffer) {
+    GameMessage message;
     size_t offset = 0;
 
     message.m_gameSessionID = m_deserializeString(buffer, offset);
