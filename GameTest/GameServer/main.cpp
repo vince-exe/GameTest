@@ -6,7 +6,7 @@
 
 int main() {
 	ServerSettings& sSingleton = ServerSettings::getInstance();
-	if (!sSingleton.init(ServerUtils::Settings::SETTINGS_PATH)) {
+	if (!sSingleton.init(ServerUtils::Settings::SETTINGS_DIRECTORY / ServerUtils::Settings::SETTINGS_PATH)) {
 		std::cerr << "\n [ ERROR ]: Failed to load the settings file";
 		return 1;
 	}

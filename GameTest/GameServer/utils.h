@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <filesystem>
 
 namespace ServerUtils {
 	namespace Settings {
@@ -16,6 +17,8 @@ namespace ServerUtils {
 
 		const std::string THREADS_NUMBER = "ThreadsNumber";
 
-		const std::string SETTINGS_PATH = "settings/settings.json";
+		const std::filesystem::path SETTINGS_DIRECTORY = "settings";
+
+		const std::filesystem::path SETTINGS_PATH = "settings.json";
 	}
 }

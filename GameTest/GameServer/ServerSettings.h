@@ -3,10 +3,11 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <filesystem>
+
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
-
 #include "utils.h"
 
 class ServerSettings {
@@ -16,7 +17,7 @@ class ServerSettings {
 	ServerSettings& operator=(ServerSettings&&) = delete; // disable move operator
 
 private:
-	std::string m_settingsPath;
+	std::shared_ptr<std::filesystem::path> m_settingsPath;
 	rapidjson::Document m_Document;
 
 private:
@@ -25,7 +26,7 @@ private:
 public:
 	static ServerSettings& getInstance();
 
-	bool init(const std::string& filePath);
+	bool init(const std::filesystem::path& path);
 
 	rapidjson::Value& getValue(const std::string& key);
 

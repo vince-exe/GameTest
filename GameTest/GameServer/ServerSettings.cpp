@@ -5,14 +5,17 @@ ServerSettings& ServerSettings::getInstance() {
 	return instance;
 }
 
-bool ServerSettings::init(const std::string& filePath) {
-	m_settingsPath = filePath;
-    std::ifstream inputFile(filePath);
-    
+bool ServerSettings::init(const std::filesystem::path& path) {
+	m_settingsPath = std::make_shared<std::filesystem::path>(path);
+    std::ifstream inputFile(path);
+    if (!std::filesystem::exists(ServerUtils::Settings::SETTINGS_DIRECTORY)) {
+        std::cout << "\nNo settings directory found...[ Created a new settings directory ] \n";
+        std::filesystem::create_directory(ServerUtils::Settings::SETTINGS_DIRECTORY);
+    }
     if (!inputFile.is_open()) {
         if (createSettingsFile()) {
             std::cerr << "\nNo settings file found...[ Created a new settings file ]\n";
-            inputFile.open(filePath);
+            inputFile.open(path);
         }
         else {
             return false;
@@ -81,7 +84,7 @@ bool ServerSettings::createSettingsFile() {
 
     writer.EndObject();
 
-    std::ofstream outputFile(m_settingsPath);
+    std::ofstream outputFile(*m_settingsPath);
     if (outputFile.is_open()) {
         outputFile << s.GetString();
         outputFile.close();
