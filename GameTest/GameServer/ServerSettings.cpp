@@ -1,10 +1,5 @@
 #include "ServerSettings.h"
 
-ServerSettings& ServerSettings::getInstance() {
-	static ServerSettings instance;
-	return instance;
-}
-
 bool ServerSettings::init(const std::filesystem::path& path) {
 	m_settingsPath = std::make_shared<std::filesystem::path>(path);
     std::ifstream inputFile(path);

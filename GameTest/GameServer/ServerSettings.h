@@ -11,6 +11,7 @@
 #include "utils.h"
 
 class ServerSettings {
+public:
 	ServerSettings() = default;
 	~ServerSettings() = default;
 	ServerSettings& operator=(const ServerSettings&) = delete; // Disable = operator
@@ -24,8 +25,6 @@ private:
 	bool createSettingsFile();
 
 public:
-	static ServerSettings& getInstance();
-
 	bool init(const std::filesystem::path& path);
 
 	rapidjson::Value& getValue(const std::string& key);

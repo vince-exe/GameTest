@@ -63,6 +63,9 @@
     <ClCompile Include="udp_utilities.cpp">
       <Filter>File di origine\Network</Filter>
     </ClCompile>
+    <ClCompile Include="extern_variables.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameSession.h">
@@ -100,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="udp_utilities.h">
       <Filter>File di intestazione\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="extern_vaiables.h">
+      <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
