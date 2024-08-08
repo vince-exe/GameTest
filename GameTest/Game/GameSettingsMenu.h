@@ -6,7 +6,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Entity.h"
-#include "TextureManager.h"
+#include "extern_variables.h"
 
 class GameSettingsMenu {
 private:
@@ -15,7 +15,7 @@ private:
 public:
 	GameSettingsMenu() = default;
 
-	void setTextures(TextureManager& textureManager);
+	void setTextures();
 
 	void setSprites(sf::RenderWindow& window);
 

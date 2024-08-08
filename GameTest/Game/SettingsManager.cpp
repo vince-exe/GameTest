@@ -1,21 +1,19 @@
 #include "SettingsManager.h"
 
-SettingsManager& SettingsManager::getInstance() {
-    static SettingsManager singleton;
-    return singleton;
+bool SettingsManager::init(const std::filesystem::path& path) {
+    m_settingsPath = std::make_shared<std::filesystem::path>(path);
+    std::ifstream inputFile(path);
 
-}
-
-bool SettingsManager::init(const std::string& filePath) {
-    m_settingsPath = filePath;
-    std::ifstream inputFile(filePath);
-
+    if (!std::filesystem::exists(SkyfallUtils::Settings::SETTINGS_DIRECTORY)) {
+        std::cout << "\nNo settings directory found...[ Created a new settings directory ] \n";
+        std::filesystem::create_directory(SkyfallUtils::Settings::SETTINGS_DIRECTORY);
+    }
     if (!inputFile.is_open()) {
         std::cerr << "\nNo settings file found...[ Creating a new settings file ]";
 
         if (createSettingsFile()) {
             /* successfully created the settings file*/
-            inputFile.open(filePath);
+            inputFile.open(path);
         }
         else {
             return false;
@@ -57,7 +55,7 @@ bool SettingsManager::createSettingsFile() {
 
     writer.EndObject();
 
-    std::ofstream outputFile(m_settingsPath);
+    std::ofstream outputFile(*m_settingsPath);
     if (outputFile.is_open()) {
         outputFile << s.GetString();
         outputFile.close();
@@ -75,7 +73,7 @@ bool SettingsManager::storeSettings() {
     m_Document.Accept(writer);
     std::string jsonString = buffer.GetString();
 
-    std::ofstream outputFile(m_settingsPath);
+    std::ofstream outputFile(*m_settingsPath);
     if (outputFile.is_open()) {
         outputFile << jsonString;
         outputFile.close();

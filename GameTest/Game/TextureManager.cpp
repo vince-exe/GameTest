@@ -15,11 +15,6 @@ bool TextureManager::init() {
         && m_doneBtn.loadFromFile("assets/Buttons/done.png") && m_cancelBtn.loadFromFile("assets/Buttons/cancel.png");
 }
 
-TextureManager& TextureManager::getInstance() {
-    static TextureManager instance;
-    return instance;
-}
-
 const sf::Texture& TextureManager::getQuitBtnTexture() const {
     return m_quitBtnTexture;
 }

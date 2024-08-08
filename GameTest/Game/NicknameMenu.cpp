@@ -1,10 +1,10 @@
 #include "NicknameMenu.h"
 
-std::string NicknameMenu::init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker) {
+std::string NicknameMenu::init(sf::RenderWindow& window, SkyfallUtils::WindowsReturnValues& checker) {
 	m_Window = &window;
 
-    setTextures(textureManager);
-    initSprites(fontManager);
+    setTextures();
+    initSprites();
     
     bool requestExit = false;
     sf::Event event;
@@ -18,7 +18,7 @@ std::string NicknameMenu::init(sf::RenderWindow& window, TextureManager& texture
                 return "";
             }
             handleTextEntered(event);
-            handleMouseButtons(event, audioManager, checker, requestExit);
+            handleMouseButtons(event, checker, requestExit);
         }
         draw();
     }
@@ -39,13 +39,13 @@ void NicknameMenu::draw() {
 	m_Window->display();
 }
 
-void NicknameMenu::setTextures(TextureManager& textureManager) {
-    m_Text.setTexture(textureManager.getTextImage(8));
-    m_doneBtn.setTexture(textureManager.getDoneBtn());
-    m_cancelBtn.setTexture(textureManager.getCancelBtn());
+void NicknameMenu::setTextures() {
+    m_Text.setTexture(g_tSingleton.getTextImage(8));
+    m_doneBtn.setTexture(g_tSingleton.getDoneBtn());
+    m_cancelBtn.setTexture(g_tSingleton.getCancelBtn());
 }
 
-void NicknameMenu::initSprites(FontManager& fontManager) {
+void NicknameMenu::initSprites() {
     float windowXSize = m_Window->getSize().x;
     float windowYSize = m_Window->getSize().y;
 
@@ -56,7 +56,7 @@ void NicknameMenu::initSprites(FontManager& fontManager) {
     m_Line.setRotation(0);
     m_Line.setPosition(m_Text.getSprite().getPosition().x, m_Text.getSprite().getPosition().y + 240);
 
-    m_inputDisplay.setFont(fontManager.getFredokaOne());
+    m_inputDisplay.setFont(g_fSingleton.getFredokaOne());
     m_inputDisplay.setCharacterSize(45);
 
     m_cancelBtn.getSprite().setPosition((windowXSize - m_cancelBtn.getTexture().getSize().x) / 2 - 230, m_Line.getPosition().y + 100);
@@ -83,17 +83,17 @@ void NicknameMenu::handleTextEntered(sf::Event& event) {
     }
 }
 
-void NicknameMenu::handleMouseButtons(sf::Event& event, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested) {
+void NicknameMenu::handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested) {
     sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         if (m_cancelBtn.isInside(position)) {
-            audioManager.getButtonClickSound().play();
+            g_aSingleton.getButtonClickSound().play();
             checker = SkyfallUtils::WindowsReturnValues::BACK;
             exitRequested = true;
         }
         else if (m_doneBtn.isInside(position) && m_inputText.size()) {
-            audioManager.getButtonClickSound().play();
+            g_aSingleton.getButtonClickSound().play();
             checker = SkyfallUtils::WindowsReturnValues::DONE;
             exitRequested = true;
         }

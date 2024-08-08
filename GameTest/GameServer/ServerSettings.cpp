@@ -3,6 +3,7 @@
 bool ServerSettings::init(const std::filesystem::path& path) {
 	m_settingsPath = std::make_shared<std::filesystem::path>(path);
     std::ifstream inputFile(path);
+
     if (!std::filesystem::exists(ServerUtils::Settings::SETTINGS_DIRECTORY)) {
         std::cout << "\nNo settings directory found...[ Created a new settings directory ] \n";
         std::filesystem::create_directory(ServerUtils::Settings::SETTINGS_DIRECTORY);

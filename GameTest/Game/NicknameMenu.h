@@ -6,9 +6,7 @@
 
 #include "Entity.h"
 #include "utils.h"
-#include "TextureManager.h"
-#include "FontManager.h"
-#include "AudioManager.h"
+#include "extern_variables.h"
 
 class NicknameMenu {
 private:
@@ -22,17 +20,17 @@ private:
 	Entity m_doneBtn, m_cancelBtn;
 
 public:
-	std::string init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker);
+	std::string init(sf::RenderWindow& window, SkyfallUtils::WindowsReturnValues& checker);
 
 private:
 	void draw();
 
-	void setTextures(TextureManager& textureManager);
+	void setTextures();
 
-	void initSprites(FontManager& fontManager);
+	void initSprites();
 
 	void handleTextEntered(sf::Event& event);
 	
-	void handleMouseButtons(sf::Event& event, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested);
+	void handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested);
 };
 

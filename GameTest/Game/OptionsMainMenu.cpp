@@ -1,14 +1,14 @@
 #include "OptionsMainMenu.h"
 
-void OptionsMainMenu::init(sf::RenderWindow& window, TextureManager& textureManager, SettingsManager& settingsManager, FontManager& fontManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker) {
+void OptionsMainMenu::init(sf::RenderWindow& window, SkyfallUtils::WindowsReturnValues& checker) {
     m_Window = &window;
 
     sf::Cursor defaultCursor;
     defaultCursor.loadFromSystem(sf::Cursor::Arrow);
     m_Window->setMouseCursor(defaultCursor);
     
-    setTextures(textureManager);
-    initSprites(fontManager, audioManager, settingsManager);
+    setTextures();
+    initSprites();
 
     bool requestExit = false;
     sf::Event event;
@@ -21,7 +21,7 @@ void OptionsMainMenu::init(sf::RenderWindow& window, TextureManager& textureMana
                 checker = SkyfallUtils::WindowsReturnValues::BACK;
                 return;
             }
-            handleMouseButtons(event, requestExit, settingsManager, audioManager, checker);
+            handleMouseButtons(event, requestExit, checker);
         }
         draw();
     }
@@ -47,29 +47,29 @@ void OptionsMainMenu::draw() {
     m_Window->display();
 }
 
-void OptionsMainMenu::handleMouseButtons(sf::Event& event, bool& requestExit, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker) {
+void OptionsMainMenu::handleMouseButtons(sf::Event& event, bool& requestExit, SkyfallUtils::WindowsReturnValues& checker) {
     sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-        setMusicLevel(settingsManager, audioManager, position);
-        setSoundLevel(settingsManager, audioManager, position);
+        setMusicLevel(position);
+        setSoundLevel(position);
         
         if (m_backBtn.isInside(position)) {
-            audioManager.getButtonClickSound().play();
+            g_aSingleton.getButtonClickSound().play();
             requestExit = true;
             checker = SkyfallUtils::WindowsReturnValues::BACK;
             return;
         }
         if (m_debugModeResult.getGlobalBounds().contains(position)) {
-            audioManager.getButtonClickSound().play();
+            g_aSingleton.getButtonClickSound().play();
 
             if (m_debugModeResult.getString().toAnsiString() == "OFF") {
-                settingsManager.setString_(SkyfallUtils::Settings::DEBUG_MODE, "ON");
+                g_sSingleton.setString_(SkyfallUtils::Settings::DEBUG_MODE, "ON");
                 m_debugModeResult.setFillColor(sf::Color(43, 97, 24));
                 m_debugModeResult.setString("ON");
             }
             else {
-                settingsManager.setString_(SkyfallUtils::Settings::DEBUG_MODE, "OFF");
+                g_sSingleton.setString_(SkyfallUtils::Settings::DEBUG_MODE, "OFF");
                 m_debugModeResult.setFillColor(sf::Color(97, 24, 24));
                 m_debugModeResult.setString("OFF");
             }
@@ -77,7 +77,7 @@ void OptionsMainMenu::handleMouseButtons(sf::Event& event, bool& requestExit, Se
     }
 }
 
-void OptionsMainMenu::setMusicLevel(SettingsManager& settingsManager, AudioManager& audioManager, sf::Vector2f& position) {
+void OptionsMainMenu::setMusicLevel(sf::Vector2f& position) {
     int volumeLevel = 0;
 
     sf::Vector2i mousePosition = sf::Mouse::getPosition(*m_Window);
@@ -87,14 +87,14 @@ void OptionsMainMenu::setMusicLevel(SettingsManager& settingsManager, AudioManag
             m_oldMusicVolumeIndex = i;
             m_musicCheckPoints[i].setFillColor(m_selectedCheckpointColor);
 
-            audioManager.getBackgroundMusic().setVolume(volumeLevel);
-            settingsManager.setInt_(SkyfallUtils::Settings::MUSIC_VOLUME, volumeLevel);
+            g_aSingleton.getBackgroundMusic().setVolume(volumeLevel);
+            g_sSingleton.setInt_(SkyfallUtils::Settings::MUSIC_VOLUME, volumeLevel);
         } 
         volumeLevel += 5;
     }
 }
 
-void OptionsMainMenu::setSoundLevel(SettingsManager& settingsManager, AudioManager& audioManager, sf::Vector2f& position) {
+void OptionsMainMenu::setSoundLevel(sf::Vector2f& position) {
     int volumeLevel = 0;
 
     sf::Vector2i mousePosition = sf::Mouse::getPosition(*m_Window);
@@ -104,20 +104,20 @@ void OptionsMainMenu::setSoundLevel(SettingsManager& settingsManager, AudioManag
             m_oldSoundVolumeIndex = i;
             m_soundEffectsCheckpoints[i].setFillColor(m_selectedCheckpointColor);
 
-            audioManager.setSoundEffectsVolume(volumeLevel);
-            audioManager.getButtonClickSound().play();
-            settingsManager.setInt_(SkyfallUtils::Settings::SOUND_EFFECTS_VOLUME, volumeLevel);
+            g_aSingleton.setSoundEffectsVolume(volumeLevel);
+            g_aSingleton.getButtonClickSound().play();
+            g_sSingleton.setInt_(SkyfallUtils::Settings::SOUND_EFFECTS_VOLUME, volumeLevel);
         }
         volumeLevel += 10;
     }
 }
 
-void OptionsMainMenu::setTextures(TextureManager& textureManager) {
-    m_backBtn.setTexture(textureManager.getCancelBtn());
+void OptionsMainMenu::setTextures() {
+    m_backBtn.setTexture(g_tSingleton.getCancelBtn());
 }
 
-void OptionsMainMenu::initSprites(FontManager& fontManager, AudioManager& audioManager, SettingsManager& settingsManager) {
-    m_musicText.setFont(fontManager.getFredokaOne());
+void OptionsMainMenu::initSprites() {
+    m_musicText.setFont(g_fSingleton.getFredokaOne());
     m_musicText.setCharacterSize(50);
     m_musicText.setString("Music");
     m_musicText.setPosition(m_Window->getSize().x / 2 - m_musicText.getGlobalBounds().width + 70.f, 10.f);
@@ -133,7 +133,7 @@ void OptionsMainMenu::initSprites(FontManager& fontManager, AudioManager& audioM
         m_musicCheckPoints[i].setPosition(sf::Vector2f(m_musicSlider.getPosition().x + i * (m_musicSlider.getSize().x / 9), m_musicSlider.getPosition().y - 21));
     } 
     /* set the current level of music */
-    int musicVolume = audioManager.getBackgroundMusic().getVolume();
+    int musicVolume = g_aSingleton.getBackgroundMusic().getVolume();
     if (musicVolume == 0) {
         m_musicCheckPoints[0].setFillColor(m_selectedCheckpointColor);
         m_oldMusicVolumeIndex = 0;
@@ -143,7 +143,7 @@ void OptionsMainMenu::initSprites(FontManager& fontManager, AudioManager& audioM
         m_oldMusicVolumeIndex = musicVolume / 5;
     }
 
-    m_soundEffectsText.setFont(fontManager.getFredokaOne());
+    m_soundEffectsText.setFont(g_fSingleton.getFredokaOne());
     m_soundEffectsText.setCharacterSize(50);
     m_soundEffectsText.setString("Sound-Effects");
     m_soundEffectsText.setPosition(m_Window->getSize().x / 2 - m_soundEffectsText.getGlobalBounds().width + 165.f, m_musicSlider.getPosition().y + 46);
@@ -160,7 +160,7 @@ void OptionsMainMenu::initSprites(FontManager& fontManager, AudioManager& audioM
     }
 
     /* set the current level of sound effects */
-    int soundVolume = audioManager.getSoundEffectsVolume();
+    int soundVolume = g_aSingleton.getSoundEffectsVolume();
     if (soundVolume == 0) {
         m_soundEffectsCheckpoints[0].setFillColor(m_selectedCheckpointColor);
         m_oldSoundVolumeIndex = 0;
@@ -170,16 +170,16 @@ void OptionsMainMenu::initSprites(FontManager& fontManager, AudioManager& audioM
         m_oldSoundVolumeIndex = soundVolume / 10;
     }
 
-    m_debugModeText.setFont(fontManager.getFredokaOne());
+    m_debugModeText.setFont(g_fSingleton.getFredokaOne());
     m_debugModeText.setCharacterSize(40);
     m_debugModeText.setString("Debug-Mode: ");
     m_debugModeText.setPosition(m_musicSlider.getPosition().x, m_soundEffectsSlider.getPosition().y + m_soundEffectsSlider.getGlobalBounds().height + 55.f);
     m_debugModeText.setFillColor(sf::Color(199, 199, 199));
 
-    m_debugModeResult.setFont(fontManager.getFredokaOne());
+    m_debugModeResult.setFont(g_fSingleton.getFredokaOne());
     m_debugModeResult.setCharacterSize(50);
-    m_debugModeResult.setString(settingsManager.getValue(SkyfallUtils::Settings::DEBUG_MODE).GetString());
-    if (std::strcmp(settingsManager.getValue(SkyfallUtils::Settings::DEBUG_MODE).GetString(), "ON") == 0) { 
+    m_debugModeResult.setString(g_sSingleton.getValue(SkyfallUtils::Settings::DEBUG_MODE).GetString());
+    if (std::strcmp(g_sSingleton.getValue(SkyfallUtils::Settings::DEBUG_MODE).GetString(), "ON") == 0) { 
         m_debugModeResult.setFillColor(sf::Color(43, 97, 24));
     }
     else {

@@ -8,15 +8,12 @@
 #include "Entity.h"
 #include "Client.h"
 
-#include "SettingsManager.h"
-
 #include "MenuConfirmationExit.h"
 #include "OptionsMainMenu.h"
 #include "NicknameMenu.h"
 #include "IpPortMenu.h"
 #include "MainGameWindow.h"
-#include "TextureManager.h"
-#include "AudioManager.h"
+#include "extern_variables.h"
 
 #include "../GameServer/NetPacket.h"
 #include "../GameServer/network_utilities.h"
@@ -38,23 +35,23 @@ private:
 	std::string m_Nickname;
 
 private:
-	void setMusicAndSound(SettingsManager& settingsManager, AudioManager& audioManager);
+	void setMusicAndSound();
 
-	void setTextures(TextureManager& textureManager);
+	void setTextures();
 
 	void initSprites();
 
 	void draw();
 
-	void handleKeyBoard(sf::Event& event, TextureManager& textureManager, AudioManager& audioManager);
+	void handleKeyBoard(sf::Event& event);
 
-	void handleButtonClicks(sf::Event& event, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager);
+	void handleButtonClicks(sf::Event& event);
 
-	void handleClientConnection(std::string nick, std::string ip, int port, AudioManager& audioManager);
+	void handleClientConnection(std::string nick, std::string ip, int port);
 
 	void displayTextThread(Entity& entity, int seconds);
 
-	void handleMatchmakingClient(const NetPacket::NetMessages& msg, AudioManager& audioManager, std::string nickname);
+	void handleMatchmakingClient(const NetPacket::NetMessages& msg, std::string nickname);
 
 	void listenForMatchmaking(std::string nickname);
 
@@ -62,12 +59,12 @@ private:
 
 	void undoMatchmaking();
 
-	void exitMenu(TextureManager& textureManager, AudioManager& audioManager);
+	void exitMenu();
 
 	void matchFound(std::string nick);
 
 public:
 	MainMenu();
 
-	bool init(TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager);
+	bool init();
 };

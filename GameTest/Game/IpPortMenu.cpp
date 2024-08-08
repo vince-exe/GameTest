@@ -1,11 +1,11 @@
 #include "IpPortMenu.h"
 
-std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker) {
+std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, SkyfallUtils::WindowsReturnValues& checker) {
     m_Window = &window; 
     
-    setTextures(textureManager);
-    initSprites(fontManager);
-    setPlaceholder(settingsManager);
+    setTextures();
+    initSprites();
+    setPlaceholder();
 
     bool requestExit = false;
     sf::Event event;
@@ -21,7 +21,7 @@ std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, TextureMa
             }
             
             handleTextEntered(event);
-            handleMouseButtons(event, settingsManager, audioManager, checker, requestExit);
+            handleMouseButtons(event, checker, requestExit);
         }
         draw();
     }
@@ -29,14 +29,14 @@ std::pair<std::string, int> IpPortMenu::init(sf::RenderWindow& window, TextureMa
     return m_Pair;
 }
 
-void IpPortMenu::setTextures(TextureManager& textureManager) {
-    m_Text.setTexture(textureManager.getTextImage(5));
-    m_connectBtn.setTexture(textureManager.getDoneBtn());
-    m_cancelBtn.setTexture(textureManager.getCancelBtn());
-    m_entityToDisplay.setTexture(textureManager.getTextImage(7));
+void IpPortMenu::setTextures() {
+    m_Text.setTexture(g_tSingleton.getTextImage(5));
+    m_connectBtn.setTexture(g_tSingleton.getDoneBtn());
+    m_cancelBtn.setTexture(g_tSingleton.getCancelBtn());
+    m_entityToDisplay.setTexture(g_tSingleton.getTextImage(7));
 }
 
-void IpPortMenu::initSprites(FontManager& fontManager) {
+void IpPortMenu::initSprites() {
     float windowXSize = m_Window->getSize().x;
     float windowYSize = m_Window->getSize().y;
 
@@ -47,15 +47,15 @@ void IpPortMenu::initSprites(FontManager& fontManager) {
     m_Line.setRotation(0);
     m_Line.setPosition(m_Text.getSprite().getPosition().x, m_Text.getSprite().getPosition().y + 240);
 
-    m_inputDisplay.setFont(fontManager.getFredokaOne());
+    m_inputDisplay.setFont(g_fSingleton.getFredokaOne());
     m_inputDisplay.setCharacterSize(45);
 
     m_cancelBtn.getSprite().setPosition((windowXSize - m_cancelBtn.getTexture().getSize().x) / 2 - 230, m_Line.getPosition().y + 100);
     m_connectBtn.getSprite().setPosition((windowXSize - m_connectBtn.getTexture().getSize().x) / 2 + 230, m_Line.getPosition().y + 100);
 }
 
-void IpPortMenu::setPlaceholder(SettingsManager& settingsManager) {
-    std::string ipPort = settingsManager.getValue(SkyfallUtils::Settings::DEFAULT_NETWORK).GetString();
+void IpPortMenu::setPlaceholder() {
+    std::string ipPort = g_sSingleton.getValue(SkyfallUtils::Settings::DEFAULT_NETWORK).GetString();
 
     for (int i = 0; i < ipPort.length(); i++) {
         m_Pair.first += ipPort[i];
@@ -107,12 +107,12 @@ void IpPortMenu::handleTextEntered(sf::Event& event) {
     }
 }
 
-void IpPortMenu::handleMouseButtons(sf::Event& event, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested) {
+void IpPortMenu::handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested) {
     sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         if (m_cancelBtn.isInside(position)) {
-            audioManager.getButtonClickSound();
+            g_aSingleton.getButtonClickSound();
             checker = SkyfallUtils::WindowsReturnValues::BACK;
             exitRequested = true;
         }
@@ -120,13 +120,13 @@ void IpPortMenu::handleMouseButtons(sf::Event& event, SettingsManager& settingsM
             /* check if the format is valid */
             std::string check = m_Pair.first;
             if (setIpPort(check)) {
-                audioManager.getButtonClickSound().play();
-                settingsManager.setString_("DefaultIpPort", check);
+                g_aSingleton.getButtonClickSound().play();
+                g_sSingleton.setString_("DefaultIpPort", check);
                 checker = SkyfallUtils::WindowsReturnValues::DONE;
                 exitRequested = true;
             }
             else {
-                audioManager.getErrorSound().play();
+                g_aSingleton.getErrorSound().play();
                 displayTextFuncTime(m_entityToDisplay, 5);
             }
         }

@@ -7,10 +7,7 @@
 #include "Entity.h"
 #include "Music.h"
 #include "utils.h"
-#include "TextureManager.h"
-#include "SettingsManager.h"
-#include "FontManager.h"
-#include "AudioManager.h"
+#include "extern_variables.h"
 
 class OptionsMainMenu {
 private:
@@ -30,16 +27,16 @@ private:
 private:
 	void draw();
 
-	void handleMouseButtons(sf::Event& event, bool& requestExit, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker);
+	void handleMouseButtons(sf::Event& event, bool& requestExit, SkyfallUtils::WindowsReturnValues& checker);
 
-	void setMusicLevel(SettingsManager& settingsManager, AudioManager& audioManager, sf::Vector2f& position);
+	void setMusicLevel(sf::Vector2f& position);
 
-	void setSoundLevel(SettingsManager& settingsManager, AudioManager& audioManager, sf::Vector2f& position);
+	void setSoundLevel(sf::Vector2f& position);
 
-	void initSprites(FontManager& fontManager, AudioManager& audioManager, SettingsManager& settingsManager);
+	void initSprites();
 
-	void setTextures(TextureManager& textureManager);
+	void setTextures();
 
 public:
-	void init(sf::RenderWindow& window, TextureManager& textureManager, SettingsManager& settingsManager, FontManager& fontManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker);
+	void init(sf::RenderWindow& window, SkyfallUtils::WindowsReturnValues& checker);
 };

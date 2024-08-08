@@ -1,9 +1,9 @@
 #include "MenuConfirmationExit.h"
 
-void MenuConfirmationExit::init(sf::RenderWindow& window, TextureManager& textureManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker) {
+void MenuConfirmationExit::init(sf::RenderWindow& window, SkyfallUtils::WindowsReturnValues& checker) {
 	m_Window = &window;
 
-	setTextures(textureManager);
+	setTextures();
 	setSprite();
 
 	sf::Event event;
@@ -18,16 +18,16 @@ void MenuConfirmationExit::init(sf::RenderWindow& window, TextureManager& textur
 				checker = SkyfallUtils::WindowsReturnValues::BACK;
 				exitRequested = true;
 			}
-			handleButtonClicks(checker, event, exitRequested, audioManager);
+			handleButtonClicks(checker, event, exitRequested);
 		}
 		draw();
 	}
 }
 
-void MenuConfirmationExit::setTextures(TextureManager& textureManager) {
-	m_backBtn.setTexture(textureManager.getCancelBtn());
-	m_exitBtn.setTexture(textureManager.getDoneBtn());
-	m_Text.setTexture(textureManager.getTextImage(6));
+void MenuConfirmationExit::setTextures() {
+	m_backBtn.setTexture(g_tSingleton.getCancelBtn());
+	m_exitBtn.setTexture(g_tSingleton.getDoneBtn());
+	m_Text.setTexture(g_tSingleton.getTextImage(6));
 }
 
 void MenuConfirmationExit::setSprite() {
@@ -36,18 +36,18 @@ void MenuConfirmationExit::setSprite() {
 	m_exitBtn.getSprite().setPosition((m_Window->getSize().x - m_exitBtn.getTexture().getSize().x) / 2 + 120, 390.f);
 }
 
-void MenuConfirmationExit::handleButtonClicks(SkyfallUtils::WindowsReturnValues& checker, sf::Event& event, bool& exitRequested, AudioManager& audioManager) {
+void MenuConfirmationExit::handleButtonClicks(SkyfallUtils::WindowsReturnValues& checker, sf::Event& event, bool& exitRequested) {
 	sf::Vector2f position = m_Window->mapPixelToCoords(sf::Mouse::getPosition(*m_Window));
 
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 		if (m_exitBtn.isInside(position)) {
-			audioManager.getButtonClickSound().play();
+			g_aSingleton.getButtonClickSound().play();
 			m_Window->close();
 			checker = SkyfallUtils::WindowsReturnValues::EXIT;
 			exitRequested = true;
 		}
 		else if (m_backBtn.isInside(position)) {
-			audioManager.getButtonClickSound().play();
+			g_aSingleton.getButtonClickSound().play();
 			checker = SkyfallUtils::WindowsReturnValues::BACK;
 			exitRequested = true;
 		}

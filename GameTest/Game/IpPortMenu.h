@@ -6,14 +6,9 @@
 #include <iostream>
 #include <thread>
 
-#include  "SettingsManager.h"
-
 #include "Entity.h"
 #include "utils.h"
-#include "TextureManager.h"
-#include "FontManager.h"
-#include "Sound.h"
-#include "AudioManager.h"
+#include "extern_variables.h"
 
 class IpPortMenu {
 private:
@@ -29,23 +24,23 @@ private:
 	Entity* m_msgToDisplay;
 
 private:
-	void setTextures(TextureManager& textureManager);
+	void setTextures();
 
-	void setPlaceholder(SettingsManager& settingsManager);
+	void setPlaceholder();
 
-	void initSprites(FontManager& fontManager);
+	void initSprites();
 
 	void draw();
 
 	void handleTextEntered(sf::Event& event);
 
-	void handleMouseButtons(sf::Event& event, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested);
+	void handleMouseButtons(sf::Event& event, SkyfallUtils::WindowsReturnValues& checker, bool& exitRequested);
 
 	bool setIpPort(std::string ipPort);
 
 	void displayTextFuncTime(Entity& entity, int seconds);
 
 public:
-	std::pair<std::string, int> init(sf::RenderWindow& window, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager, SkyfallUtils::WindowsReturnValues& checker);
+	std::pair<std::string, int> init(sf::RenderWindow& window, SkyfallUtils::WindowsReturnValues& checker);
 };
 

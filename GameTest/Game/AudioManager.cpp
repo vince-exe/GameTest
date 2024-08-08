@@ -1,17 +1,12 @@
 #include "AudioManager.h"
 
-AudioManager& AudioManager::getInstance() {
-    static AudioManager instance;
-    return instance;
-}
-
 bool AudioManager::init() {
     m_soundEffectsVolume = 0;
 
     return 
-        m_backgroundMusic.openFromFile(SkyfallUtils::Audio::BACKGROUND_MUSIC) && m_matchmakingSound.openFromFile(SkyfallUtils::Audio::MATCHMAKING_SOUND)
-        && m_buttonClick.openFromFile(SkyfallUtils::Audio::BUTTON_CLICK_SOUND) && m_errorSound.openFromFile(SkyfallUtils::Audio::ERROR_SOUND)
-        && m_battleMusic.openFromFile(SkyfallUtils::Audio::BATTLE_MUSIC) && m_countdownSound.openFromFile(SkyfallUtils::Audio::COUNTDOWN_SOUND);
+        m_backgroundMusic.openFromFile(SkyfallUtils::Audio::BACKGROUND_MUSIC.string()) && m_matchmakingSound.openFromFile(SkyfallUtils::Audio::MATCHMAKING_SOUND.string())
+        && m_buttonClick.openFromFile(SkyfallUtils::Audio::BUTTON_CLICK_SOUND.string()) && m_errorSound.openFromFile(SkyfallUtils::Audio::ERROR_SOUND.string())
+        && m_battleMusic.openFromFile(SkyfallUtils::Audio::BATTLE_MUSIC.string()) && m_countdownSound.openFromFile(SkyfallUtils::Audio::COUNTDOWN_SOUND.string());
 }
 
 Music& AudioManager::getBackgroundMusic() {

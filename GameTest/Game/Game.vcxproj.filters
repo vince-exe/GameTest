@@ -114,6 +114,9 @@
     <ClCompile Include="network_game_utilities.cpp">
       <Filter>File di origine\Network</Filter>
     </ClCompile>
+    <ClCompile Include="extern_variables.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioManager.h">
@@ -181,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="network_game_utilities.h">
       <Filter>File di intestazione\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="extern_variables.h">
+      <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

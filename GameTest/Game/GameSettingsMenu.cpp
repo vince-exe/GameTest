@@ -1,7 +1,7 @@
 #include "GameSettingsMenu.h"
 
-void GameSettingsMenu::setTextures(TextureManager& textureManager) {
-	m_backText.setTexture(textureManager.getCancelBtn());
+void GameSettingsMenu::setTextures() {
+	m_backText.setTexture(g_tSingleton.getCancelBtn());
 }
 
 void GameSettingsMenu::setSprites(sf::RenderWindow& window) {

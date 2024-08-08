@@ -5,17 +5,14 @@
 #include <iostream>
 
 #include "Entity.h"
-#include "FontManager.h"
 #include "Client.h"
 #include "Player.h"
 #include "../GameServer/network_utilities.h"
 #include "network_game_utilities.h"
 #include "Game.h"
-#include "TextureManager.h"
 #include "GameSettingsMenu.h"
 #include "EndGameWindow.h"
-#include "SettingsManager.h"
-#include "AudioManager.h"
+#include "extern_variables.h"
 
 class MainGameWindow {
 private:
@@ -43,19 +40,19 @@ private:
 	std::vector<std::vector<sf::CircleShape>> m_damageAreasVector;
 
 private:
-	void setMusicAndSound(AudioManager& audioManager, SettingsManager& settingsManager);
+	void setMusicAndSound();
 
-	void update(sf::Time deltaTime, AudioManager& audioManager);
+	void update(sf::Time deltaTime);
 
 	void draw();
 
-	void initSprites(FontManager& fontManager, SettingsManager& settingsManager);
+	void initSprites();
 
 	void handleKeyBoards(sf::Event event);
 
 	void handleMouseClick(sf::Event& event);
 
-	void quitGame(AudioManager& audioManager);
+	void quitGame();
 
 	void updateRechargeBar();
 
@@ -65,10 +62,10 @@ private:
 
 	bool handleEnemyNickname();
 
-	void handleMessages(AudioManager& audioManager);
+	void handleMessages();
 
 	bool initPlayerAndEnemyPosition();
 
 public:
-	void init(const std::string nickname, Client& client, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager);
+	void init(const std::string nickname, Client& client);
 };

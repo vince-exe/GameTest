@@ -5,7 +5,7 @@
 #include "utils.h"
 
 class FontManager {
-private:
+public:
 	FontManager() = default;
 	~FontManager() = default;
 	FontManager& operator=(const FontManager&) = delete; // Disable = operator
@@ -14,12 +14,8 @@ private:
 private:
 	sf::Font m_fredokaOne;
 
-public:
-	static FontManager& getInstance();
-
 public:	
 	bool init();
 
 	const sf::Font& getFredokaOne() const ;
 };
-

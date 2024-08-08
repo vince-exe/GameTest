@@ -1,47 +1,40 @@
 #include <iostream>
 
+#include "extern_variables.h"
 #include "MainMenu.h"
-#include "TextureManager.h"
-#include "FontManager.h"
-#include "SettingsManager.h"
-#include "AudioManager.h"
 
 int main() {
-    SettingsManager& sSingleton = SettingsManager::getInstance();
-    FontManager& fSinfleton = FontManager::getInstance();
-    TextureManager& tSingleton = TextureManager::getInstance();
-    AudioManager& aSingleton = AudioManager::getInstance();
 
-    if (!sSingleton.init(SkyfallUtils::Settings::SETTINGS_PATH)) {
+    if (!g_sSingleton.init(SkyfallUtils::Settings::SETTINGS_PATH)) {
         std::cerr << "\n[ ERROR ]: Failed to load game's settings\n";
         system("pause");
         return 1;
     }
-    if (!fSinfleton.init()) {
+    if (!g_fSingleton.init()) {
         std::cerr << "\n [ ERROR ]: Failed to load game's fonts\n";
         system("pause");
         return 1;
     }
-    if (!tSingleton.init()) {
+    if (!g_tSingleton.init()) {
         std::cerr << "\n[ ERROR ]: Failed to load game's textures\n";
         system("pause");
         return 1;
     }
-    if (!aSingleton.init()) {
+    if (!g_aSingleton.init()) {
         std::cerr << "\n[ ERROR ]: Failed to load game's audio\n";
         system("pause");
         return 1;
     }
 
     MainMenu mainMenu;
-    mainMenu.init(tSingleton, fSinfleton, sSingleton, aSingleton);
+    mainMenu.init();
     
-    if (sSingleton.storeSettings()) {
+    if (g_sSingleton.storeSettings()) {
         std::cout << "\nSuccessfully stored the settings";
     }
     else {
         std::cout << "\nFailed to store the settings";
     }
-
+    
     return 0;
 }

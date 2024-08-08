@@ -5,8 +5,8 @@ MainMenu::MainMenu() {
     m_Window.setFramerateLimit(60);
 }
 
-bool MainMenu::init(TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager) {
-    setMusicAndSound(settingsManager, audioManager);
+bool MainMenu::init() {
+    setMusicAndSound();
     
     /* Menu Variables */
     m_displayText = false;
@@ -15,20 +15,20 @@ bool MainMenu::init(TextureManager& textureManager, FontManager& fontManager, Se
     /* for matchmaking */
     m_inMatchmaking.store(false);
 
-    setTextures(textureManager);
+    setTextures();
     initSprites();
     sf::Event event;
 
     while (m_Window.isOpen() && !m_exitRequested) {
         if (m_displayGameWindow) {
             m_Window.setVisible(false);
-            audioManager.getBackgroundMusic().stop();
+            g_aSingleton.getBackgroundMusic().stop();
 
             MainGameWindow mainGameWindow;
-            mainGameWindow.init(m_Nickname, m_Client, textureManager, fontManager, settingsManager, audioManager);
+            mainGameWindow.init(m_Nickname, m_Client);
 
-            audioManager.getBackgroundMusic().play();
-            audioManager.getBackgroundMusic().loop(true);
+            g_aSingleton.getBackgroundMusic().play();
+            g_aSingleton.getBackgroundMusic().loop(true);
             m_displayGameWindow = false;
             m_displayText = false;
             m_Window.setVisible(true);
@@ -37,26 +37,26 @@ bool MainMenu::init(TextureManager& textureManager, FontManager& fontManager, Se
             if (event.type == sf::Event::Closed) {
                 m_Window.close();
             }
-            handleKeyBoard(event, textureManager, audioManager);
-            handleButtonClicks(event, textureManager, fontManager, settingsManager, audioManager);
+            handleKeyBoard(event);
+            handleButtonClicks(event);
         }
         draw();
     }
 
-    audioManager.getBackgroundMusic().stop();
+    g_aSingleton.getBackgroundMusic().stop();
     return (m_exitRequested == false);
 }
 
-void MainMenu::setTextures(TextureManager& textureManager) {
-    m_matchText.setTexture(textureManager.getMatchBtnTexture());
-    m_settings2Text.setTexture(textureManager.getSettings2BtnTexture());
-    m_settingsText.setTexture(textureManager.getSettingsBtnTexture());
-    m_undoMatchText.setTexture(textureManager.getUndoMatchTexture());
-    m_mainText.setTexture(textureManager.getTextImage(4));
-    m_quitText.setTexture(textureManager.getQuitBtnTexture());
+void MainMenu::setTextures() {
+    m_matchText.setTexture(g_tSingleton.getMatchBtnTexture());
+    m_settings2Text.setTexture(g_tSingleton.getSettings2BtnTexture());
+    m_settingsText.setTexture(g_tSingleton.getSettingsBtnTexture());
+    m_undoMatchText.setTexture(g_tSingleton.getUndoMatchTexture());
+    m_mainText.setTexture(g_tSingleton.getTextImage(4));
+    m_quitText.setTexture(g_tSingleton.getQuitBtnTexture());
 
     for (int i = 0; i < 4; i++) {
-        m_menuMsgs[i].setTexture(textureManager.getTextImage(i));
+        m_menuMsgs[i].setTexture(g_tSingleton.getTextImage(i));
     }
 }
 
@@ -74,13 +74,13 @@ void MainMenu::initSprites() {
     m_mainText.getSprite().setPosition(20.f, m_Window.getSize().y - m_mainText.getSprite().getGlobalBounds().height - 10);
 }
 
-void MainMenu::setMusicAndSound(SettingsManager& settingsManager, AudioManager& audioManager) {
-    Music& backMusic = audioManager.getBackgroundMusic();
-    backMusic.setVolume(settingsManager.getValue(SkyfallUtils::Settings::MUSIC_VOLUME).GetInt());
+void MainMenu::setMusicAndSound() {
+    Music& backMusic = g_aSingleton.getBackgroundMusic();
+    backMusic.setVolume(g_sSingleton.getValue(SkyfallUtils::Settings::MUSIC_VOLUME).GetInt());
     backMusic.play();
     backMusic.loop(true);
 
-    audioManager.setSoundEffectsVolume(settingsManager.getValue(SkyfallUtils::Settings::SOUND_EFFECTS_VOLUME).GetInt());
+    g_aSingleton.setSoundEffectsVolume(g_sSingleton.getValue(SkyfallUtils::Settings::SOUND_EFFECTS_VOLUME).GetInt());
 }
 
 void MainMenu::draw() {
@@ -106,65 +106,65 @@ void MainMenu::draw() {
     m_Window.display();
 }
 
-void MainMenu::handleKeyBoard(sf::Event& event, TextureManager& textureManager, AudioManager& audioManager) {
+void MainMenu::handleKeyBoard(sf::Event& event) {
     /* OPEN THE EXIT MENU */
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
         MenuConfirmationExit menuConfirmationExit;
         SkyfallUtils::WindowsReturnValues checker{};
 
-        menuConfirmationExit.init(m_Window, textureManager, audioManager, checker);
+        menuConfirmationExit.init(m_Window, checker);
         if (checker == SkyfallUtils::WindowsReturnValues::EXIT) {
             m_exitRequested = true;
         }
     }
 }
 
-void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManager, FontManager& fontManager, SettingsManager& settingsManager, AudioManager& audioManager) {
+void MainMenu::handleButtonClicks(sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2f position = m_Window.mapPixelToCoords(sf::Mouse::getPosition(m_Window));
 
         /* UNDO MATCHMAKING */
         if (m_inMatchmaking.load() && m_undoMatchText.isInside(position)) {
-            audioManager.getButtonClickSound().play();
+            g_aSingleton.getButtonClickSound().play();
             undoMatchmaking();
             return;
         }
         /* OPEN THE NICKNAME MENU */
         if (m_matchText.isInside(position) && !m_inMatchmaking.load()) {
-             audioManager.getButtonClickSound().play();
+             g_aSingleton.getButtonClickSound().play();
              m_displayText = false;
              NicknameMenu m_NicknameMenu;
              SkyfallUtils::WindowsReturnValues checker{};
 
-             std::string nick = m_NicknameMenu.init(m_Window, textureManager, fontManager, audioManager, checker);
+             std::string nick = m_NicknameMenu.init(m_Window, checker);
              if (checker == SkyfallUtils::WindowsReturnValues::DONE) {
                 /* OPEN THE CONNECT MENU */
                 IpPortMenu ipPortMenu;
-                std::pair<std::string, int> ipPort = ipPortMenu.init(m_Window, textureManager, fontManager, settingsManager, audioManager, checker);
+                std::pair<std::string, int> ipPort = ipPortMenu.init(m_Window, checker);
                 std::cout << "\nIp: " << ipPort.first << "   Port: " << ipPort.second; // debug
 
                 if (checker == SkyfallUtils::WindowsReturnValues::DONE) {
                     /* start the connection thread */
-                    std::thread t(&MainMenu::handleClientConnection, this, nick, ipPort.first, ipPort.second, std::ref(audioManager));
+                    std::thread t(&MainMenu::handleClientConnection, this, nick, ipPort.first, ipPort.second);
                     t.detach();
                 }
              }
         }
         /* SETTINGS MENU */
         else if (m_settingsText.isInside(position) && !m_inMatchmaking.load()) {
-            audioManager.getButtonClickSound().play();
+            g_aSingleton.getButtonClickSound().play();
             OptionsMainMenu optionsMainMenu;
             SkyfallUtils::WindowsReturnValues checker{};
 
-            optionsMainMenu.init(m_Window, textureManager, settingsManager, fontManager, audioManager, checker);
+            optionsMainMenu.init(m_Window, checker);
         }
         /* EXIT MENU */
         else if (m_quitText.isInside(position)) {
-            audioManager.getButtonClickSound().play();
+            g_aSingleton.getButtonClickSound().play();
             MenuConfirmationExit menuConfirmationExit;
             SkyfallUtils::WindowsReturnValues checker{};
 
-            menuConfirmationExit.init(m_Window, textureManager, audioManager, checker);
+            menuConfirmationExit.init(m_Window, checker);
             if (checker == SkyfallUtils::WindowsReturnValues::EXIT) {
                 undoMatchmaking();
                 m_exitRequested = true;
@@ -173,10 +173,10 @@ void MainMenu::handleButtonClicks(sf::Event& event, TextureManager& textureManag
     }
 }
 
-void MainMenu::handleClientConnection(std::string nick, std::string ip, int port, AudioManager& audioManager) {
+void MainMenu::handleClientConnection(std::string nick, std::string ip, int port) {
     try {
         if (!m_Client.connect(ip, port)) {
-            audioManager.getErrorSound().play();    
+            g_aSingleton.getErrorSound().play();    
             m_Client.close();
             displayTextThread(m_menuMsgs[0], 7); // "Server Down" message.
         } 
@@ -184,7 +184,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
             NetPacket::NetMessages msg = NetUtils::Tcp::read_(*m_Client.getSocket()).getMsgType();
 
             if (msg == NetPacket::NetMessages::SERVER_FULL) {
-                audioManager.getErrorSound().play();
+                g_aSingleton.getErrorSound().play();
                 displayTextThread(m_menuMsgs[2], 7); // display the "Server Full" message
             }
             else {
@@ -193,7 +193,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
 
                 /* check the m_Nickname */
                 if (NetUtils::Tcp::read_(*m_Client.getSocket()).getMsgType() == NetPacket::NetMessages::NICK_EXITS) {
-                    audioManager.getErrorSound().play();
+                    g_aSingleton.getErrorSound().play();
                     m_Client.getSocket()->close();
                     displayTextThread(m_menuMsgs[1], 7); // Nick exists text
                     
@@ -201,7 +201,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 /* send the matchmaking request */
                 else {
                     NetUtils::Tcp::write_(*m_Client.getSocket(), NetPacket(NetPacket::NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
-                    handleMatchmakingClient(NetUtils::Tcp::read_(*m_Client.getSocket()).getMsgType(), audioManager, nick);
+                    handleMatchmakingClient(NetUtils::Tcp::read_(*m_Client.getSocket()).getMsgType(), nick);
                 }
             }
         }
@@ -214,9 +214,9 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
     }
 }
 
-void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, AudioManager& audioManager, std::string m_Nickname) {
+void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, std::string m_Nickname) {
     if (msg == NetPacket::NetMessages::WAIT_FOR_MATCH) {
-        audioManager.getMatchmakingSound().play(); // "in queue for a match" text
+        g_aSingleton.getMatchmakingSound().play(); // "in queue for a match" text
         displayTextFunc(m_menuMsgs[3]);
 
         /* start a thread to listen if the matchmaking is requested */
@@ -275,11 +275,11 @@ void MainMenu::undoMatchmaking() {
     m_Client.close();
 }
 
-void MainMenu::exitMenu(TextureManager& textureManager, AudioManager& audioManager) {
+void MainMenu::exitMenu() {
     MenuConfirmationExit menuConfirmationExit;
     SkyfallUtils::WindowsReturnValues checker{};
 
-    menuConfirmationExit.init(m_Window, textureManager, audioManager, checker);
+    menuConfirmationExit.init(m_Window, checker);
     if (checker == SkyfallUtils::WindowsReturnValues::EXIT) {
         /* if is in matchmaking */
         if (m_inMatchmaking.load()) {

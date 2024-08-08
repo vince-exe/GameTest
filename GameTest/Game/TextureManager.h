@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 class TextureManager {
-private:
+public:
 	TextureManager() = default;
 	~TextureManager() = default;
 	TextureManager& operator=(const TextureManager&) = delete; // Disable = operator
@@ -15,9 +15,6 @@ private:
 	sf::Texture m_quitBtnTexture, m_settingsBtnTexture, m_settings2BtnTexture, m_undoMatchTexture, m_matchBtnTexture, m_connectBtnTexture, m_doneBtn, m_cancelBtn;
 	// texts images
 	sf::Texture m_textsImages[9];
-
-public:
-	static TextureManager& getInstance();
 
 public:
 	bool init();

@@ -3,11 +3,14 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <filesystem>
 
 namespace SkyfallUtils {
 	namespace Settings {
-		const std::string SETTINGS_PATH = "settings/settings.json";
+		const std::filesystem::path SETTINGS_PATH = "settings/settings.json";
 		
+		const std::filesystem::path SETTINGS_DIRECTORY = "settings";
+
 		const std::string MUSIC_VOLUME = "MusicVolume";
 
 		const std::string DEFAULT_NETWORK = "DefaultIpPort";
@@ -17,20 +20,20 @@ namespace SkyfallUtils {
 		const std::string DEBUG_MODE = "DebugMode";
 	}
 	namespace Audio {
-		const std::string BACKGROUND_MUSIC = "assets/Music-Sound/background_menu_music.ogg";
+		const std::filesystem::path BACKGROUND_MUSIC = "assets/Music-Sound/background_menu_music.ogg";
 		
-		const std::string BUTTON_CLICK_SOUND = "assets/Music-Sound/button_click.ogg";
+		const std::filesystem::path BUTTON_CLICK_SOUND = "assets/Music-Sound/button_click.ogg";
 
-		const std::string MATCHMAKING_SOUND = "assets/Music-Sound/matchmaking.ogg";
+		const std::filesystem::path MATCHMAKING_SOUND = "assets/Music-Sound/matchmaking.ogg";
 
-		const std::string BATTLE_MUSIC = "assets/Music-Sound/battle_music.ogg";
+		const std::filesystem::path BATTLE_MUSIC = "assets/Music-Sound/battle_music.ogg";
 
-		const std::string COUNTDOWN_SOUND = "assets/Music-Sound/countdown.ogg";
+		const std::filesystem::path COUNTDOWN_SOUND = "assets/Music-Sound/countdown.ogg";
 
-		const std::string ERROR_SOUND = "assets/Music-Sound/error_sound.ogg";
+		const std::filesystem::path ERROR_SOUND = "assets/Music-Sound/error_sound.ogg";
 	}
 	namespace Font {
-		const std::string FREDOKA_ONE = "assets/Fonts/FredokaOne-Regular.ttf";
+		const std::filesystem::path FREDOKA_ONE = "assets/Fonts/FredokaOne-Regular.ttf";
 	}
 
 	/*

@@ -5,7 +5,7 @@
 #include "Sound.h"
 
 class AudioManager {
-private:
+public:
 	AudioManager() = default;
 	~AudioManager() = default;
 	AudioManager& operator=(const AudioManager&) = delete; // disable = operator
@@ -17,8 +17,6 @@ private:
 	int m_soundEffectsVolume;
 
 public:
-	static AudioManager& getInstance();
-
 	bool init();
 
 	Music& getBackgroundMusic();
