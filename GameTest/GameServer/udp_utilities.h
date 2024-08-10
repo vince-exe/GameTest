@@ -22,6 +22,10 @@ namespace UdpUtils {
 
 	std::string m_deserializeString(const std::vector<uint8_t>& buffer, size_t& offset);
 
+	void floatArrToUint8tVec(std::vector<uint8_t>& vec, float* floatArray);
+	
+	bool uint8tVecToFloatArr(const std::vector<uint8_t>& vec, float* floatArray);
+	
 	std::vector<uint8_t> serializeUDPMessage(const GameMessage& message);
 
 	GameMessage deserializeUDPMessage(const std::vector<uint8_t>& buffer);

@@ -136,12 +136,14 @@
     <ClCompile Include="..\GameServer\NetPacket.cpp" />
     <ClCompile Include="..\GameServer\network_utilities.cpp" />
     <ClCompile Include="..\GameServer\udp_utilities.cpp" />
+    <ClCompile Include="..\Game\network_game_utilities.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GameServer\NetPacket.h" />
     <ClInclude Include="..\GameServer\network_utilities.h" />
     <ClInclude Include="..\GameServer\udp_utilities.h" />
+    <ClInclude Include="..\Game\network_game_utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

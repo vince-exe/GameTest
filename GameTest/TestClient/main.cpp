@@ -1,11 +1,14 @@
 #include <iostream>
 #include <thread>
 #include <boost/asio.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 
 #include "../GameServer/network_utilities.h"
 #include "../GameServer/NetPacket.h"
 #include "../Game/network_game_utilities.h"
 #include "../GameServer/udp_utilities.h"
+#include "../Game/network_game_utilities.h"
 
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
@@ -16,8 +19,12 @@ void readThred(udp::socket& socket, udp::endpoint& endpoint) {
         while (true) {
             try {
                 NetPacket p = NetUtils::Udp::read_(socket, endpoint);
-                std::string msgStr(p.getData().begin(), p.getData().end());
-                std::cout << "\nMessaggio dall'altro: " << msgStr;
+                
+                float floatArr[3];
+                if (UdpUtils::uint8tVecToFloatArr(p.getData(), floatArr)) {
+                    std::cout << "\nX: " << floatArr[0] << "  Y: " << floatArr[1];
+                }
+                
             }
             catch (boost::system::error_code& e) {
                 std::cout << "\nerrore in read: " << e.what();
@@ -37,7 +44,7 @@ int main() {
 
     // UDP INITIALIZATION
     udp::resolver resolver(io_service);
-    udp::resolver::results_type endpoints = resolver.resolve(udp::v4(), "79.32.155.183", "8889");
+    udp::resolver::results_type endpoints = resolver.resolve(udp::v4(), "79.33.122.225", "8889");
     if (endpoints.size() != 0) {
         auto it = endpoints.begin();
         while (it != endpoints.end()) {
@@ -53,7 +60,7 @@ int main() {
     std::cout << "\nNickname: ";
     std::cin >> nickname;
     // SEND THE TCP CONNECTION
-    socketTCP.connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("79.32.155.183"), 8888), ec);
+    socketTCP.connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("79.33.122.225"), 8888), ec);
 
     if (ec) {
         std::cerr << "Errore while connecting (TCP): " << ec.message() << std::endl;
@@ -98,17 +105,22 @@ int main() {
             NetUtils::Tcp::read_(socketTCP);
 
             readThred(socketUDP, endpoint);
-            std::string msg;
+            float x, y;
             // ciclo per mandare
   
             while (true) {
                 std::cout << "\n-> ";
-                std::getline(std::cin, msg);
+                std::cin >> x; 
+                std::cin >> y;
                 UdpUtils::GameMessage message;
                 // the combination of nicknames ( it's put like that for testing purposes
                 message.m_gameSessionID = "12";
                 message.m_playerUsername = nickname;
-                message.data = std::vector<uint8_t>(msg.begin(), msg.end());
+                
+                // the third slot is for the checksum
+                float p[3] = { x, y };
+                UdpUtils::floatArrToUint8tVec(message.data, p);
+
                 std::vector<uint8_t> msgToSend = UdpUtils::serializeUDPMessage(message);
                 NetUtils::Udp::write_(socketUDP, endpoint, NetPacket(NetPacket::NetMessages::GAME_UDP_MESSAGE, msgToSend.data(), msgToSend.size()));
             }

@@ -27,6 +27,9 @@
     <ClCompile Include="..\GameServer\udp_utilities.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="..\Game\network_game_utilities.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GameServer\NetPacket.h">
@@ -36,6 +39,9 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="..\GameServer\udp_utilities.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\network_game_utilities.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
