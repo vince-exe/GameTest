@@ -1,7 +1,3 @@
-PRINCIPALE:
--vedere il file TO-DO-BOTH.txt
-
-
 REFACTORING:
 -cercare di trovare una soluzione più ottimale per il design della handle-undo-matchmaking.
 

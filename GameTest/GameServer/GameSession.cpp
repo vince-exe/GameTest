@@ -9,7 +9,6 @@ GameSession::GameSession(ThreadSafeUnorderedMap<std::string, std::shared_ptr<Use
 }
 
 void GameSession::handleUDPMessage(UdpUtils::GameMessage& message, std::shared_ptr<NetPacket> packet) {
-	// if the message has been sent by the player 1 send it to the player 2
 	if (message.m_playerUsername == m_user1->getNick()) {
 		NetUtils::Udp::write_(*m_udpServerSocket, *m_user2->getUDPEndpoint(), NetPacket(packet->getMsgType(), message.data.data(), message.data.size()));
 	}

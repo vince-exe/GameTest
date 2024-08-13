@@ -181,6 +181,13 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
             displayTextThread(m_menuMsgs[0], 7); // "Server Down" message.
         } 
         else {
+            // initialize the udp endpoint
+            if (!m_Client.resolveUdpEndpoint(ip, port + 1)) {
+                g_aSingleton.getErrorSound().play();
+                m_Client.close();
+                displayTextThread(m_menuMsgs[0], 7);
+                return;
+            }
             NetPacket::NetMessages msg = NetUtils::Tcp::read_(*m_Client.getSocket()).getMsgType();
 
             if (msg == NetPacket::NetMessages::SERVER_FULL) {
@@ -198,8 +205,19 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                     displayTextThread(m_menuMsgs[1], 7); // Nick exists text
                     
                 }
-                /* send the matchmaking request */
+                /* send the udp connection and after the matchmaking request */
                 else {
+                    m_Client.openUdpSocket();
+                    NetUtils::Udp::write_(*m_Client.getUdpSocket(), m_Client.getUdpEndpoint(), NetPacket(NetPacket::NetMessages::CONNECTION_UDP_MESSAGE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
+
+                    /* check if the udp connection went fine */
+                    if (NetUtils::Tcp::read_(*m_Client.getSocket()).getMsgType() != NetPacket::NetMessages::UDP_CONNECTION_SUCCESS) {
+                        g_aSingleton.getErrorSound().play();
+                        m_Client.getSocket()->close();
+                        displayTextThread(m_menuMsgs[0], 7);
+                        return;
+                    }
+
                     NetUtils::Tcp::write_(*m_Client.getSocket(), NetPacket(NetPacket::NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
                     handleMatchmakingClient(NetUtils::Tcp::read_(*m_Client.getSocket()).getMsgType(), nick);
                 }

@@ -31,7 +31,7 @@ void Server::listenUDPConnections() {
 				m_udpConnectionsMap.insert(nick, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(true, remoteEndpoint));
 				m_udpConnectionsCv.notify_all();
 			}
-			else if (packet.getMsgType() == NetPacket::NetMessages::GAME_UDP_MESSAGE) {
+			else {
 				m_udpMessagesQueue.push(std::make_shared<NetPacket>(packet));
 				m_threadPoolCv.notify_all();
 			}
