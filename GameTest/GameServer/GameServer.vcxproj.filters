@@ -107,5 +107,8 @@
     <ClInclude Include="extern_vaiables.h">
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="hash.h">
+      <Filter>File di intestazione\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -230,12 +230,14 @@ void Server::gameSessionThread(const std::string nick) {
 	}
 
 	Sleep(1000);
+	
+	boost::uuids::uuid uuid = m_UUIDGenerator();
+	std::cout << "\nGameSession's UUID of [ "  << player1->getNick() << " " << player2->getNick() << " ]: " << uuid; // DEBUG
+
 	GameSession gameSession(&m_usersMap, player1, player2, m_udpServerSocket);
-	// store a reference to the gameSession object in the game sessions map.
-	m_gameSessionsMap.insert(player1->getNick() + player2->getNick(), std::make_shared<GameSession>(gameSession));
-	// blocking operation.
-	gameSession.start();
-	m_gameSessionsMap.erase(player1->getNick() + player2->getNick());
+	m_gameSessionsMap.insert(uuid, std::make_shared<GameSession>(gameSession));
+	gameSession.start(uuid); // blocking operation.
+	m_gameSessionsMap.erase(uuid);
 }
 
 //TO-DO: ( REDISIGN ) of this undo-matchmaking-thread

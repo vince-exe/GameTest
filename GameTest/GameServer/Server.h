@@ -13,6 +13,7 @@
 #include "ThreadSafeQueue.h"
 #include "TemporaryThreadsManager.h"
 #include "udp_utilities.h"
+#include "hash.h"
 
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
@@ -70,11 +71,13 @@ private:
 	ThreadSafeQueue<std::shared_ptr<NetPacket>>m_udpMessagesQueue;
 
 	ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>> m_usersMap;
-	ThreadSafeUnorderedMap<std::string, std::shared_ptr<GameSession>> m_gameSessionsMap;
+	ThreadSafeUnorderedMap<boost::uuids::uuid, std::shared_ptr<GameSession>> m_gameSessionsMap;
 
 	ThreadSafeUnorderedMap<std::string, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>> m_udpConnectionsMap;
 	std::condition_variable m_udpConnectionsCv;
 
 	ThreadSafeQueue<std::shared_ptr<User>> m_matchmakingQueue;
 	TemporaryThreadsManager m_tempThreadsManager;
+
+	boost::uuids::random_generator m_UUIDGenerator;
 };

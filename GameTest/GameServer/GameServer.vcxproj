@@ -109,6 +109,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\vince\Documents\C++_Libs\rapidjson-1.1.0\include;C:\Users\vince\Documents\C++_Libs\boost_1_82_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,6 +152,7 @@
     <ClInclude Include="extern_vaiables.h" />
     <ClInclude Include="GameSession.h" />
     <ClInclude Include="game_session_utilities.h" />
+    <ClInclude Include="hash.h" />
     <ClInclude Include="NetPacket.h" />
     <ClInclude Include="network_utilities.h" />
     <ClInclude Include="Server.h" />

@@ -1,6 +1,9 @@
 #include <iostream>
 #include <thread>
 #include <boost/asio.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -69,6 +72,8 @@ int main() {
         return false;
     }
     
+    bool waitForMatch = false; // TEST PURPOSE
+
     if(NetUtils::Tcp::read_(socketTCP).getMsgType() == NetPacket::NetMessages::IDLE) {
         // 1.) SEND THE NICKNAME
         NetUtils::Tcp::write_(socketTCP, NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(nickname.c_str()), nickname.size()));
@@ -90,6 +95,7 @@ int main() {
             NetUtils::Tcp::write_(socketTCP, NetPacket(NetPacket::NetMessages::MATCHMAKING_REQUEST, nullptr, 0));
 
             if (NetUtils::Tcp::read_(socketTCP).getMsgType() == NetPacket::NetMessages::WAIT_FOR_MATCH) {
+                waitForMatch = true;
                 std::cout << "\nStarted listening for matchmaking..\n";
 
                 if (NetUtils::Tcp::read_(socketTCP).getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
@@ -102,6 +108,14 @@ int main() {
             }
 
             // 4.) READ THE 3 GAME MESSAGES FROM THE SERVER
+            if (waitForMatch) {
+                NetUtils::Tcp::read_(socketTCP);
+            }
+            boost::uuids::uuid gameSessionUUID;
+            std::vector<uint8_t> vec = NetUtils::Tcp::read_(socketTCP).getData();
+            std::copy(vec.begin(), vec.end(), gameSessionUUID.begin());
+            std::cout << "\nGAME SESSION UUID: " << gameSessionUUID;
+
             NetUtils::Tcp::read_(socketTCP);
             NetUtils::Tcp::read_(socketTCP);
             NetUtils::Tcp::read_(socketTCP);
@@ -115,8 +129,7 @@ int main() {
                 std::cin >> x; 
                 std::cin >> y;
                 UdpUtils::GameMessage message;
-                // the combination of nicknames ( it's put like that for testing purposes
-                message.m_gameSessionID = "12";
+                message.m_gameSessionID = gameSessionUUID;
                 message.m_playerUsername = nickname;
                 
                 // the third slot is for the checksum

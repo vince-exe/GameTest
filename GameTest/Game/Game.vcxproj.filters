@@ -45,9 +45,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
     <ClCompile Include="AudioManager.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
@@ -115,6 +112,9 @@
       <Filter>File di origine\Network</Filter>
     </ClCompile>
     <ClCompile Include="extern_variables.cpp">
+      <Filter>File di origine\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
   </ItemGroup>

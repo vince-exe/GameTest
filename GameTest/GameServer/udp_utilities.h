@@ -4,6 +4,10 @@
 #include <string>
 #include <vector>
 
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 namespace UdpUtils {
 	namespace errors {
 		class InvalidBytesLength : public std::runtime_error {
@@ -15,10 +19,9 @@ namespace UdpUtils {
 	enum class GameMessageType {
 		PLAYER_POSITION
 	};
-
+	
 	typedef struct GameMessage {
-		GameMessageType m_messageType;
-		std::string m_gameSessionID;
+		boost::uuids::uuid m_gameSessionID;
 		std::string m_playerUsername;
 		std::vector<uint8_t> data;
 	}GameMessage;

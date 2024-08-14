@@ -17,10 +17,9 @@ void GameSession::handleUDPMessage(UdpUtils::GameMessage& message, std::shared_p
 	}
 }
 
-void GameSession::start() {
-	/* send the nicknames */
+void GameSession::start(boost::uuids::uuid& gameSessionUUID) {
 	sendNicknames();
-	/* send the positions */
+	sendGameSessionUUID(gameSessionUUID);
 	sendDefaultPositions();
 
 	/* start the game session */
@@ -41,6 +40,11 @@ void GameSession::start() {
 		handleGameEnd();
 	}
 	std::cout << "\nGameSession between " << m_user1->getNick() << " and " << m_user2->getNick() << " end.\n";
+}
+
+void GameSession::sendGameSessionUUID(boost::uuids::uuid& uuid) {
+	NetUtils::Tcp::write_(*m_user1->getTCPSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(uuid.data), uuid.size()));
+	NetUtils::Tcp::write_(*m_user2->getTCPSocket(), NetPacket(NetPacket::NetMessages::IDLE, reinterpret_cast<const uint8_t*>(uuid.data), uuid.size()));
 }
 
 void GameSession::sendNicknames() {

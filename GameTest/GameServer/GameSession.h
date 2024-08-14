@@ -4,6 +4,9 @@
 #include <unordered_map>
 #include <boost/asio.hpp>
 #include <random>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 #include "User.h"
 #include "network_utilities.h"
@@ -40,11 +43,13 @@ private:
 
 	void handleGameEnd();
 
+	void sendGameSessionUUID(boost::uuids::uuid& uuid);
+
 public:
 	GameSession(ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2, std::shared_ptr<udp::socket> serverSocket);
 
 	void handleUDPMessage(UdpUtils::GameMessage& message,std::shared_ptr<NetPacket> packet);
 
-	void start();
+	void start(boost::uuids::uuid& gameSessionUUID);
 };
 

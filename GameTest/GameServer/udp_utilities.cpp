@@ -47,7 +47,8 @@ bool UdpUtils::uint8tVecToFloatArr(const std::vector<uint8_t>& vec, float* float
 std::vector<uint8_t> UdpUtils::serializeUDPMessage(const GameMessage& message) {
     std::vector<uint8_t> buffer;
 
-    m_serializeString(message.m_gameSessionID, buffer);
+    const uint8_t* uuid = message.m_gameSessionID.data;
+    buffer.insert(buffer.end(), uuid, uuid + 16);
     m_serializeString(message.m_playerUsername, buffer);
 
     size_t dataSize = message.data.size();
@@ -61,7 +62,9 @@ UdpUtils::GameMessage UdpUtils::deserializeUDPMessage(const std::vector<uint8_t>
     GameMessage message;
     size_t offset = 0;
 
-    message.m_gameSessionID = m_deserializeString(buffer, offset);
+    std::copy(buffer.begin(), buffer.begin() + 16, message.m_gameSessionID.begin());
+    offset += 16;
+
     message.m_playerUsername = m_deserializeString(buffer, offset);
 
     size_t dataSize;
