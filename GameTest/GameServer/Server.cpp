@@ -197,7 +197,7 @@ Server::MatchmakingRequestStates Server::handleMatchmaking(std::shared_ptr<tcp::
 		try {
 			NetUtils::Tcp::write_(*socket, NetPacket(NetPacket::NetMessages::WAIT_FOR_MATCH, nullptr, 0));
 
-			std::cout << "\nClient [nick]: " << nick << " in queue for a match.";
+			std::cout << "\nClient [ " << nick << " ]:" << " in queue for a match.";
 			return MatchmakingRequestStates::WAIT;
 		}
 		catch (const boost::system::system_error& ex) {
@@ -212,6 +212,7 @@ Server::MatchmakingRequestStates Server::handleMatchmaking(std::shared_ptr<tcp::
 }
 
 void Server::gameSessionThread(const std::string nick) {
+	using namespace std::chrono_literals;
 	// match this client with the last client who requested the match 
 	std::shared_ptr<User> player1 = m_matchmakingQueue.front();
 	player1->setUDPEndpoint(m_udpConnectionsMap.get(player1->getNick()).second);
@@ -224,12 +225,12 @@ void Server::gameSessionThread(const std::string nick) {
 	NetUtils::Tcp::write_(*player1->getTCPSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 	NetUtils::Tcp::write_(*player2->getTCPSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 
-	/* delete the thread because the match has been found and it's useless to have. */
+	// delete the thread because the match has been found and it's useless to have. 
 	if (m_tempThreadsManager.size()) {
 		m_tempThreadsManager.pop();
 	}
 
-	Sleep(1000);
+	std::this_thread::sleep_for(1s);
 	
 	boost::uuids::uuid uuid = m_UUIDGenerator();
 	std::cout << "\nGameSession's UUID of [ "  << player1->getNick() << " " << player2->getNick() << " ]: " << uuid; // DEBUG
@@ -270,11 +271,8 @@ void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const st
 		catch (const boost::system::system_error& e) {
 			if (e.code() != boost::asio::error::would_block) {
 				std::cerr << "\nCatch in listen for UndoMatchmaking: " << e.what() << std::endl;
-
-				m_matchmakingQueue.pop();
 				m_usersMap.erase(nick);
 				m_udpConnectionsMap.erase(nick);
-
 				return;
 			}
 		}

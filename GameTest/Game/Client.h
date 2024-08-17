@@ -12,6 +12,7 @@ private:
 	std::shared_ptr<udp::socket> m_udpSocket;
 	std::shared_ptr<udp::resolver> m_udpResolver;
 	udp::resolver::results_type m_Endpoints;
+	udp::endpoint m_Endpoint;
 
 public:
 	Client();
@@ -24,7 +25,7 @@ public:
 
 	std::shared_ptr<udp::socket> getUdpSocket();
 
-	udp::endpoint getUdpEndpoint() const;
+	udp::endpoint& getUdpEndpoint();
 
 	void close();
 

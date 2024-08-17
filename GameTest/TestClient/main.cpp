@@ -20,7 +20,6 @@ constexpr auto PUBLIC_IP = "95.239.48.85";
 
 void readThred(udp::socket& socket, udp::endpoint& endpoint) {
     std::thread t([&socket, &endpoint]() {
-        int number = 0;
         while (true) {
             try {
                 NetPacket p = NetUtils::Udp::read_(socket, endpoint);

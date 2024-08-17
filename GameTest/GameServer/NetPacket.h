@@ -39,6 +39,14 @@ public:
 
 	NetPacket(NetMessages type, const uint8_t* data_, size_t dataSize_);
 
+	NetPacket(const NetPacket& other) = default;
+
+	NetPacket& operator=(const NetPacket& other) = default;
+
+	NetPacket(NetPacket&& other) noexcept;
+
+	NetPacket& operator=(NetPacket&& other) noexcept;
+
 	NetMessages getMsgType() const;
 
 	const std::vector<uint8_t>& getData() const;

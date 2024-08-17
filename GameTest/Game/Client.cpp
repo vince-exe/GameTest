@@ -21,9 +21,11 @@ bool Client::connect(const std::string& ip, int port) {
 
 bool Client::resolveUdpEndpoint(const std::string& ip, int port) {
     m_Endpoints = m_udpResolver->resolve(udp::v4(), ip, std::to_string(port));
-    std::cout << m_Endpoints.size();
-
-    return m_Endpoints.size() != 0;
+    if (m_Endpoints.size() != 0) {
+        m_Endpoint = m_Endpoints.begin()->endpoint();
+        return true;
+    }
+    return false;
 }
 
 std::shared_ptr<tcp::socket> Client::getSocket() {
@@ -34,8 +36,8 @@ std::shared_ptr<udp::socket> Client::getUdpSocket() {
     return m_udpSocket;
 }
 
-udp::endpoint Client::getUdpEndpoint() const {
-    return m_Endpoints.begin()->endpoint();
+udp::endpoint& Client::getUdpEndpoint() {
+    return m_Endpoint;
 }
 
 void Client::close() {

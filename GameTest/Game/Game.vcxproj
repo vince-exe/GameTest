@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClCompile Include="..\GameServer\NetPacket.cpp" />
     <ClCompile Include="..\GameServer\network_utilities.cpp" />
+    <ClCompile Include="..\GameServer\udp_utilities.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="EndGameWindow.cpp" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="..\GameServer\NetPacket.h" />
     <ClInclude Include="..\GameServer\network_utilities.h" />
+    <ClInclude Include="..\GameServer\udp_utilities.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="EndGameWindow.h" />

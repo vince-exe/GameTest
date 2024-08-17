@@ -3,7 +3,7 @@
 void MainGameWindow::init(const std::string nickname, Client& client) {
     setMusicAndSound();
     m_Client = &client;
-
+    
     m_Window.create(sf::VideoMode(1200, 800), "SkyFall Showdown", sf::Style::Close);
     m_Window.setFramerateLimit(60);
 
@@ -20,6 +20,8 @@ void MainGameWindow::init(const std::string nickname, Client& client) {
         return;
     }
     m_myNickname.setString(nickname);
+
+    initUdpStruct(nickname);
     initSprites();
 
     /* try to get the default position of the player and enemy player*/
@@ -30,15 +32,15 @@ void MainGameWindow::init(const std::string nickname, Client& client) {
 
     //resolvePlayerSprint();
 
-    /* start the thread to listen for game messages */
-    std::thread t(&MainGameWindow::handleMessages, this);
-    t.detach();
+    /* start the threads functions to listen for game messages */
+    handleMessages();
+    handleUdpMessages();
 
     sf::Event event;
     m_displayWindow = true;
     sf::Clock sprintClock;
 
-    std::cout << "\nPlayer: " << nickname;  //DEBUG
+    std::cout << "\nPlayer: " << nickname << "\nGameSessionUUID: " << m_gameMessage.m_gameSessionID;  //DEBUG
     while (m_displayWindow) {
         while (m_Window.pollEvent(event)) {
             if (m_inGameSettings) {
@@ -97,57 +99,82 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
 }
 
 void MainGameWindow::handleMessages() {
-    NetPacket packet;
-    while (true) {
-        try {
-            packet = NetUtils::Tcp::read_(*m_Client->getSocket());
+    std::thread t([this] {
+        NetPacket packet;
 
-            switch (packet.getMsgType()) {
-            case NetPacket::NetMessages::GAME_END:
-                m_Client->close();
+        while (true) {
+            try {
+                packet = NetUtils::Tcp::read_(*m_Client->getSocket());
+
+                switch (packet.getMsgType()) {
+                case NetPacket::NetMessages::GAME_END:
+                    m_Client->close();
+                    return;
+
+                case NetPacket::NetMessages::QUIT_GAME:
+                    m_Client->close();
+                    m_Game.handleEnemyQuit();
+                    return;
+
+                case NetPacket::NetMessages::PLAYER_POSITION:
+                    m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet));
+                    break;
+
+                case NetPacket::NetMessages::ENEMY_COLLISION:
+                    m_youPlayer.setHitByEnemy(true);
+                    m_youPlayer.handleEnemyCollision((Player::CollisionSide)packet.getData()[0]);
+                    break;
+
+                case NetPacket::NetMessages::GAME_STARTED:
+                    m_Game.waitRound(m_waitRoundText, g_aSingleton.getCountdownSound());
+                    m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet));
+                    /* set the vector of damages areas */
+                    m_Game.startGame(m_damageAreasVector);
+                    m_Game.startTimer(m_gameTimer);
+                    break;
+
+                case NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA:
+                    m_youPlayer.stopMove();
+                    m_youPlayer.resetSprint();
+                    m_Game.handleNewRound(Game::GameEntities::ENEMY);
+                    m_Game.waitRound(m_waitRoundText, g_aSingleton.getCountdownSound());
+
+                    /* set the player to the start position and send the position to the enemy */
+                    m_youPlayer.setPosition(m_Game.getStartPlayerPosition());
+
+                    float p[] = { m_youPlayer.getPosition().x, m_youPlayer.getPosition().y };
+                    NetUtils::Tcp::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
+                    break;
+                }
+            }
+            catch (const boost::system::system_error& ex) {
+                std::cerr << "\nError in handleMessages() | " << ex.what();
                 return;
-                /* if the enemy quit */
-            case NetPacket::NetMessages::QUIT_GAME:
-                m_Client->close();
-                m_Game.handleEnemyQuit();
-                return;
-
-            case NetPacket::NetMessages::PLAYER_POSITION:
-                m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet));
-                break;
-
-            case NetPacket::NetMessages::ENEMY_COLLISION:
-                m_youPlayer.setHitByEnemy(true);
-                m_youPlayer.handleEnemyCollision((Player::CollisionSide)packet.getData()[0]);
-                break;
-            
-            case NetPacket::NetMessages::GAME_STARTED:
-                m_Game.waitRound(m_waitRoundText, g_aSingleton.getCountdownSound());
-                m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet));
-                /* set the vector of damages areas */
-                m_Game.startGame(m_damageAreasVector);
-                m_Game.startTimer(m_gameTimer);
-                break;
-
-            case NetPacket::NetMessages::ENEMY_COLLISION_W_DAMAGE_AREA:
-                m_youPlayer.stopMove();
-                m_youPlayer.resetSprint();
-                m_Game.handleNewRound(Game::GameEntities::ENEMY);
-                m_Game.waitRound(m_waitRoundText, g_aSingleton.getCountdownSound());
-
-                /* set the player to the start position and send the position to the enemy */
-                m_youPlayer.setPosition(m_Game.getStartPlayerPosition());
-               
-                float p[] = { m_youPlayer.getPosition().x, m_youPlayer.getPosition().y };
-                NetUtils::Tcp::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
-                break;
             }
         }
-        catch (const boost::system::system_error& ex) {
-            std::cerr << "\nError in handleMessages() | " << ex.what();
-            return;
+    });
+    t.detach();
+}
+
+void MainGameWindow::handleUdpMessages() {
+    std::thread t([this] {
+        float floatArr[3];
+        NetPacket p;
+        while (true) {
+            try {
+                p = NetUtils::Udp::read_(*m_Client->getUdpSocket(), m_Client->getUdpEndpoint());
+                if (p.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
+                    if (UdpUtils::uint8tVecToFloatArr(p.getData(), floatArr)) {
+                        m_enemyPlayer.setPosition(floatArr[0], floatArr[1]);
+                    }
+                }
+            }
+            catch (boost::system::error_code& e) {
+                std::cerr << "\nerror in handleUdpMessages: " << e.what();
+            }
         }
-    }
+    });
+    t.detach();
 }
 
 void MainGameWindow::updateRechargeBar() {
@@ -237,9 +264,7 @@ void MainGameWindow::update(sf::Time deltaTime) {
 
     if (m_youPlayer.isMoving()) {
         checkPlayerWindowBorders();
-        /* send the position */
-        float p[2] = { m_youPlayer.getPosition().x, m_youPlayer.getPosition().y };
-        NetUtils::Tcp::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
+        sendPosition();
         
         if (m_youPlayer.isSprinting() && m_youPlayer.isEnemyHit()) {
             Player::CollisionSide cL = m_youPlayer.getCollidedSide();
@@ -249,7 +274,7 @@ void MainGameWindow::update(sf::Time deltaTime) {
             m_youPlayer.resetEnemyHit();
         }
 
-        /* check if the player collided with a damage area */
+        // check if the player collided with a damage area
         if (m_Game.checkCollision(m_damageAreasVector.at(m_Game.getCurrentRound()), m_youPlayer)) {
             m_youPlayer.resetSprint();
             m_youPlayer.stopMove();
@@ -289,11 +314,28 @@ void MainGameWindow::draw() {
             m_Window.draw(shape);
         }
     }
-    /* draw the 3..2..1 text */
+   
     if (m_Game.areActionsBlocked()) {
         m_Window.draw(m_waitRoundText);
     }
     m_Window.display();
+}
+
+void MainGameWindow::sendPosition() {
+    // the third slot is for the checksum
+    float arr[3] = { m_youPlayer.getPosition().x , m_youPlayer.getPosition().y };
+    // this function will resize the m_gameMessage.data to host the array with the checksum 
+    UdpUtils::floatArrToUint8tVec(m_gameMessage.data, arr);
+    std::vector<uint8_t> msgToSend = UdpUtils::serializeUDPMessage(m_gameMessage);
+
+    NetUtils::Udp::write_(*m_Client->getUdpSocket(), m_Client->getUdpEndpoint(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, msgToSend.data(), msgToSend.size()));
+    m_gameMessage.data.clear();
+}
+
+void MainGameWindow::initUdpStruct(const std::string& nickname) {
+    std::vector<uint8_t> data = NetUtils::Tcp::read_(*m_Client->getSocket()).getData();
+    std::copy(data.begin(), data.end(), m_gameMessage.m_gameSessionID.begin());
+    m_gameMessage.m_playerUsername = nickname;
 }
 
 void MainGameWindow::initSprites() {

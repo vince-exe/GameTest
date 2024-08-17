@@ -28,6 +28,24 @@ NetPacket::NetPacket(NetMessages type, const uint8_t* data_, size_t dataSize_) {
     m_Data = std::vector<uint8_t>(data_, data_ + m_dataSize);
 }
 
+NetPacket::NetPacket(NetPacket&& other) noexcept 
+    : m_messageType(std::move(other.m_messageType)),
+      m_Data(std::move(other.m_Data)),
+      m_dataSize(other.m_dataSize) {
+        other.m_dataSize = 0; 
+}
+
+NetPacket& NetPacket::operator=(NetPacket&& other) noexcept {
+    if (this != &other) {
+        m_messageType = std::move(other.m_messageType);
+        m_Data = std::move(other.m_Data);
+        m_dataSize = other.m_dataSize;
+
+        other.m_dataSize = 0; 
+    }
+    return *this;
+}
+
 NetPacket::NetMessages NetPacket::getMsgType() const {
     return m_messageType;
 }

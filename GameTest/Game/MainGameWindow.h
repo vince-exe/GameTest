@@ -19,6 +19,7 @@ private:
 	sf::RenderWindow m_Window;
 	Client* m_Client;
 	Game m_Game;
+	UdpUtils::GameMessage m_gameMessage;
 
 	sf::Text m_myNickname, m_enemyNickname, m_vsText, m_waitRoundText, m_gameTimer;
 
@@ -46,6 +47,10 @@ private:
 
 	void draw();
 
+	void sendPosition();
+
+	void initUdpStruct(const std::string& nickname);
+
 	void initSprites();
 
 	void handleKeyBoards(sf::Event event);
@@ -63,6 +68,8 @@ private:
 	bool handleEnemyNickname();
 
 	void handleMessages();
+
+	void handleUdpMessages();
 
 	bool initPlayerAndEnemyPosition();
 
