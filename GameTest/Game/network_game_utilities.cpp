@@ -1,21 +1,21 @@
 #include "network_game_utilities.h"
 
-std::string NetGameUtils::getString(NetPacket& packet) {
-    return std::string(reinterpret_cast<const char*>(&packet.getData()[0]), packet.getDataSize());
+std::string NetGameUtils::getString(const std::vector<uint8_t>& buffer) {
+    return std::string(reinterpret_cast<const char*>(&buffer[0]), buffer.size());
 }
 
-sf::Vector2f NetGameUtils::getSfvector2f(NetPacket& packet) {
+sf::Vector2f NetGameUtils::getSfvector2f(const std::vector<uint8_t>& buffer) {
     std::vector<float> floatVec(2);
 
-    std::memcpy(&floatVec[0], &packet.getData()[0], sizeof(float));
-    std::memcpy(&floatVec[1], &packet.getData()[sizeof(float)], sizeof(float));
+    std::memcpy(&floatVec[0], &buffer[0], sizeof(float));
+    std::memcpy(&floatVec[1], &buffer[sizeof(float)], sizeof(float));
 
     return sf::Vector2f(floatVec[0], floatVec[1]);
 }
 
-std::vector<std::vector<std::pair<float, float>>> NetGameUtils::getDamageAreasCoordinates(NetPacket& packet) {
-    const uint8_t* ptr = packet.getData().data();
-    const uint8_t* end = ptr + packet.getData().size();
+std::vector<std::vector<std::pair<float, float>>> NetGameUtils::getDamageAreasCoordinates(const std::vector<uint8_t>& buffer) {
+    const uint8_t* ptr = buffer.data();
+    const uint8_t* end = ptr + buffer.size();
 
     std::vector<std::vector<std::pair<float, float>>> result;
 

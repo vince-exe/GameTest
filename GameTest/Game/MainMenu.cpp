@@ -208,7 +208,7 @@ void MainMenu::handleClientConnection(std::string nick, std::string ip, int port
                 /* send the udp connection and after the matchmaking request */
                 else {
                     m_Client.openUdpSocket();
-                    NetUtils::Udp::write_(*m_Client.getUdpSocket(), m_Client.getUdpEndpoint(), NetPacket(NetPacket::NetMessages::CONNECTION_UDP_MESSAGE, reinterpret_cast<const uint8_t*>(nick.c_str()), nick.size()));
+                    NetUtils::Udp::write_(*m_Client.getUdpSocket(), m_Client.getUdpEndpoint(), NetUdpPacket(nick, NetUdpPacket::UdpMessages::CONNECTION_MESSAGE, boost::uuids::uuid(), NetPacket::NetMessages::IDLE, nullptr, 0));
 
                     /* check if the udp connection went fine */
                     if (NetUtils::Tcp::read_(*m_Client.getSocket()).getMsgType() != NetPacket::NetMessages::UDP_CONNECTION_SUCCESS) {

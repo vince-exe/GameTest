@@ -20,8 +20,9 @@ void MainGameWindow::init(const std::string nickname, Client& client) {
         return;
     }
     m_myNickname.setString(nickname);
-
-    initUdpStruct(nickname);
+    
+    m_sessionInfoStruct.m_playerNick = nickname;
+    getSessionInfo();
     initSprites();
 
     /* try to get the default position of the player and enemy player*/
@@ -40,7 +41,7 @@ void MainGameWindow::init(const std::string nickname, Client& client) {
     m_displayWindow = true;
     sf::Clock sprintClock;
 
-    std::cout << "\nPlayer: " << nickname << "\nGameSessionUUID: " << m_gameMessage.m_gameSessionID;  //DEBUG
+    std::cout << "\nPlayer: " << nickname << "\nGameSessionUUID: " << m_sessionInfoStruct.m_sessionUUID;  //DEBUG
     while (m_displayWindow) {
         while (m_Window.pollEvent(event)) {
             if (m_inGameSettings) {
@@ -83,7 +84,7 @@ void MainGameWindow::init(const std::string nickname, Client& client) {
 bool MainGameWindow::initPlayerAndEnemyPosition() {
     NetPacket packet = NetUtils::Tcp::read_(*m_Client->getSocket());
     if (packet.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
-        sf::Vector2f pos = NetGameUtils::getSfvector2f(packet);
+        sf::Vector2f pos = NetGameUtils::getSfvector2f(packet.getData());
 
         m_Game.setPlayerStartPosition(pos);
         m_youPlayer.setPosition(pos);
@@ -91,7 +92,7 @@ bool MainGameWindow::initPlayerAndEnemyPosition() {
 
     packet = NetUtils::Tcp::read_(*m_Client->getSocket());
     if (packet.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
-        m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet));
+        m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet.getData()));
 
         return true;
     }
@@ -117,7 +118,7 @@ void MainGameWindow::handleMessages() {
                     return;
 
                 case NetPacket::NetMessages::PLAYER_POSITION:
-                    m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet));
+                    m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet.getData()));
                     break;
 
                 case NetPacket::NetMessages::ENEMY_COLLISION:
@@ -127,7 +128,7 @@ void MainGameWindow::handleMessages() {
 
                 case NetPacket::NetMessages::GAME_STARTED:
                     m_Game.waitRound(m_waitRoundText, g_aSingleton.getCountdownSound());
-                    m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet));
+                    m_Game.setDamageAreasCords(NetGameUtils::getDamageAreasCoordinates(packet.getData()));
                     /* set the vector of damages areas */
                     m_Game.startGame(m_damageAreasVector);
                     m_Game.startTimer(m_gameTimer);
@@ -158,19 +159,23 @@ void MainGameWindow::handleMessages() {
 
 void MainGameWindow::handleUdpMessages() {
     std::thread t([this] {
-        float floatArr[3];
-        NetPacket p;
+        NetUdpPacket packet;
+
         while (true) {
             try {
-                p = NetUtils::Udp::read_(*m_Client->getUdpSocket(), m_Client->getUdpEndpoint());
-                if (p.getMsgType() == NetPacket::NetMessages::PLAYER_POSITION) {
-                    if (UdpUtils::uint8tVecToFloatArr(p.getData(), floatArr)) {
-                        m_enemyPlayer.setPosition(floatArr[0], floatArr[1]);
-                    }
+                packet = NetUtils::Udp::read_(*m_Client->getUdpSocket(), m_Client->getUdpEndpoint());
+                if (packet.getGameMsg() == NetPacket::NetMessages::PLAYER_POSITION) {
+                    m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet.data()));
                 }
             }
             catch (boost::system::error_code& e) {
-                std::cerr << "\nerror in handleUdpMessages: " << e.what();
+                std::cerr << "\nerror in handleUdpMessages: " << e.what() << std::endl;
+            }
+            catch (const std::exception& e) {
+                std::cerr << "\nError in handleUDPMessages: " << e.what() << std::endl;
+            }
+            catch (...) {
+                std::cerr << "\nGeneral Exception" << std::endl;
             }
         }
     });
@@ -322,20 +327,18 @@ void MainGameWindow::draw() {
 }
 
 void MainGameWindow::sendPosition() {
-    // the third slot is for the checksum
-    float arr[3] = { m_youPlayer.getPosition().x , m_youPlayer.getPosition().y };
-    // this function will resize the m_gameMessage.data to host the array with the checksum 
-    UdpUtils::floatArrToUint8tVec(m_gameMessage.data, arr);
-    std::vector<uint8_t> msgToSend = UdpUtils::serializeUDPMessage(m_gameMessage);
-
-    NetUtils::Udp::write_(*m_Client->getUdpSocket(), m_Client->getUdpEndpoint(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, msgToSend.data(), msgToSend.size()));
-    m_gameMessage.data.clear();
+    float p[] = { m_youPlayer.getPosition().x , m_youPlayer.getPosition().y };
+    NetUtils::Udp::write_(*m_Client->getUdpSocket(), m_Client->getUdpEndpoint(), NetUdpPacket(m_sessionInfoStruct.m_playerNick,
+        NetUdpPacket::UdpMessages::GAME_MESSAGE,
+        m_sessionInfoStruct.m_sessionUUID,
+        NetPacket::NetMessages::PLAYER_POSITION,
+        reinterpret_cast<const uint8_t*>(p),
+        sizeof(p)));
 }
 
-void MainGameWindow::initUdpStruct(const std::string& nickname) {
+void MainGameWindow::getSessionInfo() {
     std::vector<uint8_t> data = NetUtils::Tcp::read_(*m_Client->getSocket()).getData();
-    std::copy(data.begin(), data.end(), m_gameMessage.m_gameSessionID.begin());
-    m_gameMessage.m_playerUsername = nickname;
+    std::copy(data.begin(), data.end(), m_sessionInfoStruct.m_sessionUUID.begin());
 }
 
 void MainGameWindow::initSprites() {
@@ -421,7 +424,7 @@ void MainGameWindow::initSprites() {
 bool MainGameWindow::handleEnemyNickname() {
     try {
         NetPacket p = NetUtils::Tcp::read_(*m_Client->getSocket());
-        m_enemyNickname.setString(NetGameUtils::getString(p));
+        m_enemyNickname.setString(NetGameUtils::getString(p.getData()));
         return true;
     }
     catch (const boost::system::system_error& e) {

@@ -7,7 +7,6 @@ class NetPacket  {
 public:
 	enum class NetMessages {
 		UDP_CONNECTION_SUCCESS,
-		CONNECTION_UDP_MESSAGE,
 		SERVER_DOWN,
 		IDLE,
 		STANDARD_MESSAGE,

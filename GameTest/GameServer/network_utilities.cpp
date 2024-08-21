@@ -21,7 +21,7 @@ void NetUtils::Tcp::write_(tcp::socket& socket, const NetPacket& packet) {
     boost::asio::write(socket, boost::asio::buffer(serializedData));
 }
 
-NetPacket NetUtils::Udp::read_(udp::socket& socket, udp::endpoint& endpoint) {
+NetUdpPacket NetUtils::Udp::read_(udp::socket& socket, udp::endpoint& endpoint) {
     size_t packetSize;
     boost::asio::mutable_buffer size_buffer(&packetSize, sizeof(packetSize));
     socket.receive_from(size_buffer, endpoint);
@@ -31,27 +31,26 @@ NetPacket NetUtils::Udp::read_(udp::socket& socket, udp::endpoint& endpoint) {
     boost::asio::mutable_buffer data_buffer(receivedData.data(), packetSize);
     socket.receive_from(data_buffer, endpoint);
 
-    if (data_buffer.size() != packetSize) {
-        throw UdpUtils::errors::InvalidBytesLength("The read didn't perfomed all the bytes to read");
+    if (!NetUdpPacket::verifyCrc32Checksum(receivedData)) {
+        throw std::runtime_error("The data received is corrupted");
     }
-    return NetPacket::deserialize(receivedData);
+
+    return NetUdpPacket::deserialize(receivedData);
 }
 
-void NetUtils::Udp::write_(udp::socket& socket, const udp::endpoint& endpoint, const NetPacket& packet) {
+void NetUtils::Udp::write_(udp::socket& socket, const udp::endpoint& endpoint, const NetUdpPacket& packet) {
     std::vector<uint8_t> serializedData = packet.serialize();
+    NetUdpPacket::addCrc32Checksum(serializedData);
     size_t packetSize = serializedData.size();
 
-    // Buffer per la dimensione del pacchetto
     std::vector<uint8_t> sizeBuffer(sizeof(packetSize));
     std::memcpy(sizeBuffer.data(), &packetSize, sizeof(packetSize));
 
-    // Invio della dimensione del pacchetto
     boost::asio::const_buffer size_buffer = boost::asio::buffer(sizeBuffer);
 
     boost::system::error_code error_code;
     socket.send_to(size_buffer, endpoint);
 
-    // Invio dei dati serializzati
     boost::asio::const_buffer data_buffer = boost::asio::buffer(serializedData);
     socket.send_to(data_buffer, endpoint);
 }

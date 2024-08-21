@@ -11,10 +11,10 @@
 #include "User.h"
 #include "network_utilities.h"
 #include "NetPacket.h"
+#include "NetUdpPacket.h"
 #include "game_session_utilities.h"
 #include "ThreadSafeUnorderedMap.h"
 #include "ThreadSafeQueue.h"
-#include "udp_utilities.h"
 
 using boost::asio::ip::tcp;
 
@@ -48,7 +48,7 @@ private:
 public:
 	GameSession(ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>>* usersMap, std::shared_ptr<User> user1, std::shared_ptr<User> user2, std::shared_ptr<udp::socket> serverSocket);
 
-	void handleUDPMessage(UdpUtils::GameMessage& message,std::shared_ptr<NetPacket> packet);
+	void handleUDPMessage(NetUdpPacket& packet);
 
 	void start(boost::uuids::uuid& gameSessionUUID);
 };

@@ -12,7 +12,6 @@
 #include "ThreadSafeUnorderedMap.h"
 #include "ThreadSafeQueue.h"
 #include "TemporaryThreadsManager.h"
-#include "udp_utilities.h"
 #include "hash.h"
 
 using boost::asio::ip::tcp;
@@ -42,7 +41,6 @@ private:
 
 	bool handleUserNickname(std::shared_ptr<tcp::socket> socket, const std::string& nick);
 
-	// return true if a match has been found
 	MatchmakingRequestStates handleMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick);
 
 	void handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick);
@@ -68,7 +66,7 @@ private:
 	std::vector<std::thread> m_threadPool;
 	std::condition_variable m_threadPoolCv;
 	std::mutex m_threadPoolMtx;
-	ThreadSafeQueue<std::shared_ptr<NetPacket>>m_udpMessagesQueue;
+	ThreadSafeQueue<std::shared_ptr<NetUdpPacket>> m_udpMessagesQueue;
 
 	ThreadSafeUnorderedMap<std::string, std::shared_ptr<User>> m_usersMap;
 	ThreadSafeUnorderedMap<boost::uuids::uuid, std::shared_ptr<GameSession>> m_gameSessionsMap;

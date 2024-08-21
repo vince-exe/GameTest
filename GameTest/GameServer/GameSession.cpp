@@ -8,12 +8,12 @@ GameSession::GameSession(ThreadSafeUnorderedMap<std::string, std::shared_ptr<Use
 	m_udpServerSocket = serverSocket;
 }
 
-void GameSession::handleUDPMessage(UdpUtils::GameMessage& message, std::shared_ptr<NetPacket> packet) {
-	if (message.m_playerUsername == m_user1->getNick()) {
-		NetUtils::Udp::write_(*m_udpServerSocket, *m_user2->getUDPEndpoint(), NetPacket(packet->getMsgType(), message.data.data(), message.data.size()));
+void GameSession::handleUDPMessage(NetUdpPacket& packet) {
+	if (packet.sender() == m_user1->getNick()) {
+		NetUtils::Udp::write_(*m_udpServerSocket, *m_user2->getUDPEndpoint(), packet);
 	}
 	else {
-		NetUtils::Udp::write_(*m_udpServerSocket, *m_user1->getUDPEndpoint(), NetPacket(packet->getMsgType(), message.data.data(), message.data.size()));
+		NetUtils::Udp::write_(*m_udpServerSocket, *m_user1->getUDPEndpoint(), packet);
 	}
 }
 
@@ -21,9 +21,6 @@ void GameSession::start(boost::uuids::uuid& gameSessionUUID) {
 	sendNicknames();
 	sendGameSessionUUID(gameSessionUUID);
 	sendDefaultPositions();
-
-	/* start the game session */
-	std::cout << "\nGameSession between " << m_user1->getNick() << " and " << m_user2->getNick() << " started.\n";
 
 	std::thread thUser1(&GameSession::handleClientMessages, this, m_user1, m_user2);
 	std::thread thUser2(&GameSession::handleClientMessages, this, m_user2, m_user1);

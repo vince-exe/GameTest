@@ -2,6 +2,8 @@
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <boost/uuid/uuid.hpp>
+
 #include <iostream>
 #include <vector>
 #include <utility>
@@ -18,6 +20,12 @@ public:
 		RUNNING,
 		END,
 	};
+
+	typedef struct GameSessionInfo {
+		std::string m_playerNick;
+		boost::uuids::uuid m_sessionUUID;
+
+	}GameSessionInfo;
 
 private:
 	std::vector<std::vector<std::pair<float, float>>> m_damageAreasCoordinates;

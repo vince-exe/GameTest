@@ -16,7 +16,7 @@
 #include "extern_variables.h"
 
 #include "../GameServer/NetPacket.h"
-#include "../GameServer/network_utilities.h"
+#include "../GameServer/NetUdpPacket.h"
 
 class MainMenu {
 private:

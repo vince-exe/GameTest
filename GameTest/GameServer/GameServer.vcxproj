@@ -139,12 +139,12 @@
     <ClCompile Include="game_session_utilities.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetPacket.cpp" />
+    <ClCompile Include="NetUdpPacket.cpp" />
     <ClCompile Include="network_utilities.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerSettings.cpp" />
     <ClCompile Include="TemporaryThread.cpp" />
     <ClCompile Include="TemporaryThreadsManager.cpp" />
-    <ClCompile Include="udp_utilities.cpp" />
     <ClCompile Include="User.cpp" />
     <ClCompile Include="utils.h" />
   </ItemGroup>
@@ -154,6 +154,7 @@
     <ClInclude Include="game_session_utilities.h" />
     <ClInclude Include="hash.h" />
     <ClInclude Include="NetPacket.h" />
+    <ClInclude Include="NetUdpPacket.h" />
     <ClInclude Include="network_utilities.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="ServerSettings.h" />
@@ -161,7 +162,6 @@
     <ClInclude Include="TemporaryThreadsManager.h" />
     <ClInclude Include="ThreadSafeQueue.h" />
     <ClInclude Include="ThreadSafeUnorderedMap.h" />
-    <ClInclude Include="udp_utilities.h" />
     <ClInclude Include="User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

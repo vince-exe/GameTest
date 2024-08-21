@@ -4,7 +4,7 @@
 #include <boost/asio.hpp>
 
 #include "NetPacket.h"
-#include "udp_utilities.h"
+#include "NetUdpPacket.h"
 
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
@@ -16,8 +16,8 @@ namespace NetUtils {
         void write_(tcp::socket& socket, const NetPacket& packet);
     }
     namespace Udp {
-        NetPacket read_(udp::socket& socket, udp::endpoint& endpoint);
+        NetUdpPacket read_(udp::socket& socket, udp::endpoint& endpoint);
 
-        void write_(udp::socket& socket, const udp::endpoint& endpoint, const NetPacket& packet);
+        void write_(udp::socket& socket, const udp::endpoint& endpoint, const NetUdpPacket& packet);
     }
 }

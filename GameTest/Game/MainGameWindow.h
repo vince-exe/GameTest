@@ -19,7 +19,7 @@ private:
 	sf::RenderWindow m_Window;
 	Client* m_Client;
 	Game m_Game;
-	UdpUtils::GameMessage m_gameMessage;
+	Game::GameSessionInfo m_sessionInfoStruct;
 
 	sf::Text m_myNickname, m_enemyNickname, m_vsText, m_waitRoundText, m_gameTimer;
 
@@ -49,7 +49,7 @@ private:
 
 	void sendPosition();
 
-	void initUdpStruct(const std::string& nickname);
+	void getSessionInfo();
 
 	void initSprites();
 

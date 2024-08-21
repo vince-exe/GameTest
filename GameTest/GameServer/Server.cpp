@@ -24,23 +24,28 @@ void Server::listenUDPConnections() {
 	while (true) {
 		std::shared_ptr<udp::endpoint> remoteEndpoint = std::make_shared<udp::endpoint>(udp::v4(), m_udpPort);
 		try {
-			NetPacket packet = NetUtils::Udp::read_(*m_udpServerSocket, *remoteEndpoint);
-			if (packet.getMsgType() == NetPacket::NetMessages::CONNECTION_UDP_MESSAGE) {
-				std::string nick(reinterpret_cast<const char*>(&packet.getData()[0]), packet.getDataSize());
-
-				m_udpConnectionsMap.insert(nick, std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(true, remoteEndpoint));
+			NetUdpPacket packet = NetUtils::Udp::read_(*m_udpServerSocket, *remoteEndpoint);
+			if (packet.getUdpMsg() == NetUdpPacket::UdpMessages::CONNECTION_MESSAGE) {
+				{
+					std::lock_guard<std::mutex> lock(m_threadPoolMtx);
+					m_udpConnectionsMap.insert(packet.sender(), std::pair<bool, std::shared_ptr<boost::asio::ip::udp::endpoint>>(true, remoteEndpoint));
+				}
 				m_udpConnectionsCv.notify_all();
 			}
 			else {
-				m_udpMessagesQueue.push(std::make_shared<NetPacket>(packet));
+				std::lock_guard<std::mutex> lock(m_threadPoolMtx);
+				m_udpMessagesQueue.push(std::make_shared<NetUdpPacket>(packet));
 				m_threadPoolCv.notify_all();
 			}
 		}
-		catch (UdpUtils::errors::InvalidBytesLength& e) {
-			std::cerr << e.what();
-		}
 		catch (boost::system::system_error& e) {
 			std::cerr << "\nBoost system error: " << e.what();
+		}
+		catch (const std::exception& e) {
+			std::cerr << "\nRuntime Excpetion: " << e.what();
+		}
+		catch (...) {
+			std::cerr << "\nUnknown exception occured";
 		}
 	}
 }
@@ -50,14 +55,13 @@ void Server::processUDPMessages() {
 		std::unique_lock<std::mutex> lock(m_threadPoolMtx);
 		m_threadPoolCv.wait(lock, [this] { return !m_udpMessagesQueue.empty(); });
 
-		if (!m_udpMessagesQueue.empty()) {
-			std::shared_ptr<NetPacket> packet = m_udpMessagesQueue.front();
+		while (!m_udpMessagesQueue.empty()) {
+			std::shared_ptr<NetUdpPacket> packet = m_udpMessagesQueue.front();
 			m_udpMessagesQueue.pop();
-
 			lock.unlock();
 
-			UdpUtils::GameMessage message = UdpUtils::deserializeUDPMessage(packet->getData());
-			m_gameSessionsMap.get(message.m_gameSessionID)->handleUDPMessage(message, packet);
+			m_gameSessionsMap.get(packet->sessionUUID())->handleUDPMessage(*packet);
+			lock.lock(); // this lock is to make sure that if the loop continues, the thread has a lock on the resources
 		}
 	}
 }
@@ -173,7 +177,7 @@ void Server::handleClient(std::shared_ptr<tcp::socket> socket) {
 					t.detach();
 				}
 				else if(state == MatchmakingRequestStates::WAIT) {
-					/* start the thread to listen if the client wants to undo the matchmaking */
+					/* start the thread to listen if the client wants to undo the matchmaking (GIVES BUG-TESTING) */
 					m_tempThreadsManager.push(TemporaryThread(std::make_shared<std::thread>(&Server::handleUndoMatchmaking, this, socket, nick), false));
 					m_tempThreadsManager.back().getThread()->detach();
 				}
@@ -233,7 +237,7 @@ void Server::gameSessionThread(const std::string nick) {
 	std::this_thread::sleep_for(1s);
 	
 	boost::uuids::uuid uuid = m_UUIDGenerator();
-	std::cout << "\nGameSession's UUID of [ "  << player1->getNick() << " " << player2->getNick() << " ]: " << uuid; // DEBUG
+	std::cout << "\nGameSession's UUID of [ "  << player1->getNick() << " - " << player2->getNick() << " ]: " << uuid; // DEBUG
 
 	GameSession gameSession(&m_usersMap, player1, player2, m_udpServerSocket);
 	m_gameSessionsMap.insert(uuid, std::make_shared<GameSession>(gameSession));
@@ -271,6 +275,7 @@ void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const st
 		catch (const boost::system::system_error& e) {
 			if (e.code() != boost::asio::error::would_block) {
 				std::cerr << "\nCatch in listen for UndoMatchmaking: " << e.what() << std::endl;
+				m_matchmakingQueue.pop();
 				m_usersMap.erase(nick);
 				m_udpConnectionsMap.erase(nick);
 				return;

@@ -8,9 +8,9 @@
 #include "../GameServer/NetPacket.h"
 
 namespace NetGameUtils {
-	std::string getString(NetPacket& packet);
+	std::string getString(const std::vector<uint8_t>& buffer);
 
-	sf::Vector2f getSfvector2f(NetPacket& packet);
+	sf::Vector2f getSfvector2f(const std::vector<uint8_t>& buffer);
 	
-	std::vector<std::vector<std::pair<float, float>>> getDamageAreasCoordinates(NetPacket& packet);
+	std::vector<std::vector<std::pair<float, float>>> getDamageAreasCoordinates(const std::vector<uint8_t>& buffer);
 }

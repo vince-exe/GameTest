@@ -117,7 +117,7 @@
     <ClCompile Include="main.cpp">
       <Filter>File di origine\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\GameServer\udp_utilities.cpp">
+    <ClCompile Include="..\GameServer\NetUdpPacket.cpp">
       <Filter>File di origine\Network</Filter>
     </ClCompile>
   </ItemGroup>
@@ -191,7 +191,7 @@
     <ClInclude Include="extern_variables.h">
       <Filter>File di intestazione\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\GameServer\udp_utilities.h">
+    <ClInclude Include="..\GameServer\NetUdpPacket.h">
       <Filter>File di intestazione\Network</Filter>
     </ClInclude>
   </ItemGroup>

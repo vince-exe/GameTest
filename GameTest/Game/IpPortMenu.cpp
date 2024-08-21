@@ -89,20 +89,17 @@ void IpPortMenu::draw() {
 
 void IpPortMenu::handleTextEntered(sf::Event& event) {
     if (event.type == sf::Event::TextEntered) {
-        /* check the size of the ip */
-        if (event.text.unicode < 128) {
-            if (event.text.unicode == '\b' && m_Pair.first.size() > 0) {
-                m_Pair.first.pop_back();
-            }
-            else {
-                m_Pair.first += event.text.unicode;
+        if(event.text.unicode == '\b' && m_Pair.first.size() > 0) {
+            m_Pair.first.pop_back();
+        }
+        else {
+            m_Pair.first += event.text.unicode;
 
-                m_inputDisplay.setString(m_inputDisplay.getString() + static_cast<char>(event.text.unicode));
-                /* set the m_Text at the center of the m_Line */
-                sf::FloatRect m_TextBounds = m_inputDisplay.getLocalBounds();
-                m_inputDisplay.setOrigin(m_TextBounds.left + m_TextBounds.width / 2.f, m_TextBounds.top + m_TextBounds.height / 2.f);
-                m_inputDisplay.setPosition(m_Line.getPosition().x + m_Line.getSize().x / 2.f, (m_Line.getPosition().y - m_TextBounds.height / 2.f) - 8.f);
-            }
+            m_inputDisplay.setString(m_inputDisplay.getString() + static_cast<char>(event.text.unicode));
+            /* set the m_Text at the center of the m_Line */
+            sf::FloatRect m_TextBounds = m_inputDisplay.getLocalBounds();
+            m_inputDisplay.setOrigin(m_TextBounds.left + m_TextBounds.width / 2.f, m_TextBounds.top + m_TextBounds.height / 2.f);
+            m_inputDisplay.setPosition(m_Line.getPosition().x + m_Line.getSize().x / 2.f, (m_Line.getPosition().y - m_TextBounds.height / 2.f) - 8.f);
         }
     }
 }
