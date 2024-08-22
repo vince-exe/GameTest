@@ -36,7 +36,7 @@ private:
 
 	unsigned int m_currentRound, m_waitTimeRound, m_gameMaxTime, m_playerLife, m_enemyLife;
 
-	sf::Vector2f m_startPlayerPosition;
+	sf::Vector2f m_startPlayerPosition, m_startEnemyPosition;
 	
 	bool m_enemyQuit;
 
@@ -59,9 +59,13 @@ public:
 
 	GameResults getGameResults();
 
-	void setPlayerStartPosition(sf::Vector2f vec);
+	void setPlayerPosition(const sf::Vector2f& vec1);
 	
-	sf::Vector2f getStartPlayerPosition();
+	void setEnemyPosition(const sf::Vector2f& vec2);
+
+	const sf::Vector2f& getStartPlayerPosition() const;
+
+	const sf::Vector2f& getEnemyStartPosition() const;
 
 	unsigned int getCurrentRound();
 

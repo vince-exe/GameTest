@@ -11,12 +11,12 @@ Game::Game() {
 	m_enemyQuit = false;
 }
 
-sf::Vector2f Game::getStartPlayerPosition() {
+const sf::Vector2f& Game::getStartPlayerPosition() const {
 	return m_startPlayerPosition;
 }
 
-void Game::setPlayerStartPosition(sf::Vector2f vec) {
-	m_startPlayerPosition = vec;
+const sf::Vector2f& Game::getEnemyStartPosition() const {
+	return m_startEnemyPosition;
 }
 
 void Game::setBlockActions(bool flag) {
@@ -140,6 +140,14 @@ Game::GameResults Game::getGameResults() {
 		return GameResults::LOST;
 	}
 	return GameResults::DRAW;
+}
+
+void Game::setPlayerPosition(const sf::Vector2f& vec1) {
+	m_startPlayerPosition = vec1;
+}
+
+void Game::setEnemyPosition(const sf::Vector2f& vec2) {
+	m_startEnemyPosition = vec2;
 }
 
 Game::GameStates Game::getGameState() {

@@ -39,13 +39,13 @@ void Server::listenUDPConnections() {
 			}
 		}
 		catch (boost::system::system_error& e) {
-			std::cerr << "\nBoost system error: " << e.what();
+			continue;
 		}
 		catch (const std::exception& e) {
-			std::cerr << "\nRuntime Excpetion: " << e.what();
+			continue;
 		}
 		catch (...) {
-			std::cerr << "\nUnknown exception occured";
+			continue;
 		}
 	}
 }
@@ -115,15 +115,15 @@ bool Server::handleUserNickname(std::shared_ptr<tcp::socket> socket, const std::
 	try {
 		// if the nickname already exist 
 		if (nicknameAlreadyExist(nick)) {
-			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << " [ NICK ]: " << nick << " | refused ( nick already exist )";
+			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << " [ " << nick << " ] " << "refused ( nick already exist )";
 
 			NetUtils::Tcp::write_(*socket, NetPacket(NetPacket::NetMessages::NICK_EXITS, nullptr, 0));
 			return false;
 		}
 		else {
-			// creates the User
+			// create the User
 			m_usersMap.insert(nick, std::make_shared<User>(nick, socket));
-			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << "[ " << nick << " ] " << nick << " | accepted.";
+			std::cout << "\nClient [ IP ]: " << socket->remote_endpoint().address().to_string() << "[ " << nick << " ]" << " | accepted.";
 			// after this message the client will send the UDP_CONNECTION request
 			NetUtils::Tcp::write_(*socket, NetPacket(NetPacket::NetMessages::CLIENT_ACCEPTED, nullptr, 0));
 			return true;
