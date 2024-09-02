@@ -1,3 +1,7 @@
+URGENTE:
+capire perché dopo x tempo il GameServer crasha:
+	-possibile debug: aggiungere un catch() in handleClient func
+
 REFACTORING:
 -cercare di trovare una soluzione più ottimale per il design della handle-undo-matchmaking.
 

@@ -238,7 +238,7 @@ void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, std::s
         displayTextFunc(m_menuMsgs[3]);
 
         /* start a thread to listen if the matchmaking is requested */
-        std::thread t(&MainMenu::listenForMatchmaking, this, m_Nickname);
+        std::thread t(&MainMenu::listenMatchmaking, this, m_Nickname);
         t.detach();
     }
     /* start the game window */
@@ -247,50 +247,39 @@ void MainMenu::handleMatchmakingClient(const NetPacket::NetMessages& msg, std::s
     }
 }
 
-void MainMenu::listenForMatchmaking(std::string m_Nickname) {
+void MainMenu::listenMatchmaking(const std::string nick) {
     using namespace std::chrono_literals;
 
-    NetPacket p;
     m_inMatchmaking.store(true);
-   
-    m_Client.getSocket()->non_blocking(true);
-
-    while (m_inMatchmaking.load()) {
-        try {
-            std::this_thread::sleep_for(500ms);            
-            p = NetUtils::Tcp::read_(*m_Client.getSocket());
-
-            if (p.getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
-                NetUtils::Tcp::write_(*m_Client.getSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
-
-                m_Client.getSocket()->non_blocking(false);
-                matchFound(m_Nickname);
-                return;
-            }
+    try {
+        NetPacket packet = NetUtils::Tcp::read_(*m_Client.getSocket());
+        if (packet.getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
+            NetUtils::Tcp::write_(*m_Client.getSocket(), packet);
+            matchFound(nick);
         }
-        catch (const boost::system::system_error& e) {
-            if (e.code() != boost::asio::error::would_block) {
-                std::cerr << "\nCatch in listen for matchmaking: " << e.what() << std::endl;
-
-                m_Client.getSocket()->close();
-                m_inMatchmaking.store(false);
-                m_displayText = false;
-            }
-        }
-    }   
+    }
+    catch (boost::system::error_code& e) {
+        std::cout << "\nerror in listening for matchmaking";
+    }
+    catch (std::runtime_error& e) {
+        std::cout << "\nruntime error: " << e.what();
+    }
+    m_displayText = false;
+    m_inMatchmaking.store(false);
 }
 
 void MainMenu::undoMatchmaking() {
-    std::cout << "\nundo matchmaking.\n";
     try {
-        m_inMatchmaking.store(false);
-        NetUtils::Tcp::write_(*m_Client.getSocket(), NetPacket(NetPacket::NetMessages::UNDO_MATCHMAKING, nullptr, 0));
+        if (!m_displayGameWindow) {
+
+            m_inMatchmaking.store(false);
+            m_Client.close();
+        }
     }
     catch (const boost::system::system_error& e) {
         std::cerr << "\nError in undo matchmaking " << e.what() << std::endl;
         
     }
-    m_Client.close();
 }
 
 void MainMenu::exitMenu() {

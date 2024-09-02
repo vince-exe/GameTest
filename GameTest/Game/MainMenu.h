@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <thread>
+#include <mutex>
 
 #include "Entity.h"
 #include "Client.h"
@@ -53,7 +54,7 @@ private:
 
 	void handleMatchmakingClient(const NetPacket::NetMessages& msg, std::string nickname);
 
-	void listenForMatchmaking(std::string nickname);
+	void listenMatchmaking(const std::string nick);
 
 	void displayTextFunc(Entity& entity);
 

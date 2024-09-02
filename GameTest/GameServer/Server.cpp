@@ -229,11 +229,6 @@ void Server::gameSessionThread(const std::string nick) {
 	NetUtils::Tcp::write_(*player1->getTCPSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 	NetUtils::Tcp::write_(*player2->getTCPSocket(), NetPacket(NetPacket::NetMessages::MATCH_FOUND, nullptr, 0));
 
-	// delete the thread because the match has been found and it's useless to have. 
-	if (m_tempThreadsManager.size()) {
-		m_tempThreadsManager.pop();
-	}
-
 	std::this_thread::sleep_for(1s);
 	
 	boost::uuids::uuid uuid = m_UUIDGenerator();
@@ -245,41 +240,29 @@ void Server::gameSessionThread(const std::string nick) {
 	m_gameSessionsMap.erase(uuid);
 }
 
-//TO-DO: ( REDISIGN ) of this undo-matchmaking-thread
 void Server::handleUndoMatchmaking(std::shared_ptr<tcp::socket> socket, const std::string nick) {
-	using namespace std::chrono_literals;
-	NetPacket p;
-
-	socket->non_blocking(true);
 	while (true) {
 		try {
-			std::this_thread::sleep_for(300ms);
-	
-			p = NetUtils::Tcp::read_(*socket);
-			if (p.getMsgType() == NetPacket::NetMessages::UNDO_MATCHMAKING) {
-				m_matchmakingQueue.pop();
-				m_usersMap.erase(nick);
-				m_udpConnectionsMap.erase(nick);
-				/* add this thread to the cancellable threads, so it will be deleted */
+			NetPacket packet = NetUtils::Tcp::read_(*socket);
+			if (packet.getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
 				m_tempThreadsManager.increaseUselessCounter();
-
-				std::cout << "\nClient [ " << nick << " ]: " << " undo the matchmaking";
-				socket->non_blocking(false);
-				return;
-			}
-			else if (p.getMsgType() == NetPacket::NetMessages::MATCH_FOUND) {
-				socket->non_blocking(false);
 				return;
 			}
 		}
-		catch (const boost::system::system_error& e) {
-			if (e.code() != boost::asio::error::would_block) {
-				std::cerr << "\nCatch in listen for UndoMatchmaking: " << e.what() << std::endl;
+		catch (boost::system::system_error& e) {
+			if (!m_matchmakingQueue.empty()) {
 				m_matchmakingQueue.pop();
-				m_usersMap.erase(nick);
-				m_udpConnectionsMap.erase(nick);
-				return;
 			}
+			m_usersMap.erase(nick);
+			m_udpConnectionsMap.erase(nick);
+			m_tempThreadsManager.increaseUselessCounter();
+
+			std::cout << "\n[ " << nick << " ]: undo the matchmaking\n";
+			return;
+		}
+		catch (std::runtime_error& e) {
+			std::cerr << "\nRuntime Error: " << e.what();
+			return;
 		}
 	}
 }

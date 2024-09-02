@@ -32,4 +32,6 @@ public:
 	void openUdpSocket();
 
 	void closeUdpSocket();
+
+	boost::asio::io_service& getIOService();
 };

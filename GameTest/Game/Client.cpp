@@ -8,11 +8,11 @@ Client::Client() {
 
 bool Client::connect(const std::string& ip, int port) {
     boost::system::error_code ec;
-  
+   
     m_Socket->connect(tcp::endpoint(address::from_string(ip), port), ec);
     
     if (ec) {
-        std::cerr << "Errore while connecting: " << ec.message() << std::endl;
+        std::cerr << "\nError while connecting: " << ec.message() << std::endl;
         return false;
     }
     
@@ -56,4 +56,8 @@ void Client::closeUdpSocket() {
     if (m_udpSocket->is_open()) {
         m_udpSocket->close();
     }
+}
+
+boost::asio::io_service& Client::getIOService() {
+    return m_ioService;
 }
