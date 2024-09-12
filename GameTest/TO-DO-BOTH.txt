@@ -1,5 +1,0 @@
-aggiungere alla classe NetUdpPacket un size_t che rappresenta il numero di
-spedizione del pacchetto.
-
-Controllare poi questo numero spedizione del pacchetto quando si riceve la posizione del client nemico in modo da non caricare posizioni vecchie 
-( in caso di arrivo sfalzato dei messaggi con UDP )

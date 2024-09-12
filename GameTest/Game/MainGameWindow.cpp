@@ -23,6 +23,17 @@ void MainGameWindow::init(const std::string nickname, Client& client) {
     
     m_sessionInfoStruct.m_playerNick = nickname;
     getSessionInfo();
+
+    m_udpPositionPacket = std::make_unique<NetUdpPacket>(m_sessionInfoStruct.m_playerNick,
+        NetUdpPacket::UdpMessages::GAME_MESSAGE,
+        m_sessionInfoStruct.m_sessionUUID,
+        NetPacket::NetMessages::PLAYER_POSITION,
+        nullptr,
+        0,
+        0);
+    m_positionPacketCounter = 1;
+    m_enemyPositionPacketCounter = 0;
+
     initSprites();
 
     /* try to get the default position of the player and enemy player*/
@@ -165,8 +176,10 @@ void MainGameWindow::handleUdpMessages() {
         while (true) {
             try {
                 packet = NetUtils::Udp::read_(*m_Client->getUdpSocket(), m_Client->getUdpEndpoint());
-                if (packet.getGameMsg() == NetPacket::NetMessages::PLAYER_POSITION) {
+
+                if (packet.getGameMsg() == NetPacket::NetMessages::PLAYER_POSITION && packet.packetNumber() > m_enemyPositionPacketCounter) {
                     m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet.data()));
+                    m_enemyPositionPacketCounter = packet.packetNumber();
                 }
             }
             catch (boost::system::error_code& e) {
@@ -267,14 +280,13 @@ void MainGameWindow::update(sf::Time deltaTime) {
     m_youPlayer.update(deltaTime, m_enemyPlayer.getRect());
 
     updateRechargeBar();
-
     if (m_youPlayer.isMoving()) {
         checkPlayerWindowBorders();
         sendPosition();
-        
+
         if (m_youPlayer.isSprinting() && m_youPlayer.isEnemyHit()) {
             Player::CollisionSide cL = m_youPlayer.getCollidedSide();
-
+            
             NetUtils::Tcp::write_(*m_Client->getSocket(), NetPacket(NetPacket::NetMessages::ENEMY_COLLISION, (uint8_t*)&cL, sizeof(cL)));
             m_youPlayer.stopMove();
             m_youPlayer.resetEnemyHit();
@@ -328,12 +340,9 @@ void MainGameWindow::draw() {
 
 void MainGameWindow::sendPosition() {
     float p[] = { m_youPlayer.getPosition().x , m_youPlayer.getPosition().y };
-    NetUtils::Udp::write_(*m_Client->getUdpSocket(), m_Client->getUdpEndpoint(), NetUdpPacket(m_sessionInfoStruct.m_playerNick,
-        NetUdpPacket::UdpMessages::GAME_MESSAGE,
-        m_sessionInfoStruct.m_sessionUUID,
-        NetPacket::NetMessages::PLAYER_POSITION,
-        reinterpret_cast<const uint8_t*>(p),
-        sizeof(p)));
+    m_udpPositionPacket->updateData(reinterpret_cast<const uint8_t*>(p), sizeof(p), m_positionPacketCounter);
+    NetUtils::Udp::write_(*m_Client->getUdpSocket(), m_Client->getUdpEndpoint(), *m_udpPositionPacket);
+    m_positionPacketCounter++;
 }
 
 void MainGameWindow::getSessionInfo() {

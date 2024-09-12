@@ -101,7 +101,13 @@ void Game::startTimer(sf::Text& text) {
 		sf::Color warningColor(186, 141, 19);
 
 		while (m_gameState == GameStates::RUNNING) {
-			text.setString(std::to_string(m_gameMaxTime) + " : " + std::to_string(seconds));
+			if (seconds < 10) {
+				text.setString(std::to_string(m_gameMaxTime) + " : 0" + std::to_string(seconds));
+			}
+			else {
+				text.setString(std::to_string(m_gameMaxTime) + " : " + std::to_string(seconds));
+			}
+			
 			if (m_gameMaxTime == 0) {
 				text.setFillColor(warningColor);
 			}

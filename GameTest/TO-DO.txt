@@ -1,7 +1,9 @@
+DA-FARE-SUBITO:
+-Fare che quando è nelle opzioni il giocatore non può interagire con la game window (sprintare / muoversi etc...)
+-Controllare bene le hit e tutto quando il giocatore sta nell'OptionMenu
+
 PRINCIPALE:
 -Modificare la OptionsGameWindow e metterci le stesse cose della OptionsMainMenu
--Fare che la connessione tra i client è diretta e non deve passare per la GameSession.
--implementare entrambi protocolli TCP / UDP per il gioco, TCP = informazioni che non possono essere perse, UDP: informazioni che possono essere perse
 -cercare di risolvere quel fatto della finestra che aspetta un secondo per caricarsi ( MainGameWindow )
 
 

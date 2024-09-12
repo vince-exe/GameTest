@@ -41,27 +41,32 @@ NetUdpPacket NetUdpPacket::deserialize(std::vector<uint8_t>& serializedBuff) {
 
     std::string sender(reinterpret_cast<const char*>(serializedBuff.data()) + sizeof(UdpMessages) + sizeof(boost::uuids::uuid) + sizeof(NetPacket::NetMessages) + sizeof(senderLength), senderLength);
 
-    std::vector<uint8_t> data;
-    data.assign(serializedBuff.begin() + sizeof(UdpMessages) + sizeof(boost::uuids::uuid) + sizeof(NetPacket::NetMessages) + sizeof(senderLength) + senderLength, serializedBuff.end() - sizeof(uint32_t));
+    size_t packetNumber;
+    std::memcpy(&packetNumber, serializedBuff.data() + sizeof(UdpMessages) + sizeof(boost::uuids::uuid) + sizeof(NetPacket::NetMessages) + sizeof(senderLength) + senderLength, sizeof(size_t));
 
-    return NetUdpPacket(sender, udpMsg, sessionId, gameMsg, data.data(), data.size());
+    std::vector<uint8_t> data;
+    data.assign(serializedBuff.begin() + sizeof(UdpMessages) + sizeof(boost::uuids::uuid) + sizeof(NetPacket::NetMessages) + sizeof(senderLength) + senderLength + sizeof(packetNumber), serializedBuff.end() - sizeof(uint32_t));
+
+    return NetUdpPacket(sender, udpMsg, sessionId, gameMsg, data.data(), data.size(), packetNumber);
 }
 
-NetUdpPacket::NetUdpPacket(std::string& sender, UdpMessages udpMsg, boost::uuids::uuid sessionId, NetPacket::NetMessages gameMsg, const uint8_t* data, size_t size) {
+NetUdpPacket::NetUdpPacket(std::string& sender, UdpMessages udpMsg, boost::uuids::uuid sessionId, NetPacket::NetMessages gameMsg, const uint8_t* data, size_t size, size_t packetNumber) {
     m_Sender = sender;
     m_UdpMsg = udpMsg;
 	m_sessionId = sessionId;
 	m_gameMsg = gameMsg;
 	m_Data = std::vector<uint8_t>(data, data + size);
 	m_Size = size;
+    m_packetNumber = packetNumber;
 }
 
-NetUdpPacket::NetUdpPacket(NetUdpPacket&& other) noexcept 
+NetUdpPacket::NetUdpPacket(NetUdpPacket&& other) noexcept
     : m_UdpMsg(std::move(other.m_UdpMsg)),
-        m_gameMsg(std::move(other.m_gameMsg)),
-        m_Data(std::move(other.m_Data)),
-        m_sessionId(std::move(other.m_sessionId)),
-        m_Size(other.m_Size)
+    m_gameMsg(std::move(other.m_gameMsg)),
+    m_Data(std::move(other.m_Data)),
+    m_sessionId(std::move(other.m_sessionId)),
+    m_Size(other.m_Size),
+    m_packetNumber(other.m_packetNumber)
     {
         other.m_Size = 0;
 }
@@ -73,7 +78,7 @@ NetUdpPacket& NetUdpPacket::operator=(NetUdpPacket&& other) noexcept {
         m_Data = std::move(other.m_Data);
         m_sessionId = std::move(other.m_sessionId);
         m_Size = other.m_Size;
-
+        m_packetNumber = other.m_packetNumber;
         other.m_Size = 0;
     }
     return *this;
@@ -104,9 +109,16 @@ std::vector<uint8_t> NetUdpPacket::serialize() const {
     uint16_t senderLength = static_cast<uint16_t>(m_Sender.size());
     buffer.insert(buffer.end(), reinterpret_cast<const uint8_t*>(&senderLength), reinterpret_cast<const uint8_t*>(&senderLength) + sizeof(senderLength));
     buffer.insert(buffer.end(), m_Sender.begin(), m_Sender.end());
+    buffer.insert(buffer.end(), reinterpret_cast<const uint8_t*>(&m_packetNumber), reinterpret_cast<const uint8_t*>(&m_packetNumber) + sizeof(m_packetNumber));
     buffer.insert(buffer.end(), m_Data.begin(), m_Data.end());
-
+    
     return buffer;
+}
+
+void NetUdpPacket::updateData(const uint8_t* data, size_t size, size_t packetNumber) {
+    m_packetNumber = packetNumber;
+    m_Data = std::vector<uint8_t>(data, data + size);
+    m_Size = size;
 }
 
 const boost::uuids::uuid& NetUdpPacket::sessionUUID() const {
@@ -115,4 +127,8 @@ const boost::uuids::uuid& NetUdpPacket::sessionUUID() const {
 
 const std::string& NetUdpPacket::sender() const {
     return m_Sender;
+}
+
+const size_t NetUdpPacket::packetNumber() const {
+    return m_packetNumber;
 }

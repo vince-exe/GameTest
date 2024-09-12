@@ -25,6 +25,7 @@ private:
 	boost::uuids::uuid m_sessionId;
 	std::string m_Sender;
 	size_t m_Size;
+	size_t m_packetNumber;
 
 	// PAYLOAD
 	std::vector<uint8_t> m_Data;
@@ -39,7 +40,7 @@ public:
 public:
 	NetUdpPacket() = default;
 
-	NetUdpPacket(std::string& sender, UdpMessages udpMsg, boost::uuids::uuid sessionId, NetPacket::NetMessages gameMsg, const uint8_t* data, size_t size);
+	NetUdpPacket(std::string& sender, UdpMessages udpMsg, boost::uuids::uuid sessionId, NetPacket::NetMessages gameMsg, const uint8_t* data, size_t size, size_t packetNumber);
 
 	NetUdpPacket(const NetUdpPacket& other) = default;
 
@@ -59,7 +60,11 @@ public:
 
 	std::vector<uint8_t> serialize() const;
 
+	void updateData(const uint8_t* data, size_t size, size_t packetNumber);
+
 	const boost::uuids::uuid& sessionUUID() const;
 
 	const std::string& sender() const;
+
+	const size_t packetNumber() const;
 };

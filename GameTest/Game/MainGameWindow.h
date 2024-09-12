@@ -40,6 +40,9 @@ private:
 
 	std::vector<std::vector<sf::CircleShape>> m_damageAreasVector;
 
+	std::unique_ptr<NetUdpPacket> m_udpPositionPacket;
+	size_t m_positionPacketCounter, m_enemyPositionPacketCounter;
+	
 private:
 	void setMusicAndSound();
 
