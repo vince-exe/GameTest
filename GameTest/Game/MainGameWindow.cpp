@@ -177,9 +177,13 @@ void MainGameWindow::handleUdpMessages() {
             try {
                 packet = NetUtils::Udp::read_(*m_Client->getUdpSocket(), m_Client->getUdpEndpoint());
 
-                if (packet.getGameMsg() == NetPacket::NetMessages::PLAYER_POSITION && packet.packetNumber() > m_enemyPositionPacketCounter) {
-                    m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet.data()));
-                    m_enemyPositionPacketCounter = packet.packetNumber();
+                switch (packet.getGameMsg()) {
+                case NetPacket::NetMessages::PLAYER_POSITION:
+                    if (packet.packetNumber() > m_enemyPositionPacketCounter) {
+                        m_enemyPlayer.setPosition(NetGameUtils::getSfvector2f(packet.data()));
+                        m_enemyPositionPacketCounter = packet.packetNumber();
+                    }
+                    break;
                 }
             }
             catch (boost::system::error_code& e) {
@@ -239,7 +243,7 @@ void MainGameWindow::checkPlayerWindowBorders() {
 }
 
 void MainGameWindow::handleMouseClick(sf::Event& event) {
-    if (event.type == sf::Event::MouseButtonPressed) {
+    if (event.type == sf::Event::MouseButtonPressed && !m_inGameSettings) {
         if (event.mouseButton.button == sf::Mouse::Left) {
             m_youPlayer.handlePlayerMovement(m_Game.areActionsBlocked(), m_Window, false);
         }
@@ -250,7 +254,7 @@ void MainGameWindow::handleMouseClick(sf::Event& event) {
 }
 
 void MainGameWindow::handleKeyBoards(sf::Event event) {
-    if (event.type == sf::Event::KeyPressed) {
+    if (event.type == sf::Event::KeyPressed && !m_inGameSettings) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
             if (!m_youPlayer.isEnemyHit()) {
                 m_youPlayer.stopMove();
@@ -292,7 +296,7 @@ void MainGameWindow::update(sf::Time deltaTime) {
             m_youPlayer.resetEnemyHit();
         }
 
-        // check if the player collided with a damage area
+        /* check if the player collided with a damage area */
         if (m_Game.checkCollision(m_damageAreasVector.at(m_Game.getCurrentRound()), m_youPlayer)) {
             m_youPlayer.resetSprint();
             m_youPlayer.stopMove();
@@ -326,7 +330,6 @@ void MainGameWindow::draw() {
     }
     if (m_Game.getGameState() == Game::GameStates::RUNNING) {
         m_Window.draw(m_gameTimer);
-
         for (sf::CircleShape& shape : m_damageAreasVector.at(m_Game.getCurrentRound())) {
             m_Window.draw(shape);
         }
@@ -391,7 +394,7 @@ void MainGameWindow::initSprites() {
     m_youPlayer.setColor(sf::Color(2, 35, 89));
     m_youPlayer.setIndicator(sf::Color(31, 110, 2), 8.0f);
     m_youPlayer.setSpeed(200.f);
-    m_youPlayer.setSprint(1000.f, 5.f);
+    m_youPlayer.setSprint(5, 5.f);
     m_youPlayer.setDebugMode(std::strcmp(g_sSingleton.getValue(SkyfallUtils::Settings::DEBUG_MODE).GetString(), "ON") == 0);
 
     m_enemyPlayer.setSize(sf::Vector2f(70.f, 70.f));

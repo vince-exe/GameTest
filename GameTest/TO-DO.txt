@@ -1,7 +1,3 @@
-DA-FARE-SUBITO:
--Fare che quando è nelle opzioni il giocatore non può interagire con la game window (sprintare / muoversi etc...)
--Controllare bene le hit e tutto quando il giocatore sta nell'OptionMenu
-
 PRINCIPALE:
 -Modificare la OptionsGameWindow e metterci le stesse cose della OptionsMainMenu
 -cercare di risolvere quel fatto della finestra che aspetta un secondo per caricarsi ( MainGameWindow )
