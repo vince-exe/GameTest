@@ -66,6 +66,8 @@ public:
 
     void setDebugMode(bool flag);
 
+    const bool getDebugMode() const;
+
     void handleEnemyCollision(const CollisionSide collidionSide);
 
     void update(sf::Time deltaTime, const sf::RectangleShape& other);

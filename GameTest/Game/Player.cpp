@@ -355,3 +355,7 @@ void Player::setHitByEnemy(bool flag) {
 void Player::setDebugMode(bool flag) {
     m_drawVertexLine = flag;
 }
+
+const bool Player::getDebugMode() const {
+    return m_drawVertexLine;
+}

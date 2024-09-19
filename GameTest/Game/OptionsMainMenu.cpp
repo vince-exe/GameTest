@@ -35,7 +35,6 @@ void OptionsMainMenu::draw() {
     m_Window->draw(m_soundEffectsText);
     m_Window->draw(m_debugModeText);
     m_Window->draw(m_debugModeResult);
-
     m_Window->draw(m_soundEffectsSlider);
     for (int i = 0; i < 10; i++) {
         m_Window->draw(m_musicCheckPoints[i]);

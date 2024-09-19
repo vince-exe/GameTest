@@ -11,8 +11,7 @@ void MainGameWindow::init(const std::string nickname, Client& client) {
     m_inGameSettings = false;
     m_Game.setBlockActions(true);
 
-    m_gameSettingsMenu.setTextures();
-    m_gameSettingsMenu.setSprites(m_Window);
+    m_gameSettingsMenu.init(m_Window);
 
     /* get the enemy nickname */
     if (!handleEnemyNickname()) {
@@ -56,7 +55,7 @@ void MainGameWindow::init(const std::string nickname, Client& client) {
     while (m_displayWindow) {
         while (m_Window.pollEvent(event)) {
             if (m_inGameSettings) {
-                m_gameSettingsMenu.handleMouseButtonPressed(event, m_Window, m_inGameSettings);
+                m_gameSettingsMenu.handleMouseButtonPressed(event, m_Window, m_inGameSettings, m_youPlayer);
             }
             if (event.type == sf::Event::Closed) {
                 quitGame();
@@ -394,7 +393,7 @@ void MainGameWindow::initSprites() {
     m_youPlayer.setColor(sf::Color(2, 35, 89));
     m_youPlayer.setIndicator(sf::Color(31, 110, 2), 8.0f);
     m_youPlayer.setSpeed(200.f);
-    m_youPlayer.setSprint(5, 5.f);
+    m_youPlayer.setSprint(1000.f, 5.f);
     m_youPlayer.setDebugMode(std::strcmp(g_sSingleton.getValue(SkyfallUtils::Settings::DEBUG_MODE).GetString(), "ON") == 0);
 
     m_enemyPlayer.setSize(sf::Vector2f(70.f, 70.f));
