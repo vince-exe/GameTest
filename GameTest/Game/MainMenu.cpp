@@ -27,6 +27,7 @@ bool MainMenu::init() {
             MainGameWindow mainGameWindow;
             mainGameWindow.init(m_Nickname, m_Client);
 
+            g_aSingleton.getBackgroundMusic().setVolume(g_sSingleton.getValue(SkyfallUtils::Settings::MUSIC_VOLUME).GetInt());
             g_aSingleton.getBackgroundMusic().play();
             g_aSingleton.getBackgroundMusic().loop(true);
             m_displayGameWindow = false;
