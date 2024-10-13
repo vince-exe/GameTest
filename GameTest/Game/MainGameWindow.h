@@ -32,7 +32,7 @@ private:
 
 	Player m_youPlayer, m_enemyPlayer;
 
-	bool m_displayWindow, m_inGameSettings;
+	bool m_displayWindow, m_inGameSettings, m_isCursorGrabbed;
 	std::atomic<bool> m_closeSettingsWindowFlag;
 
 	GameSettingsMenu m_gameSettingsMenu;
@@ -42,7 +42,9 @@ private:
 
 	std::unique_ptr<NetUdpPacket> m_udpPositionPacket;
 	size_t m_positionPacketCounter, m_enemyPositionPacketCounter;
-	
+
+	Entity m_lockBtn, m_unlockBtn;
+
 private:
 	void setMusicAndSound();
 
@@ -50,13 +52,11 @@ private:
 
 	void draw();
 
-	void sendPosition();
-
 	void getSessionInfo();
 
 	void initSprites();
 
-	void handleKeyBoards(sf::Event event);
+	void handleKeyBoards(sf::Event& event);
 
 	void handleMouseClick(sf::Event& event);
 
@@ -64,15 +64,11 @@ private:
 
 	void updateRechargeBar();
 
-	void resolvePlayerSprint();
-
-	void checkPlayerWindowBorders();
+	void checkPlayerWindowBorders(Player& player);
 
 	bool handleEnemyNickname();
 
 	void handleMessages();
-
-	void handleUdpMessages();
 
 	bool initPlayerAndEnemyPosition();
 

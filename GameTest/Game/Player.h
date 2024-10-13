@@ -43,16 +43,14 @@ private:
 
     void updateIndicatorPos();
 
-    void calcPlayerTrend(const sf::Vector2f& newPos);
-
 public:
     Player();
 
     CollisionSide& getCollidedSide();
 
-    void resetSprint();
+    void calcPlayerTrend(const sf::Vector2f& newPos);
 
-    void handlePlayerMovement(std::atomic<bool> actionsBlocked, sf::RenderWindow& window, bool wantSprint);
+    void resetSprint();
 
     void setSize(sf::Vector2f size);
 
@@ -67,8 +65,6 @@ public:
     void setDebugMode(bool flag);
 
     const bool getDebugMode() const;
-
-    void handleEnemyCollision(const CollisionSide collidionSide);
 
     void update(sf::Time deltaTime, const sf::RectangleShape& other);
 
@@ -105,6 +101,8 @@ public:
     float getSprintTimeout();
 
     bool isEnemyHit();
+
+    bool hitByEnemy();
 
     void resetEnemyHit();
 

@@ -1,10 +1,3 @@
-URGENTE:
-capire perché dopo x tempo il GameServer crasha:
-	-possibile debug: aggiungere un catch() in handleClient func
-
-REFACTORING:
--cercare di trovare una soluzione più ottimale per il design della handle-undo-matchmaking.
-
 SECONDARIE:
 -il tempo di attesa per una UDP-CONNECTION può essere gestito con file .json 
 ( ovviamente questo implicà che il client dovrà conoscere questo tempo di attesa affinché possa gestire il timeout anche lui internamente ).

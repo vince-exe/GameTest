@@ -1,7 +1,4 @@
-PRINCIPALE:
--Modificare la OptionsGameWindow e metterci le stesse cose della OptionsMainMenu
 -cercare di risolvere quel fatto della finestra che aspetta un secondo per caricarsi ( MainGameWindow )
-
 
 DA FARE SECONDARIE ( rispettare l'ordine per una maggiore chiarezza ):
 1)continuare l'altro progetto ( VocalChat ) per implementare che entrambi possono parlare e ricevere ( fare refactoring anche )

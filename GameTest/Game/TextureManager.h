@@ -12,7 +12,7 @@ public:
 
 private:
 	// buttons 
-	sf::Texture m_quitBtnTexture, m_settingsBtnTexture, m_settings2BtnTexture, m_undoMatchTexture, m_matchBtnTexture, m_connectBtnTexture, m_doneBtn, m_cancelBtn;
+	sf::Texture m_quitBtnTexture, m_settingsBtnTexture, m_settings2BtnTexture, m_undoMatchTexture, m_matchBtnTexture, m_connectBtnTexture, m_doneBtn, m_cancelBtn, m_lockBtn, m_unlockBtn;
 	// texts images
 	sf::Texture m_textsImages[9];
 
@@ -36,4 +36,8 @@ public:
 	const sf::Texture& getCancelBtn() const;
 
 	const sf::Texture& getTextImage(unsigned int index) const;
+
+	const sf::Texture& getLockBtn() const;
+
+	const sf::Texture& getUnlockBtn() const;
 };

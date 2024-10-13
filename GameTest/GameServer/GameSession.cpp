@@ -53,11 +53,11 @@ void GameSession::sendDefaultPositions() {
 	float player1Position[] = { 530.f, 470.f };
 	float player2Position[] = { 670.f, 470.f };
 
-	NetUtils::Tcp::write_(*m_user1->getTCPSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
-	NetUtils::Tcp::write_(*m_user2->getTCPSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
+	NetUtils::Tcp::write_(*m_user1->getTCPSocket(), NetPacket(NetPacket::NetMessages::SET_PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
+	NetUtils::Tcp::write_(*m_user2->getTCPSocket(), NetPacket(NetPacket::NetMessages::SET_PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
 
-	NetUtils::Tcp::write_(*m_user1->getTCPSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
-	NetUtils::Tcp::write_(*m_user2->getTCPSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
+	NetUtils::Tcp::write_(*m_user1->getTCPSocket(), NetPacket(NetPacket::NetMessages::SET_PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player2Position), sizeof(player2Position)));
+	NetUtils::Tcp::write_(*m_user2->getTCPSocket(), NetPacket(NetPacket::NetMessages::SET_PLAYER_POSITION, reinterpret_cast<const uint8_t*>(player1Position), sizeof(player1Position)));
 }
 
 void GameSession::setDamageAreasCoordinates() {

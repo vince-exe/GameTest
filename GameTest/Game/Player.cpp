@@ -27,25 +27,6 @@ void Player::setIndicator(sf::Color color, float distance) {
     m_distanceAbove = distance;
 }
 
-void Player::handlePlayerMovement(std::atomic<bool> actionsBlocked, sf::RenderWindow& window, bool wantSprint) {
-    if (!actionsBlocked.load()) {
-        const sf::Vector2i mousePosition{ sf::Mouse::getPosition(window) };
-        const sf::Vector2f mouseCoord{ window.mapPixelToCoords(mousePosition) };
-
-        if (wantSprint && !isSprinting()) {
-            if (canSprint()) {
-                setTarget(mouseCoord);
-                startSprint(true);
-                calcPlayerTrend(mouseCoord);
-            }
-        }
-        else if (!isSprinting()) {
-            setTarget(mouseCoord);
-            calcPlayerTrend(mouseCoord);
-        }
-    }
-}
-
 void Player::setSpeed(float speed) {
     m_Speed = speed;
 }
@@ -237,30 +218,6 @@ bool Player::canSprint() {
     return (m_sprintClock.getElapsedTime().asSeconds() >= m_sprintTimeout);
 }
 
-void Player::handleEnemyCollision(const Player::CollisionSide collisionSide) {
-    switch (collisionSide) {
-    case Player::CollisionSide::Top:
-        setTarget(sf::Vector2f(m_Rectangle.getPosition().x, m_Rectangle.getPosition().y + 2000));
-        startSprint(false);
-        break;
-
-    case Player::CollisionSide::Bottom:
-        setTarget(sf::Vector2f(m_Rectangle.getPosition().x, m_Rectangle.getPosition().y - 2000));
-        startSprint(false);
-        break;
-
-    case Player::CollisionSide::Left:
-        setTarget(sf::Vector2f(m_Rectangle.getPosition().x + 2000, m_Rectangle.getPosition().y));
-        startSprint(false);
-        break;
-
-    case Player::CollisionSide::Right:
-        setTarget(sf::Vector2f(m_Rectangle.getPosition().x - 2000, m_Rectangle.getPosition().y));
-        startSprint(false);
-        break;
-    }
-}
-
 bool Player::isSprinting() {
     return m_isSprinting;
 }
@@ -350,6 +307,10 @@ void Player::resetEnemyHit() {
 
 void Player::setHitByEnemy(bool flag) {
     m_hitByEnemy = flag;
+}
+
+bool Player::hitByEnemy() {
+    return m_hitByEnemy;
 }
 
 void Player::setDebugMode(bool flag) {

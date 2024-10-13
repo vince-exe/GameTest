@@ -75,6 +75,65 @@ void Game::handleNewRound(GameEntities entity) {
 	}
 }
 
+void Game::sendPlayerPosition(const sf::Vector2f& position, float wantSprint, Client& client) {
+	float p[] = { position.x , position.y, wantSprint };
+	NetUtils::Tcp::write_(*client.getSocket(), NetPacket(NetPacket::NetMessages::PLAYER_POSITION, reinterpret_cast<const uint8_t*>(p), sizeof(p)));
+}
+
+void Game::handlePlayerMovement(Player& player, const sf::Vector2f& position, bool wantSprint, Client& client) {
+	if (!areActionsBlocked()) {
+		// want to sprint (if he can)
+		if (wantSprint && !player.isSprinting()) {
+			if (player.canSprint()) {
+				sendPlayerPosition(position, 1.f, client);
+				player.setTarget(position);
+				player.startSprint(true);
+				player.calcPlayerTrend(position);
+			}
+		}
+		// moving normally (if he can)
+		else if (!player.isSprinting()) {
+			sendPlayerPosition(position, 0.f, client);
+			player.setTarget(position);
+			player.calcPlayerTrend(position);
+		}
+	}
+}
+
+void Game::handlePlayerCollision(const Player::CollisionSide& collisionSide, Player& player, Client& client) {
+	sf::Vector2f newPos;
+
+	switch (collisionSide) {
+	case Player::CollisionSide::Top:
+		newPos = sf::Vector2f(player.getPosition().x, player.getPosition().y + 2000);
+		sendPlayerPosition(newPos, true, client);
+		player.setTarget(newPos);
+		player.startSprint(false);
+		break;
+
+	case Player::CollisionSide::Bottom:
+		newPos = sf::Vector2f(player.getPosition().x, player.getPosition().y - 2000);
+		sendPlayerPosition(newPos, true, client);
+		player.setTarget(newPos);
+		player.startSprint(false);
+		break;
+
+	case Player::CollisionSide::Left:
+		newPos = sf::Vector2f(player.getPosition().x + 2000, player.getPosition().y);
+		sendPlayerPosition(newPos, true, client);
+		player.setTarget(newPos);
+		player.startSprint(false);
+		break;
+
+	case Player::CollisionSide::Right:
+		newPos = sf::Vector2f(player.getPosition().x - 2000, player.getPosition().y);
+		sendPlayerPosition(newPos, true, client);
+		player.setTarget(newPos);
+		player.startSprint(false);
+		break;
+	}
+}
+
 void Game::startGame(std::vector<std::vector<sf::CircleShape>>& finalVector) {	
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 6; j++) {

@@ -12,7 +12,8 @@ bool TextureManager::init() {
         m_quitBtnTexture.loadFromFile("assets/Buttons/quit.png") && m_settingsBtnTexture.loadFromFile("assets/Buttons/settings.png")
         && m_settings2BtnTexture.loadFromFile("assets/Buttons/settings2.png") && m_connectBtnTexture.loadFromFile("assets/Buttons/connect.png")
         && m_matchBtnTexture.loadFromFile("assets/Buttons/match.png") && m_undoMatchTexture.loadFromFile("assets/Buttons/undoMatch.png")
-        && m_doneBtn.loadFromFile("assets/Buttons/done.png") && m_cancelBtn.loadFromFile("assets/Buttons/cancel.png");
+        && m_doneBtn.loadFromFile("assets/Buttons/done.png") && m_cancelBtn.loadFromFile("assets/Buttons/cancel.png")
+        && m_lockBtn.loadFromFile("assets/Buttons/lock.png") && m_unlockBtn.loadFromFile("assets/Buttons/unlock.png");
 }
 
 const sf::Texture& TextureManager::getQuitBtnTexture() const {
@@ -49,4 +50,12 @@ const sf::Texture& TextureManager::getCancelBtn() const {
 
 const sf::Texture& TextureManager::getTextImage(unsigned int index) const {
     return m_textsImages[index];
+}
+
+const sf::Texture& TextureManager::getLockBtn() const {
+    return m_lockBtn;
+}
+
+const sf::Texture& TextureManager::getUnlockBtn() const {
+    return m_unlockBtn;
 }

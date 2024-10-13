@@ -12,6 +12,8 @@
 #include "Player.h"
 #include "FontManager.h"
 #include "Sound.h"
+#include "../GameServer/network_utilities.h"
+#include "Client.h"
 
 class Game {
 public:
@@ -94,4 +96,10 @@ public:
 	
 	/* the entity represents the player that the game has to decrease the life */
 	void handleNewRound(GameEntities entity);
+
+	void handlePlayerMovement(Player& player, const sf::Vector2f& position, bool wantSprint, Client& client);
+
+	void sendPlayerPosition(const sf::Vector2f& position, float wantSprint, Client& client);
+
+	void handlePlayerCollision(const Player::CollisionSide& collisionSide, Player& player, Client& client);
 };
